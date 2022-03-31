@@ -54,12 +54,12 @@ Author: <name>
  
 Direct use of Schema.org entities:
  
-- dateCreated (DataTime) (Schema.org dateCreated) (date)
-- instrument (Schema.org instrument) (URL or String) [Optional]
-- ScholarlyArticle (Schema.org ScholarlyArticle) (URL) [Optional]
-- documentation (Schema.org documentation) (URL or String) [Optional]
-- identifier (Schema.org identifier ) (String) [Optional]
-- relatedLink (Schema.org relatedLink) (URL) [Optional]
+- `dateCreated` (DataTime) (Schema.org dateCreated) (date)
+- `instrument` (Schema.org instrument) (URL or String) [Optional]
+- `ScholarlyArticle` (Schema.org ScholarlyArticle) (URL) [Optional]
+- `documentation` (Schema.org documentation) (URL or String) [Optional]
+- `identifier` (Schema.org identifier ) (String) [Optional]
+- `relatedLink` (Schema.org relatedLink) (URL) [Optional]
  
 These are all direct use:
  
