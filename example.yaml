@@ -1,0 +1,15 @@
+Version: 1.0
+Genome:  Bombas huntii 
+Author: Adam Wright 
+  url: https://wormbase.org/resource/person/WBPerson30813 
+Assembler: David Molik 
+  url: https:/david.molik.co/person
+dateCreated: 2022-03-21
+location: PBARC
+  url: https://www.ars.usda.gov/pacific-west-area/hilo-hi/daniel-k-inouye-us-pacific-basin-agricultural-research-center/
+instrument: Sequel IIe
+ScholarlyArticle: https://doi.org/10.1371/journal.pntd.0008755
+documentation: Built assembly from... 
+identifier: gkx10242566416842
+relatedLink: https/david.molik.co/genome 
+
