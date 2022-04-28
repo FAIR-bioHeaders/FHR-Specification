@@ -22,10 +22,11 @@ Part of what FFRGS sets off to do is make sure that we can map back to Schema.or
 AAAATCGATCGGCATA…
 ```
  
-Here's a spec: 
  
-Metadata Draft v0.2 (fasta yaml header with easy microdata conversions)
- 
+## Metadata Draft v0.2 (fasta yaml header with easy microdata conversions)
+FFRGS utilizes schema.org as much as possible for later integration
+
+---
 Specialised instances of Schema.org (we want as few of these as possible):
  
 - `Version` (String) - Version of FFRGS (Currently always "1.0")
@@ -36,6 +37,8 @@ These will always be remaps of properties, so:
 ``` 
 Genome: <name>
 ```
+
+---
 Instances of Schema.org entities, where we just want a name and url because we’re not storing that data here: 
  
 - `Author` - ( Schema.org author ) (URL and String)
@@ -51,7 +54,8 @@ These will be names, and urls:
 Author: <name>
  url: https://link 
 ```
- 
+
+---
 Direct use of Schema.org entities:
  
 - `dateCreated` (DataTime) (Schema.org dateCreated) (date)
@@ -60,10 +64,12 @@ Direct use of Schema.org entities:
 - `documentation` (Schema.org documentation) (URL or String) [Optional]
 - `identifier` (Schema.org identifier ) (String) [Optional]
 - `relatedLink` (Schema.org relatedLink) (URL) [Optional]
- 
+
+``` 
 These are all direct use:
  
 - `dateCreated`: <date>
- 
+```
+
 Another benefit of having this easy conversion is that we can submit the spec to say bioschema without much work after publishing. 
 
