@@ -4,24 +4,31 @@ FFRGS (Fair Formatted Reference Genome Standard): a simple FAIR enough metadata 
 Part of what FFRGS sets off to do is make sure that we can map back to Schema.org as much as possible, this will be useful for microdata and rdfa conversions for users that want to embed data into genome webpages. We also want to be able to split out the header if we have to, we can make the coding easy on ourselves if we throw yaml into the header itself. or something that is a regex away from yaml. I think it's important that the header has a secondary character after the comment delineator to indicate that this is part of the header, otherwise a simple mistake in a regex for the header could easily grab regular comments in the fasta file. I also think that the secondary header delineating character should be on the keyboard, and not a yaml special character, this leaves the tilde as the best option. I could imagine it would look something like this:
  
 ```
-;~  Version: 1.0
-;~  Genome:  Bombas huntii 
-;~  Author: Adam Wright 
-;~    url: https://wormbase.org/resource/person/WBPerson30813 
-;~  Assembler: David Molik 
-;~    url: https:/david.molik.co/person
-;~  dateCreated: 2022-03-21
-;~  location: PBARC
-;~    url: https://www.ars.usda.gov/pacific-west-area/hilo-hi/daniel-k-inouye-us-pacific-basin-agricultural-research-center/
-;~  instrument: Sequel IIe
-;~  ScholarlyArticle: https://doi.org/10.1371/journal.pntd.0008755
-;~  documentation: Built assembly from... 
-;~  identifier: gkx10242566416842
-;~  relatedLink: https/david.molik.co/genome 
+;~Version: 1
+;~Genome: Bombas huntii
+;~Author:
+;~  name: Adam Wright
+;~  url: https://wormbase.org/resource/person/WBPerson30813
+;~Assembler:
+;~  name: David Molik
+;~  url: https:/david.molik.co/person
+;~dateCreated: '2022-03-21'
+;~location:
+;~  name: PBARC
+;~  url: https://www.ars.usda.gov/pacific-west-area/hilo-hi/daniel-k-inouye-us-pacific-basin-agricultural-research-center/
+;~instrument:
+;~- Sequel IIe
+;~- Nanopore
+;~physicalSample: Located in Freezer 33, Drawer 137
+;~ScholarlyArticle: https://doi.org/10.1371/journal.pntd.0008755
+;~documentation: 'Built assembly from... '
+;~identifier:
+;~- gkx10242566416842
+;~relatedLink:
+;~- https/david.molik.co/genome
 >Contig 1
-AAAATCGATCGGCATA…
-```
- 
+AAAATCGATCGGCATA
+``` 
  
 ## Metadata Draft v0.2 (fasta yaml header with easy microdata conversions)
 FFRGS utilizes schema.org as much as possible for later integration
