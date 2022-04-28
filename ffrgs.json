@@ -3,5 +3,88 @@
   "$id": "https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json",
   "title": "FFRGS",
   "description": "Fair Formatted Reference Genome Standard (FFRGS) Schema for Genome Assemblies",
-  "type": "object"
+  "type": "object",
+  "properties": {
+    "Version":{
+      "type": "number",
+      "description": "Version of FFRG"
+    },
+    "Genome":{
+      "type": "string",
+      "description": "Name of the Genome"
+    },
+    "Author":{
+      "type": "object",
+      "description": "Author of the FFRGS Instance (Person or Org)",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "Assembler":{
+      "type": "object",
+      "description": "Assembler of the Genome (Person or Org)",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "dateCreated":{
+      "type": "string",
+      "description": "Date the genome assembly was created"
+    },
+    "physicalSample":{
+      "type": "string",
+      "description": "Description of the physical sample"
+    },
+    "location":{
+      "type": "object",
+      "description": "location genome assembly was created",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "instrument": {
+      "type": "array",
+      "description": "Physical tools and instruments used in the creation of the genome assembly",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ScholarlyArticle": {
+      "type": "string",
+      "description": "Scholarly article genome was published in"
+    },
+    "documentation": {
+      "type": "string",
+      "description": "Documentation about the genome"
+    },
+    "identifier": {
+      "type": "array",
+      "description": "Identifies of the genome",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relatedLink": {
+      "type": "array",
+      "description": "Related URLS to the genome",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
 }
