@@ -1,5 +1,5 @@
 {
-  "$schema": "https://github.com/FFRGS/FFRGS-Specification",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json",
   "title": "FFRGS",
   "description": "Fair Formatted Reference Genome Standard (FFRGS) Schema for Genome Assemblies",
