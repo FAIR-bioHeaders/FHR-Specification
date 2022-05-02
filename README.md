@@ -36,8 +36,11 @@ FFRGS utilizes schema.org as much as possible for later integration
 ---
 Specialised instances of Schema.org (we want as few of these as possible):
  
-- `Version` (String) - Version of FFRGS (Currently always "1.0")
+- `schemaVersion` (String) - Version of FFRGS (Currently always "1.0")
 - `Genome` (String) - ( Schema.org name )
+- `Version` (String) - ( Schema.org version ) Version of the Genome
+- `license` (String) - ( Schema.org license ) License used (url or name of common license) 
+- `funding` (String) - ( Schema.org funding ) Name of Grant used in the creation of the genome
  
 These will always be remaps of properties, so:
 

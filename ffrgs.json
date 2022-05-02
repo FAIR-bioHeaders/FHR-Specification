@@ -5,13 +5,17 @@
   "description": "Fair Formatted Reference Genome Standard (FFRGS) Schema for Genome Assemblies",
   "type": "object",
   "properties": {
-    "Version":{
+    "schemaVersion":{
       "type": "number",
       "description": "Version of FFRG"
     },
     "Genome":{
       "type": "string",
       "description": "Name of the Genome"
+    },
+    "Version":{
+      "type": "string",
+      "description": "Version number of Genome"
     },
     "Author":{
       "type": "object",
@@ -85,6 +89,14 @@
       "items": {
         "type": "string"
       }
+    },
+    "funding": {
+      "type": "string",
+      "description": "Grant Line Item"
+    },
+    "license": {
+      "type": "string",
+      "description": "license for the use of the Genome"
     }
   }
 }
