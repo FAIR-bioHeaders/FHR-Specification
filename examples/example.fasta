@@ -1,10 +1,10 @@
 ;~schemaVersion: 1
-;~Genome: Bombas huntii
-;~Version: 0.0.1
-;~Author:
+;~genome: Bombas huntii
+;~version: 0.0.1
+;~author:
 ;~  name: Adam Wright
 ;~  url: https://wormbase.org/resource/person/WBPerson30813
-;~Assembler:
+;~assembler:
 ;~  name: David Molik
 ;~  url: https:/david.molik.co/person
 ;~dateCreated: '2022-03-21'
@@ -15,7 +15,7 @@
 ;~- Sequel IIe
 ;~- Nanopore
 ;~physicalSample: Located in Freezer 33, Drawer 137
-;~ScholarlyArticle: https://doi.org/10.1371/journal.pntd.0008755
+;~scholarlyArticle: https://doi.org/10.1371/journal.pntd.0008755
 ;~documentation: 'Built assembly from... '
 ;~identifier:
 ;~- gkx10242566416842

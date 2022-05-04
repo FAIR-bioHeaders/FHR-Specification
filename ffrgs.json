@@ -9,15 +9,15 @@
       "type": "number",
       "description": "Version of FFRG"
     },
-    "Genome":{
+    "genome":{
       "type": "string",
       "description": "Name of the Genome"
     },
-    "Version":{
+    "version":{
       "type": "string",
       "description": "Version number of Genome"
     },
-    "Author":{
+    "author":{
       "type": "object",
       "description": "Author of the FFRGS Instance (Person or Org)",
       "properties": {
@@ -29,7 +29,7 @@
         }
       }
     },
-    "Assembler":{
+    "assembler":{
       "type": "object",
       "description": "Assembler of the Genome (Person or Org)",
       "properties": {
@@ -68,7 +68,7 @@
         "type": "string"
       }
     },
-    "ScholarlyArticle": {
+    "scholarlyArticle": {
       "type": "string",
       "description": "Scholarly article genome was published in"
     },
