@@ -5,6 +5,10 @@
   "description": "Fair Formatted Reference Genome Standard (FFRGS) Schema for Genome Assemblies",
   "type": "object",
   "properties": {
+    "schema":{
+      "type": "string",
+      "description": "centralized schema file"
+    },
     "schemaVersion":{
       "type": "number",
       "description": "Version of FFRG"

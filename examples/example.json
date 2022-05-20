@@ -1,4 +1,6 @@
 {
+    "$schema":"https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json",
+    "$id":"https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/examples/example.json",
     "schemaVersion": 1.0,
     "genome": "Bombas huntii",
     "version": "0.0.1",
