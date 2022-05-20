@@ -1,3 +1,4 @@
+schema: https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json
 schemaVersion: 1
 genome: Bombas huntii
 version: 0.0.1
