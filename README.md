@@ -65,7 +65,8 @@ Instances of Schema.org entities, where we just want a name and url because weâ€
 These will be names, and urls:
 
 ``` 
-author: <name>
+author: 
+ name: Name
  url: https://link 
 ```
 
