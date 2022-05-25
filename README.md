@@ -4,9 +4,10 @@ FFRGS (Fair Formatted Reference Genome Standard): a simple FAIR enough metadata 
 Part of what FFRGS sets off to do is make sure that we can map back to Schema.org as much as possible, this will be useful for microdata and rdfa conversions for users that want to embed data into genome webpages. We also want to be able to split out the header if we have to, we can make the coding easy on ourselves if we throw yaml into the header itself. or something that is a regex away from yaml. I think it's important that the header has a secondary character after the comment delineator to indicate that this is part of the header, otherwise a simple mistake in a regex for the header could easily grab regular comments in the fasta file. I also think that the secondary header delineating character should be on the keyboard, and not a yaml special character, this leaves the tilde as the best option. I could imagine it would look something like this:
  
 ```
+;~schema: https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json
 ;~schemaVersion: 1
-;~version: 1
 ;~genome: Bombas huntii
+;~version: 0.0.1
 ;~author:
 ;~  name: Adam Wright
 ;~  url: https://wormbase.org/resource/person/WBPerson30813
@@ -14,7 +15,8 @@ Part of what FFRGS sets off to do is make sure that we can map back to Schema.or
 ;~  name: David Molik
 ;~  url: https:/david.molik.co/person
 ;~dateCreated: '2022-03-21'
-;~location:
+;~taxa: Bombas huntii
+;~place:
 ;~  name: PBARC
 ;~  url: https://www.ars.usda.gov/pacific-west-area/hilo-hi/daniel-k-inouye-us-pacific-basin-agricultural-research-center/
 ;~instrument:
@@ -27,6 +29,8 @@ Part of what FFRGS sets off to do is make sure that we can map back to Schema.or
 ;~- gkx10242566416842
 ;~relatedLink:
 ;~- https/david.molik.co/genome
+;~funding: 'some'
+;~licence: 'public domain'
 >Contig 1
 AAAATCGATCGGCATA
 ``` 
