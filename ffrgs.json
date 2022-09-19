@@ -21,7 +21,7 @@
       "type": "string",
       "description": "Version number of Genome"
     },
-    "author":{
+    "metadataAuthor":{
       "type": "object",
       "description": "Author of the FFRGS Instance (Person or Org)",
       "properties": {
