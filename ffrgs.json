@@ -17,6 +17,10 @@
       "type": "string",
       "description": "Name of the Genome"
     },
+    "taxonURL":{
+      "type": "string",
+      "description": "URL of the species information"
+    },
     "version":{
       "type": "string",
       "description": "Version number of Genome"
