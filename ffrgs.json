@@ -37,7 +37,7 @@
         }
       }
     },
-    "assembler":{
+    "assemblyAuthor":{
       "type": "object",
       "description": "Assembler of the Genome (Person or Org)",
       "properties": {
