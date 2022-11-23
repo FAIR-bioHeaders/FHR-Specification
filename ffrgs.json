@@ -35,7 +35,7 @@
       "type": "number",
       "description": "Version number of Genome"
     },
-    "metadataAuthors":{
+    "metadataAuthor":{
       "type": "array",
       "items": {
         "type": "object",
@@ -48,7 +48,7 @@
         }
       }
     },
-    "assemblyAuthors":{
+    "assemblyAuthor":{
       "type": "array",
         "items": {
         "type": "object",
@@ -92,7 +92,8 @@
     },
     "scholarlyArticle": {
       "type": "string",
-      "description": "Scholarly article genome was published in"
+      "pattern": "^10.",
+      "description": "Scholarly article genome was published e.g. 10.5281/zenodo.6762550 "
     },
     "documentation": {
       "type": "string",
