@@ -17,40 +17,53 @@
       "type": "string",
       "description": "Name of the Genome"
     },
-    "taxonURL":{
-      "type": "string",
-      "description": "URL of the species information"
-    },
-    "version":{
-      "type": "string",
-      "description": "Version number of Genome"
-    },
-    "metadataAuthor":{
+    "taxon":{
       "type": "object",
-      "description": "Author of the FFRGS Instance (Person or Org)",
+      "description": "Species name and URL of the species information at identifiers.org",
       "properties": {
         "name": {
           "type": "string"
         },
-        "url": {
-          "type": "string"
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "https://identifiers.org/taxonomy:[0-9]+"
         }
       }
     },
-    "assemblyAuthor":{
-      "type": "object",
-      "description": "Assembler of the Genome (Person or Org)",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
+    "version":{
+      "type": "number",
+      "description": "Version number of Genome"
+    },
+    "metadataAuthors":{
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Author of the FFRGS Instance (Person or Org)",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "uri": { "$ref": "#/definitions/orcidUri" }
+        }
+      }
+    },
+    "assemblyAuthors":{
+      "type": "array",
+        "items": {
+        "type": "object",
+        "description": "Assembler of the Genome (Person or Org)",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "uri": { "$ref": "#/definitions/orcidUri" }
         }
       }
     },
     "dateCreated":{
       "type": "string",
+      "format": "date",
       "description": "Date the genome assembly was created"
     },
     "physicalSample":{
@@ -65,7 +78,8 @@
           "type": "string"
         },
         "url": {
-          "type": "string"
+          "type": "string",
+          "format": "uri"
         }
       }
     },
@@ -95,7 +109,8 @@
       "type": "array",
       "description": "Related URLS to the genome",
       "items": {
-        "type": "string"
+        "type": "string",
+        "format": "uri"
       }
     },
     "funding": {
@@ -106,8 +121,17 @@
       "type": "string",
       "description": "license for the use of the Genome"
     },
-    "checksum": {
-      "type":"string",
-      "description": "checksum value for hashing"
+    "checksum": { "$ref": "#/definitions/sha2" }
+  },
+  "definitions": {
+    "orcidUri": { "format": "uri", 
+                  "pattern": "^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]" },
+    "sha2": {
+      "type": "string",
+      "minLength": 44,
+      "maxLength": 44,
+      "pattern": "^[A-Za-z0-9/+=]+$",
+      "description": "sha2-512/256 checksum value for hashing"
     }
+  }
 }
