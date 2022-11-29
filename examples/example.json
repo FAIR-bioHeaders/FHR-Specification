@@ -3,16 +3,19 @@
     "$id":"https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/examples/example.json",
     "schema":"https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json",
     "schemaVersion": 1.0,
-    "taxonURL" : "https://identifiers.org/taxonomy:9606",
+    "taxon" : {
+      "name":"Bombas huntii",
+      "uri": "https://identifiers.org/taxonomy:9606"
+    },
     "genome": "Bombas huntii",
     "version": "0.0.1",
     "metadataAuthor": {
       "name":"Adam Wright",
-      "url":"https://wormbase.org/resource/person/WBPerson30813"
+      "uri":"https://orcid.org/0000-0002-5719-4024"
     },
     "assemblyAuthor": {
       "name":"David Molik",
-      "url":"https:/david.molik.co/person"
+      "url":"https://orcid.org/0000-0003-3192-6538"
     },
    "dateCreated":"2022-03-21",
     "place": {
@@ -28,5 +31,5 @@
     "documentation":"Built assembly from... ",
     "identifier": ["gkx10242566416842"],
     "relatedLink": ["https/david.molik.co/genome"],
-    "checksum":"md5:a3d5d9146c3992b7ed6724409ba28aa9"
+    "checksum":"b49259f449a2016fb26c1e52f5ecf5af752c74380110058f21a2820fdc3f8526"
 }
