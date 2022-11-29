@@ -32,8 +32,8 @@
       }
     },
     "version":{
-      "type": "number",
-      "description": "Version number of Genome"
+      "type": "string",
+      "description": "Version number of Genome eg. 1.2.0"
     },
     "metadataAuthor":{
       "type": "array",
