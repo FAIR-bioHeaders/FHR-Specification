@@ -106,7 +106,7 @@
         "type": "string",
         "format": "uri",
         "pattern": "https://identifiers.org/[a-z0-9]*:.*"
-      }
+        }
     },
     "relatedLink": {
       "type": "array",
