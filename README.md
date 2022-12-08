@@ -63,7 +63,7 @@ Instances of Schema.org entities, where we just want a name and url because weâ€
  
 - `author` - ( Schema.org author ) (URL and String)
 - `assembler` - creator of the genome ( Schema.org Person or Organisation ) (URL and String)
-- `place` (URL) (Schema.org Place)  (URL and String)
+- `location` (URL) (Schema.org place)  (URL and String)
 - `assemblySoftware` (Schema.org SoftwareApplication) (URL and String) [Optional]
 - `physicalSample` (String) - ( Schema.org Thing ) (URL and String)
 
