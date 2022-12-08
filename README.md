@@ -19,7 +19,7 @@ Part of what FFRGS sets off to do is make sure that we can map back to Schema.or
 ;~  - name: David Molik
 ;~  uri: https://orcid.org/0000-0003-3192-6538
 ;~dateCreated: '2022-03-21'
-;~place:
+;~location:
 ;~  name: PBARC
 ;~  url: https://www.ars.usda.gov/pacific-west-area/hilo-hi/daniel-k-inouye-us-pacific-basin-agricultural-research-center/
 ;~instrument:
