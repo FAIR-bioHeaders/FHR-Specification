@@ -7,31 +7,35 @@ Part of what FFRGS sets off to do is make sure that we can map back to Schema.or
 ```
 ;~schema: https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json
 ;~schemaVersion: 1
+;~taxon:
+;~name: Bombas huntii
+;~uri: https://identifiers.org/taxonomy:9606
 ;~genome: Bombas huntii
 ;~version: 0.0.1
-;~author:
-;~  name: Adam Wright
-;~  url: https://wormbase.org/resource/person/WBPerson30813
-;~assembler:
-;~  name: David Molik
-;~  url: https:/david.molik.co/person
+;~metadataAuthor:
+;~  - name: Adam Wright
+;~  uri: https://orcid.org/0000-0002-5719-4024
+;~assemblyAuthor:
+;~  - name: David Molik
+;~  uri: https://orcid.org/0000-0003-3192-6538
 ;~dateCreated: '2022-03-21'
-;~taxa: Bombas huntii
 ;~place:
 ;~  name: PBARC
 ;~  url: https://www.ars.usda.gov/pacific-west-area/hilo-hi/daniel-k-inouye-us-pacific-basin-agricultural-research-center/
 ;~instrument:
-;~- Sequel IIe
-;~- Nanopore
+;~  - Sequel IIe
+;~  - Nanopore
 ;~physicalSample: Located in Freezer 33, Drawer 137
-;~scholarlyArticle: https://doi.org/10.1371/journal.pntd.0008755
+;~scholarlyArticle: 10.1371/journal.pntd.0008755
+;~assemblySoftware: HiFiASM
+;~funding: funding
+;~licence: public domain
 ;~documentation: 'Built assembly from... '
 ;~identifier:
-;~- gkx10242566416842
+;~  - beetlebase:TC010103
 ;~relatedLink:
-;~- https/david.molik.co/genome
-;~funding: 'some'
-;~licence: 'public domain'
+;~  - http://wfleabase.org/genome/Daphnia_pulex/dpulex_jgi060905/fasta/
+;~checksum: 120EA8A25E5D487BF68B5F7096440019234567891234
 >Contig 1
 AAAATCGATCGGCATA
 ``` 
