@@ -104,8 +104,7 @@
       "description": "Identifies of the genome",
       "items": {
         "type": "string",
-        "format": "uri",
-        "pattern": "https://identifiers.org/[a-z0-9]*:.*"
+        "pattern": "[a-z0-9]*:.*"
         }
     },
     "relatedLink": {
