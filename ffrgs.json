@@ -17,6 +17,13 @@
       "type": "string",
       "description": "Name of the Genome"
     },
+    "genomeSynonym": {
+      "type": "array",
+      "description": "Other common names of the genome",
+      "items": {
+        "type":"string"
+      }
+    }.
     "taxon":{
       "type": "object",
       "description": "Species name and URL of the species information at identifiers.org",
