@@ -3,41 +3,46 @@ FFRGS (Fair Formatted Reference Genome Standard): a simple FAIR enough metadata 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6762549.svg)](https://doi.org/10.5281/zenodo.6762549)
 
 Part of what FFRGS sets off to do is make sure that we can map back to Schema.org as much as possible, this will be useful for microdata and rdfa conversions for users that want to embed data into genome webpages. We also want to be able to split out the header if we have to, we can make the coding easy on ourselves if we throw yaml into the header itself. or something that is a regex away from yaml. I think it's important that the header has a secondary character after the comment delineator to indicate that this is part of the header, otherwise a simple mistake in a regex for the header could easily grab regular comments in the fasta file. I also think that the secondary header delineating character should be on the keyboard, and not a yaml special character, this leaves the tilde as the best option. I could imagine it would look something like this:
- 
+
+_NOTE_: This is the FFRGS Specification Repo, if you would like to convert between data serialization, or validate your ffrgs instance, see [FFRGS-File-Converter](https://github.com/FFRGS/FFRGS-File-Converter)
+
 ```
 ;~schema: https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json
 ;~schemaVersion: 1
+;~genome: Example species
+;~genomeSynonym: eg. species
 ;~taxon:
-;~name: Bombas huntii
-;~uri: https://identifiers.org/taxonomy:9606
-;~genome: Bombas huntii
+;~  name: Example species
+;~  uri: https://identifiers.org/taxonomy:0000
 ;~version: 0.0.1
 ;~metadataAuthor:
-;~  - name: Adam Wright
-;~    uri: https://orcid.org/0000-0002-5719-4024
-;~assemblyAuthor:
-;~  - name: David Molik
-;~    uri: https://orcid.org/0000-0003-3192-6538
+;~  name: Adam Wright
+;~  uri: https://orcid.org/0000-0002-5719-4024
+;~assembler:
+;~  name: David Molik
+;~  uri: https://orcid.org/0000-0003-3192-6538
 ;~dateCreated: '2022-03-21'
 ;~location:
-;~  name: PBARC
-;~  url: https://www.ars.usda.gov/pacific-west-area/hilo-hi/daniel-k-inouye-us-pacific-basin-agricultural-research-center/
+;~  name: Cool Science Organization
+;~  url: https://example.org/awesome_science/project-1024
 ;~instrument:
-;~  - Sequel IIe
-;~  - Nanopore
+;~- Amazing Sequencer IIe
+;~- Neato Sequencer
 ;~physicalSample: Located in Freezer 33, Drawer 137
-;~scholarlyArticle: 10.1371/journal.pntd.0008755
-;~assemblySoftware: HiFiASM
-;~funding: funding
-;~licence: public domain
+;~scholarlyArticle: https://doi.org/10.1371/journal.pntd.0008755
 ;~documentation: 'Built assembly from... '
 ;~identifier:
-;~  - beetlebase:TC010103
+;~- eg:1024512256128643216842
 ;~relatedLink:
-;~  - http://wfleabase.org/genome/Daphnia_pulex/dpulex_jgi060905/fasta/
-;~checksum: 120EA8A25E5D487BF68B5F7096440019234567891234
+;~- https://example.org/example-species/our_genome
+;~funding: 'some'
+;~licence: 'public domain'
+;~checksum: md5:7582b26fcb0a9775b87c38f836e97c42
 >Contig 1
 AAAATCGATCGGCATA
+.
+.
+.
 ``` 
  
 ## Metadata Draft v0.2 (fasta yaml header with easy microdata conversions)
