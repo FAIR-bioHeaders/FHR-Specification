@@ -14,7 +14,7 @@ Part of what FFRGS sets off to do is make sure that we can map back to Schema.or
 ;~version: 0.0.1
 ;~metadataAuthor:
 ;~  - name: Adam Wright
-;~  uri: https://orcid.org/0000-0002-5719-4024
+;~  - uri: https://orcid.org/0000-0002-5719-4024
 ;~assemblyAuthor:
 ;~  - name: David Molik
 ;~  uri: https://orcid.org/0000-0003-3192-6538
