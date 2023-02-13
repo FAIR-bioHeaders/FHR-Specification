@@ -1,5 +1,5 @@
-# FFRGS-Specification
-FFRGS (Fair Formatted Reference Genome Standard): a simple FAIR enough metadata structure for genomes that you can TRUST
+# FHR-Specification
+FHR (<u>Fair</u> <u>H</u>eader <u>R</u>eference genome): a simple FAIR enough metadata structure for reference genomes that you can TRUST
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6762549.svg)](https://doi.org/10.5281/zenodo.6762549)
 
 Part of what FHR sets off to do is make sure that we can map back to Schema.org as much as possible, this will be useful for microdata and rdfa conversions for users that want to embed data into genome webpages. We also want to be able to split out the header if we have to, we can make the coding easy on ourselves if we throw yaml into the header itself. or something that is a regex away from yaml. I think it's important that the header has a secondary character after the comment delineator to indicate that this is part of the header, otherwise a simple mistake in a regex for the header could easily grab regular comments in the fasta file. I also think that the secondary header delineating character should be on the keyboard, and not a yaml special character, this leaves the tilde as the best option. I could imagine it would look something like this:
@@ -7,7 +7,7 @@ Part of what FHR sets off to do is make sure that we can map back to Schema.org 
 _NOTE_: This is the FFRGS Specification Repo, if you would like to convert between data serialization, or validate your ffrgs instance, see [FHR-File-Converter](https://github.com/FAIR-bioHeaders/FHR-File-Converter)
 
 ```
-;~schema: https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json
+;~schema: https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json
 ;~schemaVersion: 1
 ;~genome: Example species
 ;~genomeSynonym: eg. species
