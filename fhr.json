@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json",
+  "$id": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
   "title": "FFRGS",
-  "description": "Fair Formatted Reference Genome Standard (FFRGS) Schema for Genome Assemblies",
+  "description": "FAIR Header Reference genomeSchema for Genome Assemblies",
   "type": "object",
   "properties": {
     "schema":{
@@ -11,7 +11,7 @@
     },
     "schemaVersion":{
       "type": "number",
-      "description": "Version of FFRG"
+      "description": "Version of FHR"
     },
     "genome":{
       "type": "string",
@@ -141,8 +141,6 @@
     "metadataAuthor",
     "assemblyAuthor",
     "dateCreated",
-    "physicalSample",
-    "location",
     "checksum"
   ],
   "definitions": {

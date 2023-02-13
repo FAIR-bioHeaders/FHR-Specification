@@ -1,4 +1,4 @@
-schema: https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json
+schema: https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json
 schemaVersion: 1
 taxon:
   name: Bombas huntii

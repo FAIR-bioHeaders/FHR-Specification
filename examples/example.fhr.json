@@ -1,7 +1,7 @@
 {
-    "$schema":"https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json",
-    "$id":"https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/examples/example.json",
-    "schema":"https://raw.githubusercontent.com/FFRGS/FFRGS-Specification/main/ffrgs.json",
+    "$schema":"https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+    "$id":"https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/examples/example.fhr.json",
+    "schema":"https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.jso",
     "schemaVersion": 1.0,
     "taxon" : {
       "name":"Bombas huntii",
