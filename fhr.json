@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
-  "title": "FFRGS",
-  "description": "FAIR Header Reference genomeSchema for Genome Assemblies",
+  "title": "FHR",
+  "description": "FAIR Header Reference genome Schema for Genome Assemblies",
   "type": "object",
   "properties": {
     "schema":{
