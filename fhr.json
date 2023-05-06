@@ -77,9 +77,9 @@
       "type": "string",
       "description": "Description of the physical sample"
     },
-    "location":{
+    "voucherId":{
       "type": "object",
-      "description": "location genome assembly was created",
+      "description": "voucherId genome assembly was created",
       "properties": {
         "name": {
           "type": "string"
