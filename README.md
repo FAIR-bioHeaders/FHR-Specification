@@ -22,9 +22,9 @@ _NOTE_: This is the FFRGS Specification Repo, if you would like to convert betwe
 ;~  name: David Molik
 ;~  uri: https://orcid.org/0000-0003-3192-6538
 ;~dateCreated: '2022-03-21'
-;~location:
-;~  name: Cool Science Organization
-;~  url: https://example.org/awesome_science/project-1024
+;~voucherId:
+;~  name: VoucheringDatbase
+;~  url: https://example.org/awesome_species/project-1024
 ;~instrument:
 ;~- Amazing Sequencer IIe
 ;~- Neato Sequencer
