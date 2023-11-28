@@ -73,13 +73,13 @@
       "format": "date",
       "description": "Date the genome assembly was created"
     },
-    "physicalSample":{
+    "voucherSpecimen":{
       "type": "string",
       "description": "Description of the physical sample"
     },
-    "voucherId":{
+    "accessionID":{
       "type": "object",
-      "description": "voucherId genome assembly was created",
+      "description": "accessionID genome assembly was created",
       "properties": {
         "name": {
           "type": "string"

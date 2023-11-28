@@ -22,13 +22,13 @@ _NOTE_: This is the FFRGS Specification Repo, if you would like to convert betwe
 ;~  name: David Molik
 ;~  uri: https://orcid.org/0000-0003-3192-6538
 ;~dateCreated: '2022-03-21'
-;~voucherId:
+;~accessionID:
 ;~  name: VoucheringDatbase
 ;~  url: https://example.org/awesome_species/project-1024
 ;~instrument:
 ;~- Amazing Sequencer IIe
 ;~- Neato Sequencer
-;~physicalSample: Located in Freezer 33, Drawer 137
+;~voucherSpecimen: Located in Freezer 33, Drawer 137
 ;~scholarlyArticle: https://doi.org/10.1371/journal.pntd.0008755
 ;~documentation: 'Built assembly from... '
 ;~identifier:
@@ -36,7 +36,7 @@ _NOTE_: This is the FFRGS Specification Repo, if you would like to convert betwe
 ;~relatedLink:
 ;~- https://example.org/example-species/our_genome
 ;~funding: 'some'
-;~licence: 'public domain'
+;~reuseConditions: 'public domain'
 ;~checksum: md5:7582b26fcb0a9775b87c38f836e97c42
 >Contig 1
 AAAATCGATCGGCATA
@@ -70,7 +70,7 @@ Instances of Schema.org entities, where we just want a name and url because weâ€
 - `assembler` - creator of the genome ( Schema.org Person or Organisation ) (URL and String)
 - `location` (URL) (Schema.org place)  (URL and String)
 - `assemblySoftware` (Schema.org SoftwareApplication) (URL and String) [Optional]
-- `physicalSample` (String) - ( Schema.org Thing ) (URL and String)
+- `voucherSpecimen` (String) - ( Schema.org Thing ) (URL and String)
 
 These will be names, and urls:
 
