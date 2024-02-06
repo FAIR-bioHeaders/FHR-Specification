@@ -37,6 +37,7 @@ _NOTE_: This is the FFRGS Specification Repo, if you would like to convert betwe
 ;~- https://example.org/example-species/our_genome
 ;~funding: 'some'
 ;~reuseConditions: 'public domain'
+;~masking: semi-masked
 ;~checksum: md5:7582b26fcb0a9775b87c38f836e97c42
 >Contig 1
 AAAATCGATCGGCATA
