@@ -46,7 +46,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "description": "Author of the FFRGS Instance (Person or Org)",
+        "description": "Author of the FHR Instance (Person or Org)",
         "properties": {
           "name": {
             "type": "string"
@@ -130,6 +130,45 @@
       "type": "string",
       "description": "license for the use of the Genome"
     },
+    "masking": {
+      "type": "string",
+      "pattern": "(not-masked|hard-masked|soft-masked|repeat-masked)",
+    "description": "masking applied to the genome assembly"
+    },
+    "vitalStats": {
+      "type": "object",
+      "description": "general statistics about the genome assembly",
+      "properties": {
+        "L50": { 
+            "type": "integer",
+            "description": "L50 of the genome assembly"
+        },
+        "N50": { 
+            "type": "integer",
+             "description": "N50 of the genome assembly"
+        },
+        "L90": { 
+            "type": "integer" ,
+            "description": "L90 of the genome assembly"
+        },
+        "totalBasePairs": { 
+            "type": "integer" ,
+            "description": "total base pairs of the genome assembly"
+        },
+        "numberContigs": { 
+            "type": "integer" ,
+            "description": "number of contigs of the genome assembly"
+        },
+        "numberScaffolds": { 
+            "type": "integer" ,
+            "description": "number of scaffolds of the genome assembly"
+        },
+        "readTechnology": { 
+            "type": "string",
+            "description": "read technology of the genome assembly (short, long, hifi, etc...)"
+        }
+      }
+    },
     "checksum": { "$ref": "#/definitions/sha2" }
   },
   "required": [
@@ -141,6 +180,7 @@
     "metadataAuthor",
     "assemblyAuthor",
     "dateCreated",
+    "masking",
     "checksum"
   ],
   "definitions": {
@@ -153,5 +193,6 @@
       "pattern": "^[A-Za-z0-9/+=]+$",
       "description": "sha2-512/256 checksum value for hashing"
     }
-  }
+  },
+  "additionalProperties": false
 }
