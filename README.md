@@ -99,7 +99,7 @@ These are all direct use:
 
 Another benefit of having this easy conversion is that we can submit the spec to say bioschema without much work after publishing. 
 
-## FHR-Citation
+## Citing FHR
 Information on Citations of FHR
 
 
