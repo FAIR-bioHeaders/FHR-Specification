@@ -4,7 +4,7 @@ FHR (<u>Fair</u> <u>H</u>eader <u>R</u>eference genome): a simple FAIR enough me
 
 Part of what FHR sets off to do is make sure that we can map back to Schema.org as much as possible, this will be useful for microdata and rdfa conversions for users that want to embed data into genome webpages. We also want to be able to split out the header if we have to, we can make the coding easy on ourselves if we throw yaml into the header itself. or something that is a regex away from yaml. I think it's important that the header has a secondary character after the comment delineator to indicate that this is part of the header, otherwise a simple mistake in a regex for the header could easily grab regular comments in the fasta file. I also think that the secondary header delineating character should be on the keyboard, and not a yaml special character, this leaves the tilde as the best option. I could imagine it would look something like this:
 
-_NOTE_: This is the FFRGS Specification Repo, if you would like to convert between data serialization, or validate your ffrgs instance, see [FHR-File-Converter](https://github.com/FAIR-bioHeaders/FHR-File-Converter)
+_NOTE_: This is the FHR Specification Repo, if you would like to convert between data serialization, or validate your fhr instance, see [FHR-File-Converter](https://github.com/FAIR-bioHeaders/FHR-File-Converter)
 
 ```
 ;~schema: https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json
@@ -47,12 +47,12 @@ AAAATCGATCGGCATA
 ``` 
  
 ## Metadata Draft v0.2 (fasta yaml header with easy microdata conversions)
-FFRGS utilizes schema.org as much as possible for later integration
+FHR utilizes schema.org as much as possible for later integration
 
 ---
 Specialised instances of Schema.org (we want as few of these as possible):
  
-- `schemaVersion` (String) - Version of FFRGS (Currently always "1.0")
+- `schemaVersion` (String) - Version of FHR (Currently always "1.0")
 - `genome` (String) - ( Schema.org name )
 - `version` (String) - ( Schema.org version ) Version of the Genome
 - `license` (String) - ( Schema.org license ) License used (url or name of common license) 
