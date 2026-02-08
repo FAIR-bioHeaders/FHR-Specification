@@ -126,9 +126,9 @@
       "type": "string",
       "description": "Grant Line Item"
     },
-    "license": {
+    "reuseConditions": {
       "type": "string",
-      "description": "license for the use of the Genome"
+      "description": "license and reuse conditions for the use of the Genome"
     },
     "masking": {
       "type": "string",
