@@ -1,0 +1,150 @@
+id: fhr_linkml
+name: FHR LinkML Mapping
+description: A schema to map FHR to NCBI, RefSeq, and JGI metadata formats.
+prefixes:
+  linkml: https://w3id.org/linkml/
+  ex: https://example.org/
+default_prefix: ex
+default_range: string
+
+types:
+  string:
+    base: str
+
+classes:
+  FHR:
+    description: File Header Specification for reference genomes and transcriptomes.
+    attributes:
+      file_id:
+        description: Unique identifier for the file
+      file_name:
+        description: Name of the file
+      file_version:
+        description: Version of the file
+      file_date:
+        description: Date of file creation
+      species:
+        description: Species information
+      genome_assembly:
+        description: Genome assembly details
+      genome_annotation:
+        description: Genome annotation details
+      sequence_type:
+        description: Type of sequences contained (e.g., genome, transcriptome)
+      source_database:
+        description: Source database (e.g., NCBI, JGI, RefSeq)
+      metadata:
+        description: Metadata for the file
+        range: Metadata
+
+  Metadata:
+    description: Metadata information mapped to different resources
+    attributes:
+      ncbi:
+        description: NCBI-specific metadata
+        range: NCBIMetadata
+      refseq:
+        description: RefSeq-specific metadata
+        range: RefSeqMetadata
+      jgi:
+        description: JGI-specific metadata
+        range: JGIMetadata
+
+  NCBIMetadata:
+    description: Metadata fields specific to NCBI
+    attributes:
+      submission_id:
+        description: Submission ID at NCBI
+      project_id:
+        description: NCBI Project ID
+      biosample_id:
+        description: Biosample ID at NCBI
+      organism_name:
+        description: Name of the organism
+      taxonomy_id:
+        description: Taxonomy ID
+      assembly_name:
+        description: Assembly name
+      assembly_accession:
+        description: Assembly accession number
+      annotation_release:
+        description: Annotation release version
+
+  RefSeqMetadata:
+    description: Metadata fields specific to RefSeq
+    attributes:
+      project_id:
+        description: RefSeq Project ID
+      biosample_id:
+        description: RefSeq Biosample ID
+      organism_name:
+        description: Name of the organism
+      taxonomy_id:
+        description: Taxonomy ID
+      assembly_name:
+        description: Assembly name
+      assembly_accession:
+        description: Assembly accession number
+      annotation_release:
+        description: Annotation release version
+
+  JGIMetadata:
+    description: Metadata fields specific to JGI
+    attributes:
+      gold_id:
+        description: GOLD Analysis Project ID
+      biosample_id:
+        description: JGI Biosample ID
+      organism_name:
+        description: Name of the organism
+      ecosystem:
+        description: Ecosystem classification (e.g., environmental, host-associated)
+      sequencing_project:
+        description: Sequencing project details
+      analysis_project:
+        description: Analysis project details
+      img_submission_id:
+        description: IMG submission ID
+      genome_assembly_method:
+        description: Genome assembly method
+      genome_annotation_method:
+        description: Genome annotation method
+      pi_name:
+        description: Principal Investigator name
+
+mappings:
+  FHR_to_NCBI:
+    description: Mapping of FHR fields to NCBI fields
+    mappings:
+      file_id: submission_id
+      file_name: assembly_name
+      file_version: assembly_accession
+      file_date: annotation_release
+      species: organism_name
+      genome_assembly: project_id
+      genome_annotation: annotation_release
+      sequence_type: taxonomy_id
+
+  FHR_to_RefSeq:
+    description: Mapping of FHR fields to RefSeq fields
+    mappings:
+      file_id: project_id
+      file_name: assembly_name
+      file_version: assembly_accession
+      file_date: annotation_release
+      species: organism_name
+      genome_assembly: biosample_id
+      genome_annotation: annotation_release
+      sequence_type: taxonomy_id
+
+  FHR_to_JGI:
+    description: Mapping of FHR fields to JGI fields
+    mappings:
+      file_id: gold_id
+      file_name: img_submission_id
+      file_version: genome_assembly_method
+      file_date: genome_annotation_method
+      species: organism_name
+      genome_assembly: sequencing_project
+      genome_annotation: analysis_project
+      sequence_type: ecosystem
