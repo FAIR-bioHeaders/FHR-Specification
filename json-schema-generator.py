@@ -26,6 +26,7 @@ def generate():
     for node in (generated, generated["$defs"]["FHR"]):
         node["properties"]["assemblySoftware"].pop("type", None)
         node["properties"]["checksum"].update(minLength=44, maxLength=44)
+        node["properties"]["seqcol_id"].update(minLength=32, maxLength=32)
     generated["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     return generated
 
