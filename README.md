@@ -143,6 +143,36 @@ verified checksum of a genome file. These checks validate metadata structure,
 not checksum correspondence to sequence bytes. FASTA and HTML examples are
 outside this workflow's JSON/YAML validation scope.
 
+## Preventing unintentional schema drift
+
+The `Check schema drift` workflow compares `fhr.json` against the committed
+review baseline in `.github/schema-baseline.json` on pushes and pull requests
+to `main`. It ignores whitespace and object-key order, but detects all JSON
+value changes, including constraints, required fields, references, and schema
+metadata. Arrays are compared in order, so reordering them also requires review.
+The check reports changed JSON pointers and never updates the baseline in CI.
+
+Run the check locally without extra dependencies:
+
+```bash
+python scripts/check_schema_drift.py
+python -m unittest discover -s tests -p test_schema_drift.py -v
+```
+
+For an intentional schema change, review its compatibility and effect on the
+converter, examples, and LinkML model, then explicitly accept the new baseline:
+
+```bash
+python scripts/check_schema_drift.py --update
+```
+
+Commit `fhr.json` and the baseline together, explain the schema changes in the
+PR, and run the specification validation checks above. Baseline updates are
+subject to the same maintainer review as schema edits. This guard records the
+reviewed schema; it does not prove equivalence with the LinkML model or the
+converter's bundled schema. Require the `schema-drift` check in repository
+branch protection if merges must be blocked when it fails.
+
 ## Citing FHR
 Information on Citations of FHR
 

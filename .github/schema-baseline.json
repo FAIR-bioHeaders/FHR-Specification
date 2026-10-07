@@ -1,0 +1,206 @@
+{
+  "$id": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "definitions": {
+    "orcidUri": {
+      "format": "uri",
+      "pattern": "^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]"
+    },
+    "sha2": {
+      "description": "sha2-512/256 checksum value for hashing",
+      "maxLength": 44,
+      "minLength": 44,
+      "pattern": "^[A-Za-z0-9/+=]+$",
+      "type": "string"
+    }
+  },
+  "description": "FAIR Header Reference genome Schema for Genome Assemblies",
+  "properties": {
+    "accessionID": {
+      "description": "accessionID genome assembly was created",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "assemblyAuthor": {
+      "items": {
+        "description": "Assembler of the Genome (Person or Org)",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "uri": {
+            "$ref": "#/definitions/orcidUri"
+          }
+        },
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "checksum": {
+      "$ref": "#/definitions/sha2"
+    },
+    "dateCreated": {
+      "description": "Date the genome assembly was created",
+      "format": "date",
+      "type": "string"
+    },
+    "documentation": {
+      "description": "Documentation about the genome",
+      "type": "string"
+    },
+    "funding": {
+      "description": "Grant Line Item",
+      "type": "string"
+    },
+    "genome": {
+      "description": "Name of the Genome",
+      "type": "string"
+    },
+    "genomeSynonym": {
+      "description": "Other common names of the genome",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "identifier": {
+      "description": "Identifies of the genome",
+      "items": {
+        "pattern": "[a-z0-9]*:.*",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "instrument": {
+      "description": "Physical tools and instruments used in the creation of the genome assembly",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "masking": {
+      "description": "masking applied to the genome assembly",
+      "pattern": "(not-masked|hard-masked|soft-masked|repeat-masked|unknown)",
+      "type": "string"
+    },
+    "metadataAuthor": {
+      "items": {
+        "description": "Author of the FHR Instance (Person or Org)",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "uri": {
+            "$ref": "#/definitions/orcidUri"
+          }
+        },
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "relatedLink": {
+      "description": "Related URLS to the genome",
+      "items": {
+        "format": "uri",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "reuseConditions": {
+      "description": "license and reuse conditions for the use of the Genome",
+      "type": "string"
+    },
+    "schema": {
+      "description": "centralized schema file",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "description": "Version of FHR",
+      "type": "number"
+    },
+    "scholarlyArticle": {
+      "description": "Scholarly article genome was published e.g. 10.5281/zenodo.6762550 ",
+      "pattern": "^10.",
+      "type": "string"
+    },
+    "taxon": {
+      "description": "Species name and URL of the species information at identifiers.org",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "uri": {
+          "format": "uri",
+          "pattern": "https://identifiers.org/taxonomy:[0-9]+",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "version": {
+      "description": "Version number of Genome eg. 1.2.0",
+      "type": "string"
+    },
+    "vitalStats": {
+      "description": "general statistics about the genome assembly",
+      "properties": {
+        "L50": {
+          "description": "L50 of the genome assembly",
+          "type": "integer"
+        },
+        "L90": {
+          "description": "L90 of the genome assembly",
+          "type": "integer"
+        },
+        "N50": {
+          "description": "N50 of the genome assembly",
+          "type": "integer"
+        },
+        "numberContigs": {
+          "description": "number of contigs of the genome assembly",
+          "type": "integer"
+        },
+        "numberScaffolds": {
+          "description": "number of scaffolds of the genome assembly",
+          "type": "integer"
+        },
+        "readTechnology": {
+          "description": "read technology of the genome assembly (short, long, hifi, etc...)",
+          "type": "string"
+        },
+        "totalBasePairs": {
+          "description": "total base pairs of the genome assembly",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "voucherSpecimen": {
+      "description": "Description of the physical sample",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "schemaVersion",
+    "genome",
+    "taxon",
+    "version",
+    "metadataAuthor",
+    "assemblyAuthor",
+    "dateCreated",
+    "masking",
+    "checksum"
+  ],
+  "title": "FHR",
+  "type": "object"
+}
