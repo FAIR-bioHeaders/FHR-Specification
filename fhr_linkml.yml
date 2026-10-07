@@ -1,22 +1,21 @@
-id: fhr_linkml
+id: https://w3id.org/fhr
 name: FHRLinkMLMapping
-description: A schema to map FHR to NCBI, RefSeq, and JGI metadata formats.
+description: FHR metadata and partial MIxS/MIGS crosswalks.
 prefixes:
   linkml: https://w3id.org/linkml/
   ex: https://example.org/
+  MIXS: https://w3id.org/mixs/
 default_prefix: ex
 default_range: string
 imports:
-  - linkml:types
-
+- linkml:types
 types:
   sha2:
     base: str
-    pattern: "^[A-Za-z0-9/+=]{44}$"
-
+    pattern: ^[A-Za-z0-9/+=]{44}$
 classes:
   FHR:
-    description: File Header Specification for reference genomes and transcriptomes.
+    description: Metadata for reference genome assemblies.
     tree_root: true
     attributes:
       schema:
@@ -63,28 +62,27 @@ classes:
         range: AccessionID
         inlined: true
       instrument:
-        description: Physical tools and instruments used in the creation of the genome assembly
+        description: Physical tools and instruments used in the creation of the genome
+          assembly
         multivalued: true
       scholarlyArticle:
         description: Scholarly article where the genome was published
-        pattern: "^10."
+        pattern: ^10.
       documentation:
         description: Documentation about the genome
       identifier:
         description: Identifiers of the genome
         multivalued: true
-        pattern: "[a-z0-9]*:.*"
+        pattern: '[a-z0-9]*:.*'
       relatedLink:
         description: Related URLs to the genome
         range: uri
         multivalued: true
       funding:
         description: Grant line item
-      license:
-        description: License for the use of the genome
       masking:
         description: Masking applied to the genome assembly
-        pattern: "(not-masked|hard-masked|soft-masked|repeat-masked|unknown)"
+        pattern: (not-masked|hard-masked|soft-masked|repeat-masked|unknown)
         required: true
       vitalStats:
         description: General statistics about the genome assembly
@@ -94,82 +92,26 @@ classes:
         description: sha2-512/256 checksum value for hashing
         range: sha2
         required: true
-
-  Metadata:
-    description: Metadata information mapped to different resources
-    attributes:
-      ncbi:
-        description: NCBI-specific metadata
-        range: NCBIMetadata
-      refseq:
-        description: RefSeq-specific metadata
-        range: RefSeqMetadata
-      jgi:
-        description: JGI-specific metadata
-        range: JGIMetadata
-
-  NCBIMetadata:
-    description: Metadata fields specific to NCBI
-    attributes:
-      submission_id:
-        description: Submission ID at NCBI
-      project_id:
-        description: NCBI Project ID
-      biosample_id:
-        description: Biosample ID at NCBI
-      organism_name:
-        description: Name of the organism
-      taxonomy_id:
-        description: Taxonomy ID
-      assembly_name:
-        description: Assembly name
-      assembly_accession:
-        description: Assembly accession number
-      annotation_release:
-        description: Annotation release version
-
-  RefSeqMetadata:
-    description: Metadata fields specific to RefSeq
-    attributes:
-      project_id:
-        description: RefSeq Project ID
-      biosample_id:
-        description: RefSeq Biosample ID
-      organism_name:
-        description: Name of the organism
-      taxonomy_id:
-        description: Taxonomy ID
-      assembly_name:
-        description: Assembly name
-      assembly_accession:
-        description: Assembly accession number
-      annotation_release:
-        description: Annotation release version
-
-  JGIMetadata:
-    description: Metadata fields specific to JGI
-    attributes:
-      gold_id:
-        description: GOLD Analysis Project ID
-      biosample_id:
-        description: JGI Biosample ID
-      organism_name:
-        description: Name of the organism
-      ecosystem:
-        description: Ecosystem classification (e.g., environmental, host-associated)
-      sequencing_project:
-        description: Sequencing project details
-      analysis_project:
-        description: Analysis project details
-      img_submission_id:
-        description: IMG submission ID
-      genome_assembly_method:
-        description: Genome assembly method
-      genome_annotation_method:
-        description: Genome annotation method
-      pi_name:
-        description: Principal Investigator name
-
+      reuseConditions:
+        description: Reuse conditions or license for the genome
+      assemblyProtocol:
+        broad_mappings:
+        - MIXS:0000090
+        range: uri
+        description: Assembly protocol or workflow reference URI.
+      seqcol_id:
+        range: string
+        pattern: ^[A-Za-z0-9_-]{32}$
+        description: Unprefixed refget sequence collection top-level digest (sha512t24u).
+      assemblySoftware:
+        related_mappings:
+        - MIXS:0000058
+        description: Assembly software provenance or a legacy name.
+        any_of:
+        - range: string
+        - range: AssemblySoftware
+          multivalued: true
+          inlined_as_list: true
   Taxon:
     description: Species name and taxonomy URI
     attributes:
@@ -178,8 +120,7 @@ classes:
       uri:
         description: Taxonomy URI
         range: uri
-        pattern: "https://identifiers.org/taxonomy:[0-9]+"
-
+        pattern: https://identifiers.org/taxonomy:[0-9]+
   Author:
     description: Person or organization that authored or assembled the genome
     attributes:
@@ -188,8 +129,7 @@ classes:
       uri:
         description: ORCID URI
         range: uri
-        pattern: "^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]"
-
+        pattern: ^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]
   AccessionID:
     description: Genome assembly accession identifier
     attributes:
@@ -198,7 +138,6 @@ classes:
       url:
         description: Accession URL
         range: uri
-
   VitalStats:
     description: General statistics about the genome assembly
     attributes:
@@ -215,6 +154,8 @@ classes:
         description: Total base pairs of the genome assembly
         range: integer
       numberContigs:
+        exact_mappings:
+        - MIXS:0000060
         description: Number of contigs of the genome assembly
         range: integer
       numberScaffolds:
@@ -222,3 +163,31 @@ classes:
         range: integer
       readTechnology:
         description: Read technology of the genome assembly
+      N90:
+        range: integer
+        minimum_value: 0
+      gcContent:
+        range: float
+        minimum_value: 0
+        maximum_value: 100
+  AssemblySoftware:
+    attributes:
+      name:
+        required: true
+      uri:
+        range: uri
+      version: {}
+      commandLineOption:
+        multivalued: true
+  MIGSProjection:
+    description: Partial MIxS/MIGS projection; not a complete checklist record.
+    attributes:
+      number_contig:
+        range: integer
+        slot_uri: MIXS:0000060
+      assembly_software:
+        range: string
+        slot_uri: MIXS:0000058
+      sop:
+        range: uri
+        slot_uri: MIXS:0000090

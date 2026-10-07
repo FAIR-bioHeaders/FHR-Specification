@@ -1,0 +1,49 @@
+# Agent instructions
+
+## Strategy and boundaries
+
+Read README, relevant issue requirements, and current code before editing. The
+[2024 FHR paper](https://doi.org/10.1093/bib/bbae122) motivates minimal metadata,
+multiple serializations, provenance tied closely to data, compatibility, FAIR,
+and TRUST. Practical interpretation: preserve user metadata and sequence bytes,
+keep required fields/dependencies small, and prefer interoperable incremental
+changes over speculative frameworks. These are implementation guidelines inferred
+from the paper, not quotations or an adopted governance model.
+
+David and Adam control the schema until the proposed governance is explicitly
+adopted. Do not treat the proposed steering group as current authority.
+
+## Repository map
+
+`fhr.json` is the published contract; `fhr_linkml.yml` is its LinkML model. `json-schema-generator.py` generates a separate schema. `scripts/check_linkml.py` compares validation constraints, and `scripts/check_schema_drift.py` checks the explicit review baseline. `fhr_mappings.yml` and `scripts/project_mixs.py` define a partial MIxS/MIGS projection. Examples, docs, and `Diagram.svg` must agree.
+
+## Verification
+
+Run relevant checks from the repository root:
+
+```bash
+python -m pip install -r requirements-linkml.txt
+python -m unittest discover -s tests -v
+python scripts/validate_examples.py
+python scripts/check_linkml.py
+python scripts/check_schema_drift.py
+```
+
+For schema changes, inspect compatibility of valid existing instances, required
+fields, types, unknown-property policy, patterns, URI/date formats, and optional
+values. Synchronize the published schema and both converter copies. Review the
+schema diff before intentionally updating `.github/schema-baseline.json`; never
+refresh it simply to hide a failed check. For serialization changes, test all
+formats and HTML escaping/typed values. For sequence tools, test metadata and
+sequence tampering, CRLF, ordinary comments, combine/strip, and installed commands
+from outside the checkout. Record environment limitations and failed checks.
+
+Use exact file bytes for SHA-512/256 coverage except the scalar checksum line;
+read the format policy before editing checksum behavior. SeqCol is a supplied
+collection identifier, not an FHR checksum. Use authoritative pinned MIxS terms
+and report partial/lossy mappings explicitly; do not invent accessions or metadata.
+
+Update examples, README, citations, and release notes alongside behavior changes.
+Keep cross-repo PR links current. Publishing, adoption of governance, and reporting
+contact confirmation are separate maintainer actions. Do not fabricate contacts
+or claim a policy has been adopted.

@@ -462,3 +462,6 @@ $RECYCLE.BIN/
 .venv/
 __pycache__/
 *.py[cod]
+
+# Generated LinkML artifact (compare validation constraints in CI)
+fhr_linkml.json

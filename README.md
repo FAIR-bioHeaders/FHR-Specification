@@ -1,244 +1,116 @@
-# FHR-Specification
-FHR (<u>Fair</u> <u>H</u>eader <u>R</u>eference genome): a simple FAIR enough metadata structure for reference genomes that you can TRUST
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6762549.svg)](https://doi.org/10.5281/zenodo.6762549)
+# FHR Specification
 
-Part of what FHR sets off to do is make sure that we can map back to Schema.org as much as possible, this will be useful for microdata and rdfa conversions for users that want to embed data into genome webpages. We also want to be able to split out the header if we have to, we can make the coding easy on ourselves if we throw yaml into the header itself. or something that is a regex away from yaml. I think it's important that the header has a secondary character after the comment delineator to indicate that this is part of the header, otherwise a simple mistake in a regex for the header could easily grab regular comments in the fasta file. I also think that the secondary header delineating character should be on the keyboard, and not a yaml special character, this leaves the tilde as the best option. I could imagine it would look something like this:
+FHR (FAIR Header Reference genome) keeps machine-readable and human-readable
+provenance with reference genome data. This repository defines the JSON Schema,
+LinkML model, examples, and partial MIxS/MIGS mappings. The
+[FHR File Converter](https://github.com/FAIR-bioHeaders/FHR-File-Converter)
+provides conversion, validation, and FASTA/GFA header tools.
 
-_NOTE_: This is the FHR Specification Repo, if you would like to convert between data serialization, or validate your fhr instance, see [FHR-File-Converter](https://github.com/FAIR-bioHeaders/FHR-File-Converter)
+## v0.3 metadata
 
-```
-;~schema: https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json
-;~schemaVersion: 1
-;~genome: Example species
-;~genomeSynonym: eg. species
-;~taxon:
-;~  name: Example species
-;~  uri: https://identifiers.org/taxonomy:0000
-;~version: 0.0.1
-;~metadataAuthor:
-;~  name: Adam Wright
-;~  uri: https://orcid.org/0000-0002-5719-4024
-;~assembler:
-;~  name: David Molik
-;~  uri: https://orcid.org/0000-0003-3192-6538
-;~dateCreated: '2022-03-21'
-;~accessionID:
-;~  name: VoucheringDatbase
-;~  url: https://example.org/awesome_species/project-1024
-;~instrument:
-;~- Amazing Sequencer IIe
-;~- Neato Sequencer
-;~voucherSpecimen: Located in Freezer 33, Drawer 137
-;~scholarlyArticle: https://doi.org/10.1371/journal.pntd.0008755
-;~documentation: 'Built assembly from... '
-;~identifier:
-;~- eg:1024512256128643216842
-;~relatedLink:
-;~- https://example.org/example-species/our_genome
-;~funding: 'some'
-;~reuseConditions: 'public domain'
-;~masking: semi-masked
-;~checksum: md5:7582b26fcb0a9775b87c38f836e97c42
->Contig 1
-AAAATCGATCGGCATA
-.
-.
-.
-``` 
- 
-## Metadata Draft v0.2 (fasta yaml header with easy microdata conversions)
-FHR utilizes schema.org as much as possible for later integration
+The v0.3 release adds optional fields and fixes examples; the required metadata
+set and numeric `schemaVersion: 1` remain unchanged. Package/release version,
+schema version, and assembly `version` are distinct.
 
----
-Specialised instances of Schema.org (we want as few of these as possible):
- 
-- `schemaVersion` (String) - Version of FHR (Currently always "1.0")
-- `genome` (String) - ( Schema.org name )
-- `version` (String) - ( Schema.org version ) Version of the Genome
-- `license` (String) - ( Schema.org license ) License used (url or name of common license) 
-- `funding` (String) - ( Schema.org funding ) Name of Grant used in the creation of the genome
- 
-These will always be remaps of properties, so:
+Required fields: `schema`, `schemaVersion`, `genome`, `taxon`, `version`,
+`metadataAuthor`, `assemblyAuthor`, `dateCreated`, `masking`, and `checksum`.
+See [the minimal instance](examples/minimal.fhr.json) and
+[the annotated field reference](docs/FORMAT.md). Top-level unknown fields are
+rejected by the schema. Many nested objects remain open for existing metadata;
+software provenance objects have an explicit field set.
 
-``` 
-Genome: <name>
-```
+The [rich YAML example](examples/example.fhr.yaml) shows optional
+`assemblySoftware`, `assemblyProtocol`, `vitalStats.N90`, `vitalStats.gcContent`,
+and `seqcol_id`. A legacy software name string remains valid. GC content uses a
+percentage from 0 to 100; N90 uses base pairs. SeqCol digests are supplied by users
+and have a different identity/algorithm from the FHR file checksum.
 
----
-Instances of Schema.org entities, where we just want a name and url because we’re not storing that data here: 
- 
-- `author` - ( Schema.org author ) (URL and String)
-- `assembler` - creator of the genome ( Schema.org Person or Organisation ) (URL and String)
-- `location` (URL) (Schema.org place)  (URL and String)
-- `assemblySoftware` (Schema.org SoftwareApplication) (URL and String) [Optional]
-- `voucherSpecimen` (String) - ( Schema.org Thing ) (URL and String)
+Checksum helpers require SHA-512/256 support in the Python build. Some Apple
+system Python builds omit it; use an OpenSSL-enabled Python distribution.
+Metadata conversion and validation do not require that hash implementation.
 
-These will be names, and urls:
+## Serialization and checksums
 
-``` 
-author: 
- name: Name
- url: https://link 
-```
+YAML is embedded in FASTA comments with `;~` and GFA comments with `#~`; the prefix
+is removed to recover YAML. JSON/YAML and HTML microdata can store the same
+metadata separately. See [the HTML example](examples/example.microdata.fhr.html)
+and [microdata guidance](docs/MICRODATA.md).
 
----
-Direct use of Schema.org entities:
- 
-- `dateCreated` (DataTime) (Schema.org dateCreated) (date)
-- `instrument` (Schema.org instrument) (URL or String) [Optional]
-- `scholarlyArticle` (Schema.org ScholarlyArticle) (URL) [Optional]
-- `documentation` (Schema.org documentation) (URL or String) [Optional]
-- `identifier` (Schema.org identifier ) (String) [Optional]
-- `relatedLink` (Schema.org relatedLink) (URL) [Optional]
+The v0.3 checksum policy is base64 SHA-512/256 over the exact file bytes except
+the scalar FHR checksum line (including that line's newline). Metadata, ordinary
+comments, and sequence bytes all contribute. [Checksum and migration details](docs/FORMAT.md)
+explain the change from the old MD5/payload-only documentation.
 
-``` 
-These are all direct use:
- 
-- `dateCreated`: <date>
-```
+JSON/YAML/HTML examples contain synthetic checksum and SeqCol placeholders.
+The FASTA/GFA examples have verified FHR file checksums but retain a synthetic
+SeqCol placeholder; it must not be used as the sequence collection's identity.
 
-Another benefit of having this easy conversion is that we can submit the spec to say bioschema without much work after publishing. 
+## Validation and LinkML
 
-## LinkML
-
-The LinkML file contains the FHR schema and the schemas from various reference genome resources.
-Supported resource crosswalks are in `fhr_mappings.yml`; only semantically corresponding fields are mapped.
-
-### Mappings
-
-Mappings are being generated between FHR and various portals for submitting reference genomes.
-
-### Generating json-schema
-
-The FHR json-schema can be generated using the json-schema-generator.py script.
-
-Installation
-```bash
-pip install linkml-runtime linkml
-```
-
-Running script:
-```bash
-python json-schema-generator.py
-```
-
-## Validating the specification and examples
-
-GitHub Actions checks `fhr.json` and every JSON/YAML file directly in `examples/`
-on pushes and pull requests to `main`. It validates the Draft 2020-12 schema and
-reports example failures with a filename and JSON path, including date and URI
-format errors. The same checks can be run locally with Python 3.13:
+Use Python 3.13 or later for repository checks. The cross-repo `check_release.py`
+command requires a companion FHR-File-Converter checkout at the supplied path:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements-validation.txt
+python -m pip install -r requirements-linkml.txt
 python -m unittest discover -s tests -v
 python scripts/validate_examples.py
-```
-
-The JSON and YAML examples use a synthetic checksum (the base64 encoding of 32
-zero bytes) solely to illustrate the required representation. It is not a
-verified checksum of a genome file. These checks validate metadata structure,
-not checksum correspondence to sequence bytes. FASTA and HTML examples are
-outside this workflow's JSON/YAML validation scope.
-
-## Preventing unintentional schema drift
-
-The `Check schema drift` workflow compares `fhr.json` against the committed
-review baseline in `.github/schema-baseline.json` on pushes and pull requests
-to `main`. It ignores whitespace and object-key order, but detects all JSON
-value changes, including constraints, required fields, references, and schema
-metadata. Arrays are compared in order, so reordering them also requires review.
-The check reports changed JSON pointers and never updates the baseline in CI.
-
-Run the check locally without extra dependencies:
-
-```bash
+python scripts/check_linkml.py
 python scripts/check_schema_drift.py
-python -m unittest discover -s tests -p test_schema_drift.py -v
+python scripts/check_release.py --converter ../FHR-File-Converter
+python json-schema-generator.py --output /tmp/fhr_linkml.json
+python scripts/project_mixs.py examples/example.fhr.json
 ```
 
-For an intentional schema change, review its compatibility and effect on the
-converter, examples, and LinkML model, then explicitly accept the new baseline:
+CI checks JSON/YAML examples, the explicit schema review baseline, and LinkML
+validation equivalence. Generation uses pinned LinkML 1.11.1 and preserves
+legacy open nested objects and checksum length constraints. Equivalence checking
+resolves local references and compares validation keywords, ignoring descriptive
+annotations and ordering of required fields. Generated output does not overwrite
+the published `fhr.json`. [MIxS/MIGS mapping limits](docs/MAPPINGS.md) include
+partial/lossy terms and omissions; the output is not a complete MIGS submission.
+
+For intentional schema edits, explain compatibility and update the review baseline:
 
 ```bash
 python scripts/check_schema_drift.py --update
 ```
 
-Commit `fhr.json` and the baseline together, explain the schema changes in the
-PR, and run the specification validation checks above. Baseline updates are
-subject to the same maintainer review as schema edits. This guard records the
-reviewed schema; it does not prove equivalence with the LinkML model or the
-converter's bundled schema. Require the `schema-drift` check in repository
-branch protection if merges must be blocked when it fails.
+Commit the baseline with the schema/model changes, synchronize both converter
+schema copies, and run every check. Require `schema-drift` and `validate` checks in
+branch protection to block failing merges. Whitespace/key order do not count as
+drift; other JSON changes require an explicit update and maintainer review.
+
+## Project guidance
+
+See [CONTRIBUTING](CONTRIBUTING.md), [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md),
+[SECURITY](SECURITY.md), and [AGENTS](AGENTS.md). David and Adam retain schema
+authority; [GOVERNANCE](GOVERNANCE.md) is a successor proposal awaiting adoption.
+The [schema diagram](Diagram.svg) is generated with
+`python scripts/render_diagram.py` and summarizes required and optional fields.
+[Release notes](CHANGELOG.md) document compatibility and deferred work.
 
 ## Citing FHR
-Information on Citations of FHR
 
+Chicago bibliography entries are used below. Cite the published paper for a
+general description of FHR; cite the specification or converter when using that
+resource directly. The software and specification links are concept DOIs; for a
+specific release, use the corresponding version DOI from Zenodo. Authors and
+years follow the records resolved by the concept DOIs at the v0.3 documentation
+update, and can change as later records are published.
 
-### Citing the Validation Tool
-cite the validation tool when directly interacting with the tool or library
-The APA citation for the [FHR validation/converter software](https://github.com/FAIR-bioHeaders/FHR-File-Converter) is:
+### Published paper
 
-```
-Molik, D., & Wright, A. FHR File Converster [Computer software]. https://github.com/FAIR-bioHeaders/FHR-File-Converter
-```
+Wright, Adam, Mark D. Wilkinson, Christopher Mungall, Scott Cain, Stephen Richards, Paul Sternberg, Ellen Provin, Jonathan L. Jacobs, Scott Geib, Daniela Raciti, Karen Yook, Lincoln Stein, and David C. Molik. “FAIR Header Reference Genome: A TRUSTworthy Standard.” *Briefings in Bioinformatics* 25, no. 3 (2024): bbae122. https://doi.org/10.1093/bib/bbae122.
 
-Or in bibtex:
-```bibtex
-% Citation For FHR Validation/Converter Software
-@software{FHR_File_Converter,
-    author = {Molik, David and Wright, Adam},
-    year = {2023},
-    license = {PDDL-1.0},
-    title = {{FHR File Converster}},
-    url = {https://github.com/FAIR-bioHeaders/FHR-File-Converter},
-    doi = {10.5281/zenodo.6762547}
-}
-```
-### Citing the Specification
-cite the specification when directly interacting with the specification (pull requests, comments on schema)
-The APA citation for the [FHR specification](https://github.com/FAIR-bioHeaders/FHR-Specification) is:
+### Specification
 
-```
-Molik, D., & Wright, A.  FHR Specification [Data set]. https://github.com/FAIR-bioHeaders/FHR-Specification
-```
+Molik, David. *FHR Specification*. Data set. 2022. https://doi.org/10.5281/zenodo.6762549.
 
-Or [in bibtex](https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Citation/main/citation.bib):
-```bibtex
-% Citation For FHR Specification
-@misc{FHR_Specification,
-    author = {Molik, David and Wright, Adam},
-    year = {2023},
-    title = {{FHR Specification}},
-    url = {https://github.com/FAIR-bioHeaders/FHR-Specification},
-    doi = {10.5281/zenodo.6762549}
-}
-```
-### Citing FHR
-The APA citation for the [FHR Briefings in Bioinformatics](https://doi.org/10.1093/bib/bbae122) is:
+### Converter
 
-```
-Adam Wright, Mark D Wilkinson, Christopher Mungall, Scott Cain, Stephen Richards, Paul Sternberg, Ellen Provin, Jonathan L Jacobs, Scott Geib, Daniela Raciti, Karen Yook, Lincoln Stein, David C Molik, FAIR Header Reference genome: a TRUSTworthy standard, Briefings in Bioinformatics, Volume 25, Issue 3, May 2024, bbae122, https://doi.org/10.1093/bib/bbae122
-```
+Molik, David, and Adam Wright. *FHR File Converter*. Computer software. 2024. https://doi.org/10.5281/zenodo.6762547.
 
-Or [in bibtex](https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Citation/main/citation.bib):
-```bibtex
-% Citation For FHR 
-@article{10.1093/bib/bbae122,
-    author = {Wright, Adam and Wilkinson, Mark D and Mungall, Christopher and Cain, Scott and Richards, Stephen and Sternberg, Paul and Provin, Ellen and Jacobs, Jonathan L and Geib, Scott and Raciti, Daniela and Yook, Karen and Stein, Lincoln and Molik, David C},
-    title = "{FAIR Header Reference genome: a TRUSTworthy standard}",
-    journal = {Briefings in Bioinformatics},
-    volume = {25},
-    number = {3},
-    pages = {bbae122},
-    year = {2024},
-    month = {03},
-    abstract = "{The lack of interoperable data standards among reference genome data-sharing platforms inhibits cross-platform analysis while increasing the risk of data provenance loss. Here, we describe the FAIR bioHeaders Reference genome (FHR), a metadata standard guided by the principles of Findability, Accessibility, Interoperability and Reuse (FAIR) in addition to the principles of Transparency, Responsibility, User focus, Sustainability and Technology. The objective of FHR is to provide an extensive set of data serialisation methods and minimum data field requirements while still maintaining extensibility, flexibility and expressivity in an increasingly decentralised genomic data ecosystem. The effort needed to implement FHR is low; FHR’s design philosophy ensures easy implementation while retaining the benefits gained from recording both machine and human-readable provenance.}",
-    issn = {1477-4054},
-    doi = {10.1093/bib/bbae122},
-    url = {https://doi.org/10.1093/bib/bbae122},
-    eprint = {https://academic.oup.com/bib/article-pdf/25/3/bbae122/57108923/bbae122.pdf},
-}
-```
+Machine-readable entries are maintained in
+[FHR-Citation](https://github.com/FAIR-bioHeaders/FHR-Citation/blob/main/citation.bib).

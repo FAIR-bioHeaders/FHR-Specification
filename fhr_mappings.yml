@@ -1,26 +1,23 @@
 id: https://w3id.org/fhr/mappings
-title: FHR resource metadata mappings
-description: Map FHR metadata to corresponding fields in reference genome resource records.
-
+source_schema: https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json
+target_schema: https://w3id.org/mixs
+target_version: v7.0.1
+reference: https://github.com/GenomicsStandardsConsortium/mixs/blob/v7.0.1/src/mixs/schema/mixs.yaml
+scope: Partial projection of sequencing terms shared by MIxS/MIGS checklists; not a complete submission record.
 class_derivations:
-  NCBIMetadata:
+  MIGSProjection:
     populated_from: FHR
     slot_derivations:
-      organism_name:
-        expr: "{taxon.name}"
-      assembly_accession:
-        expr: "{accessionID.name}"
-
-  RefSeqMetadata:
-    populated_from: FHR
-    slot_derivations:
-      organism_name:
-        expr: "{taxon.name}"
-      assembly_accession:
-        expr: "{accessionID.name}"
-
-  JGIMetadata:
-    populated_from: FHR
-    slot_derivations:
-      organism_name:
-        expr: "{taxon.name}"
+      number_contig:
+        expr: '{vitalStats.numberContigs}'
+        term: MIXS:0000060
+        relationship: exact
+      sop:
+        expr: '{assemblyProtocol}'
+        term: MIXS:0000090
+        relationship: narrow
+      assembly_software:
+        expr: assembly_software(assemblySoftware)
+        term: MIXS:0000058
+        relationship: lossy
+        condition: A single software object with explicit version and commandLineOption values.
