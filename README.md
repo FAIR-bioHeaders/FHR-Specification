@@ -122,6 +122,27 @@ Running script:
 python json-schema-generator.py
 ```
 
+## Validating the specification and examples
+
+GitHub Actions checks `fhr.json` and every JSON/YAML file directly in `examples/`
+on pushes and pull requests to `main`. It validates the Draft 2020-12 schema and
+reports example failures with a filename and JSON path, including date and URI
+format errors. The same checks can be run locally with Python 3.13:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-validation.txt
+python -m unittest discover -s tests -v
+python scripts/validate_examples.py
+```
+
+The JSON and YAML examples use a synthetic checksum (the base64 encoding of 32
+zero bytes) solely to illustrate the required representation. It is not a
+verified checksum of a genome file. These checks validate metadata structure,
+not checksum correspondence to sequence bytes. FASTA and HTML examples are
+outside this workflow's JSON/YAML validation scope.
+
 ## Citing FHR
 Information on Citations of FHR
 

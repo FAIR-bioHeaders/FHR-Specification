@@ -22,7 +22,6 @@ instrument:
 - Nanopore
 voucherSpecimen: Located in Freezer 33, Drawer 137
 scholarlyArticle: 10.1371/journal.pntd.0008755
-assemblySoftware: HiFiASM
 funding: funding
 reuseConditions: public domain
 documentation: 'Built assembly from... '
@@ -31,4 +30,4 @@ identifier:
 - beetlebase:TC010103
 relatedLink:
 - http://wfleabase.org/genome/Daphnia_pulex/dpulex_jgi060905/fasta/
-checksum: md5:7582b26fcb0a9775b87c38f836e97c42
+checksum: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
