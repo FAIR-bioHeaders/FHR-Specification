@@ -457,3 +457,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/vim,linux,emacs,macos,windows,libreoffice,latex
+
+# Local Python validation environment and bytecode
+.venv/
+__pycache__/
+*.py[cod]
