@@ -1,5 +1,10 @@
 # FHR Specification
 
+[![Specification checks](https://github.com/FAIR-bioHeaders/FHR-Specification/actions/workflows/validate-specification.yml/badge.svg?branch=main)](https://github.com/FAIR-bioHeaders/FHR-Specification/actions/workflows/validate-specification.yml)
+[![Schema drift checks](https://github.com/FAIR-bioHeaders/FHR-Specification/actions/workflows/check-schema-drift.yml/badge.svg?branch=main)](https://github.com/FAIR-bioHeaders/FHR-Specification/actions/workflows/check-schema-drift.yml)
+[![Specification DOI](https://img.shields.io/badge/Specification_DOI-10.5281%2Fzenodo.6762549-blue)](https://doi.org/10.5281/zenodo.6762549)
+[![File Converter DOI](https://img.shields.io/badge/File_Converter_DOI-10.5281%2Fzenodo.6762547-blue)](https://doi.org/10.5281/zenodo.6762547)
+
 FHR (FAIR Header Reference genome) keeps machine-readable and human-readable
 provenance with reference genome data. This repository defines the JSON Schema,
 LinkML model, examples, and partial MIxS/MIGS mappings. The
