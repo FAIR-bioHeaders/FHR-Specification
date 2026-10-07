@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.3 — unreleased (from v0.2)
+## v0.3 — 2026-10-07 (from v0.2)
 
 - Add optional structured assembly software, assembly protocol URI, N90, GC-content
   percentage, and supplied refget sequence collection ID. Preserve legacy software names.
