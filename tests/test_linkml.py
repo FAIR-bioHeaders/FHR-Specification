@@ -46,6 +46,7 @@ class LinkMLTests(unittest.TestCase):
     def test_invalid_cases_fail_both_schemas(self):
         for key, value in [
             ("seqcol_id", "wrong"),
+            ("seqcol_id", "A" * 32 + "\n"),
             ("vitalStats", {"gcContent": -1}),
             ("metadataAuthor", [{"name": "test", "uri": 7}]),
             ("assemblySoftware", [{"version": "1"}]),
@@ -68,11 +69,17 @@ class LinkMLTests(unittest.TestCase):
             projection["metadata"],
             {
                 "number_contig": 1,
-                "sop": "https://example.org/assembly-protocol",
-                "assembly_software": "hifiasm;0.19.8;-t 2",
+                "sop": ["https://example.org/assembly-protocol"],
             },
         )
-        self.assertEqual(projection["unmapped"], {})
+        self.assertEqual(
+            projection["unmapped"],
+            {
+                "assembly_software": (
+                    "Values do not match the pinned MIxS v7.0.1 assembly_software pattern"
+                )
+            },
+        )
         self.assertNotIn("assembly_accession", projection["metadata"])
         for software in (
             "legacy",
@@ -82,6 +89,26 @@ class LinkMLTests(unittest.TestCase):
             instance = copy.deepcopy(self.example)
             instance["assemblySoftware"] = software
             self.assertIn("assembly_software", project(instance)["unmapped"])
+
+    def test_assembly_software_pattern_accepts_supported_and_rejects_unsupported(self):
+        accepted = copy.deepcopy(self.example)
+        accepted["assemblySoftware"][0]["commandLineOption"] = ["threads=2"]
+        projection = project(accepted)
+        self.assertEqual(
+            projection["metadata"]["assembly_software"],
+            "hifiasm;0.19.8;threads=2",
+        )
+        self.assertNotIn("assembly_software", projection["unmapped"])
+
+        rejected = copy.deepcopy(self.example)
+        supplied_options = copy.deepcopy(
+            rejected["assemblySoftware"][0]["commandLineOption"]
+        )
+        projection = project(rejected)
+        self.assertIn("assembly_software", projection["unmapped"])
+        self.assertEqual(
+            rejected["assemblySoftware"][0]["commandLineOption"], supplied_options
+        )
 
     def test_unmapped_source_fields_are_not_invented(self):
         minimal = {key: self.example[key] for key in self.published["required"]}

@@ -3,6 +3,7 @@
 import argparse
 import json
 from pathlib import Path
+import re
 import shlex
 import sys
 
@@ -11,6 +12,11 @@ from jsonschema.exceptions import ValidationError
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+MIXS_SOFTWARE_COMPONENT = r"(?:[^\s-]{1,2}|[^\s-]+.+[^\s-]+)"
+MIXS_ASSEMBLY_SOFTWARE_PATTERN = re.compile(
+    rf"{MIXS_SOFTWARE_COMPONENT};{MIXS_SOFTWARE_COMPONENT};"
+    rf"{MIXS_SOFTWARE_COMPONENT}"
+)
 
 
 def project(metadata):
@@ -28,7 +34,7 @@ def project(metadata):
             try:
                 for key in expr[1:-1].split("."):
                     value = value[key]
-                result[target] = value
+                result[target] = [value] if target == "sop" else value
             except KeyError:
                 omissions[target] = "Source field absent"
         elif expr == "assembly_software(assemblySoftware)":
@@ -49,12 +55,16 @@ def project(metadata):
                 item["version"],
                 shlex.join(item["commandLineOption"]) or "none",
             ]
-            if any(";" in value or "\n" in value or not value for value in values):
+            projected = ";".join(values)
+            if (
+                any(";" in value or "\n" in value or not value for value in values)
+                or not MIXS_ASSEMBLY_SOFTWARE_PATTERN.fullmatch(projected)
+            ):
                 omissions[target] = (
-                    "Empty values or delimiter characters require manual projection"
+                    "Values do not match the pinned MIxS v7.0.1 assembly_software pattern"
                 )
                 continue
-            result[target] = ";".join(values)
+            result[target] = projected
         else:
             raise ValueError(f"Unsupported mapping expression: {expr}")
     return {

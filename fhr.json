@@ -230,7 +230,7 @@
     },
     "seqcol_id": {
       "type": "string",
-      "pattern": "^[A-Za-z0-9_-]{32}$",
+      "pattern": "^[A-Za-z0-9_-]{32}(?![\\s\\S])",
       "description": "Unprefixed GA4GH refget sequence collection top-level digest (sha512t24u); supplied by the user, not calculated by FHR."
     }
   },

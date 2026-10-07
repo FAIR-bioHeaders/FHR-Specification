@@ -101,7 +101,7 @@ classes:
         description: Assembly protocol or workflow reference URI.
       seqcol_id:
         range: string
-        pattern: ^[A-Za-z0-9_-]{32}$
+        pattern: ^[A-Za-z0-9_-]{32}(?![\s\S])
         description: Unprefixed refget sequence collection top-level digest (sha512t24u).
       assemblySoftware:
         related_mappings:
@@ -191,3 +191,4 @@ classes:
       sop:
         range: uri
         slot_uri: MIXS:0000090
+        multivalued: true
