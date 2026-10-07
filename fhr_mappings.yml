@@ -1,0 +1,26 @@
+id: https://w3id.org/fhr/mappings
+title: FHR resource metadata mappings
+description: Map FHR metadata to corresponding fields in reference genome resource records.
+
+class_derivations:
+  NCBIMetadata:
+    populated_from: FHR
+    slot_derivations:
+      organism_name:
+        expr: "{taxon.name}"
+      assembly_accession:
+        expr: "{accessionID.name}"
+
+  RefSeqMetadata:
+    populated_from: FHR
+    slot_derivations:
+      organism_name:
+        expr: "{taxon.name}"
+      assembly_accession:
+        expr: "{accessionID.name}"
+
+  JGIMetadata:
+    populated_from: FHR
+    slot_derivations:
+      organism_name:
+        expr: "{taxon.name}"
