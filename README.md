@@ -99,6 +99,29 @@ These are all direct use:
 
 Another benefit of having this easy conversion is that we can submit the spec to say bioschema without much work after publishing. 
 
+## LinkML
+
+The LinkML file contains the FHR schema and the schemas from various reference genome resources.
+Supported resource crosswalks are in `fhr_mappings.yml`; only semantically corresponding fields are mapped.
+
+### Mappings
+
+Mappings are being generated between FHR and various portals for submitting reference genomes.
+
+### Generating json-schema
+
+The FHR json-schema can be generated using the json-schema-generator.py script.
+
+Installation
+```bash
+pip install linkml-runtime linkml
+```
+
+Running script:
+```bash
+python json-schema-generator.py
+```
+
 ## Citing FHR
 Information on Citations of FHR
 
