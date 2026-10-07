@@ -2,12 +2,12 @@
   "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
   "schemaVersion": 1.0,
   "taxon": {
-    "name": "Bombas huntii",
+    "name": "Homo sapiens",
     "uri": "https://identifiers.org/taxonomy:9606"
   },
-  "genome": "Bombas huntii",
+  "genome": "Synthetic human reference example",
   "genomeSynonym": [
-    "B. huntii"
+    "synthetic example"
   ],
   "version": "0.0.1",
   "metadataAuthor": [
@@ -28,14 +28,13 @@
     "url": "https://www.ars.usda.gov/pacific-west-area/hilo-hi/daniel-k-inouye-us-pacific-basin-agricultural-research-center/"
   },
   "instrument": [
-    "Sequel IIe",
-    "Nanopore"
+    "Example sequencer"
   ],
-  "voucherSpecimen": "Located in Freezer 33, Drawer 137",
-  "scholarlyArticle": "10.1371/journal.pntd.0008755",
+  "voucherSpecimen": "Synthetic example; no physical specimen",
+  "scholarlyArticle": "10.1093/bib/bbae122",
   "funding": "funding",
   "reuseConditions": "public domain",
-  "documentation": "Built assembly from... ",
+  "documentation": "Synthetic metadata and sequence; identifiers are placeholders unless explicitly verified.",
   "masking": "soft-masked",
   "identifier": [
     "beetlebase:TC010103"
@@ -43,5 +42,29 @@
   "relatedLink": [
     "http://wfleabase.org/genome/Daphnia_pulex/dpulex_jgi060905/fasta/"
   ],
-  "checksum": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  "checksum": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+  "assemblySoftware": [
+    {
+      "name": "hifiasm",
+      "version": "0.19.8",
+      "uri": "https://github.com/chhylp123/hifiasm",
+      "commandLineOption": [
+        "-t",
+        "2"
+      ]
+    }
+  ],
+  "assemblyProtocol": "https://example.org/assembly-protocol",
+  "vitalStats": {
+    "N50": 16,
+    "N90": 16,
+    "L50": 1,
+    "L90": 1,
+    "totalBasePairs": 16,
+    "numberContigs": 1,
+    "numberScaffolds": 1,
+    "gcContent": 37.5,
+    "readTechnology": "HiFi"
+  },
+  "seqcol_id": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 }

@@ -5,13 +5,14 @@
   "definitions": {
     "orcidUri": {
       "format": "uri",
-      "pattern": "^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]"
+      "pattern": "^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]",
+      "type": "string"
     },
     "sha2": {
       "description": "sha2-512/256 checksum value for hashing",
       "maxLength": 44,
       "minLength": 44,
-      "pattern": "^[A-Za-z0-9/+=]+$",
+      "pattern": "^[A-Za-z0-9/+=]{44}$",
       "type": "string"
     }
   },
@@ -44,6 +45,47 @@
         "type": "object"
       },
       "type": "array"
+    },
+    "assemblyProtocol": {
+      "description": "URI of the assembly protocol or workflow documentation.",
+      "format": "uri",
+      "type": "string"
+    },
+    "assemblySoftware": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "commandLineOption": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "name": {
+                "type": "string"
+              },
+              "uri": {
+                "format": "uri",
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      ],
+      "description": "Assembly software provenance; a legacy name string is also accepted."
     },
     "checksum": {
       "$ref": "#/definitions/sha2"
@@ -132,6 +174,13 @@
       "pattern": "^10.",
       "type": "string"
     },
+    "seqcol_id": {
+      "description": "Unprefixed GA4GH refget sequence collection top-level digest (sha512t24u); supplied by the user, not calculated by FHR.",
+      "maxLength": 32,
+      "minLength": 32,
+      "pattern": "^[A-Za-z0-9_-]{32}$",
+      "type": "string"
+    },
     "taxon": {
       "description": "Species name and URL of the species information at identifiers.org",
       "properties": {
@@ -164,6 +213,17 @@
         "N50": {
           "description": "N50 of the genome assembly",
           "type": "integer"
+        },
+        "N90": {
+          "description": "Contig length in base pairs at 90 percent of the assembly length.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "gcContent": {
+          "description": "GC content as a percentage (0 to 100), not a fraction.",
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
         },
         "numberContigs": {
           "description": "number of contigs of the genome assembly",

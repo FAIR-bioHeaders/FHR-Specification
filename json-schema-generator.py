@@ -1,30 +1,43 @@
+"""Generate a validation-equivalent FHR schema from its LinkML model."""
+
+import argparse
 import json
-import os
-from linkml_runtime import SchemaView
+from pathlib import Path
+
 from linkml.generators.jsonschemagen import JsonSchemaGenerator
+from linkml_runtime import SchemaView
 
-# Define the path to the LinkML schema file
-linkml_schema_path = 'fhr_linkml.yml'
+ROOT = Path(__file__).resolve().parent
 
-# Load the LinkML schema
-schema_view = SchemaView(linkml_schema_path)
 
-# Generate the JSON Schema
-json_schema_generator = JsonSchemaGenerator(
-    schema_view.schema, include_null=False, not_closed=False
-)
-json_schema = json.loads(json_schema_generator.serialize())
-for slot_name in schema_view.class_slots('FHR'):
-    slot_range = schema_view.induced_slot(slot_name, 'FHR').range
-    if slot_range in schema_view.all_classes():
-        json_schema['$defs'][slot_range].pop('additionalProperties', None)
-json_schema = json.dumps(json_schema, indent=4)
+def generate():
+    view = SchemaView(str(ROOT / "fhr_linkml.yml"))
+    generated = json.loads(
+        JsonSchemaGenerator(
+            view.schema,
+            include_null=False,
+            not_closed=False,
+        ).serialize()
+    )
+    # Legacy FHR nested objects are open; provenance software objects are closed.
+    for name in ("Taxon", "Author", "AccessionID", "VitalStats"):
+        generated["$defs"][name].pop("additionalProperties", None)
+    # LinkML emits a scalar type beside a heterogeneous union. Retain the union.
+    for node in (generated, generated["$defs"]["FHR"]):
+        node["properties"]["assemblySoftware"].pop("type", None)
+        node["properties"]["checksum"].update(minLength=44, maxLength=44)
+        node["properties"]["seqcol_id"].update(minLength=32, maxLength=32)
+    generated["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    return generated
 
-# Define the output path for the JSON Schema file
-json_schema_output_path = 'fhr_linkml.json'
 
-# Write the JSON Schema to the file
-with open(json_schema_output_path, 'w') as json_file:
-    json_file.write(json_schema)
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, default=ROOT / "fhr_linkml.json")
+    args = parser.parse_args()
+    args.output.write_text(json.dumps(generate(), indent=2) + "\n", encoding="utf-8")
+    print(f"Generated {args.output}")
 
-print(f"JSON Schema has been successfully generated and saved to {json_schema_output_path}")
+
+if __name__ == "__main__":
+    main()

@@ -5,15 +5,15 @@
   "description": "FAIR Header Reference genome Schema for Genome Assemblies",
   "type": "object",
   "properties": {
-    "schema":{
+    "schema": {
       "type": "string",
       "description": "centralized schema file"
     },
-    "schemaVersion":{
+    "schemaVersion": {
       "type": "number",
       "description": "Version of FHR"
     },
-    "genome":{
+    "genome": {
       "type": "string",
       "description": "Name of the Genome"
     },
@@ -21,10 +21,10 @@
       "type": "array",
       "description": "Other common names of the genome",
       "items": {
-        "type":"string"
+        "type": "string"
       }
     },
-    "taxon":{
+    "taxon": {
       "type": "object",
       "description": "Species name and URL of the species information at identifiers.org",
       "properties": {
@@ -38,11 +38,11 @@
         }
       }
     },
-    "version":{
+    "version": {
       "type": "string",
       "description": "Version number of Genome eg. 1.2.0"
     },
-    "metadataAuthor":{
+    "metadataAuthor": {
       "type": "array",
       "items": {
         "type": "object",
@@ -51,33 +51,37 @@
           "name": {
             "type": "string"
           },
-          "uri": { "$ref": "#/definitions/orcidUri" }
+          "uri": {
+            "$ref": "#/definitions/orcidUri"
+          }
         }
       }
     },
-    "assemblyAuthor":{
+    "assemblyAuthor": {
       "type": "array",
-        "items": {
+      "items": {
         "type": "object",
         "description": "Assembler of the Genome (Person or Org)",
         "properties": {
           "name": {
             "type": "string"
           },
-          "uri": { "$ref": "#/definitions/orcidUri" }
+          "uri": {
+            "$ref": "#/definitions/orcidUri"
+          }
         }
       }
     },
-    "dateCreated":{
+    "dateCreated": {
       "type": "string",
       "format": "date",
       "description": "Date the genome assembly was created"
     },
-    "voucherSpecimen":{
+    "voucherSpecimen": {
       "type": "string",
       "description": "Description of the physical sample"
     },
-    "accessionID":{
+    "accessionID": {
       "type": "object",
       "description": "accessionID genome assembly was created",
       "properties": {
@@ -112,7 +116,7 @@
       "items": {
         "type": "string",
         "pattern": "[a-z0-9]*:.*"
-        }
+      }
     },
     "relatedLink": {
       "type": "array",
@@ -133,43 +137,104 @@
     "masking": {
       "type": "string",
       "pattern": "(not-masked|hard-masked|soft-masked|repeat-masked|unknown)",
-    "description": "masking applied to the genome assembly"
+      "description": "masking applied to the genome assembly"
     },
     "vitalStats": {
       "type": "object",
       "description": "general statistics about the genome assembly",
       "properties": {
-        "L50": { 
-            "type": "integer",
-            "description": "L50 of the genome assembly"
+        "L50": {
+          "type": "integer",
+          "description": "L50 of the genome assembly"
         },
-        "N50": { 
-            "type": "integer",
-             "description": "N50 of the genome assembly"
+        "N50": {
+          "type": "integer",
+          "description": "N50 of the genome assembly"
         },
-        "L90": { 
-            "type": "integer" ,
-            "description": "L90 of the genome assembly"
+        "L90": {
+          "type": "integer",
+          "description": "L90 of the genome assembly"
         },
-        "totalBasePairs": { 
-            "type": "integer" ,
-            "description": "total base pairs of the genome assembly"
+        "totalBasePairs": {
+          "type": "integer",
+          "description": "total base pairs of the genome assembly"
         },
-        "numberContigs": { 
-            "type": "integer" ,
-            "description": "number of contigs of the genome assembly"
+        "numberContigs": {
+          "type": "integer",
+          "description": "number of contigs of the genome assembly"
         },
-        "numberScaffolds": { 
-            "type": "integer" ,
-            "description": "number of scaffolds of the genome assembly"
+        "numberScaffolds": {
+          "type": "integer",
+          "description": "number of scaffolds of the genome assembly"
         },
-        "readTechnology": { 
-            "type": "string",
-            "description": "read technology of the genome assembly (short, long, hifi, etc...)"
+        "readTechnology": {
+          "type": "string",
+          "description": "read technology of the genome assembly (short, long, hifi, etc...)"
+        },
+        "N90": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Contig length in base pairs at 90 percent of the assembly length."
+        },
+        "gcContent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "GC content as a percentage (0 to 100), not a fraction."
         }
       }
     },
-    "checksum": { "$ref": "#/definitions/sha2" }
+    "checksum": {
+      "$ref": "#/definitions/sha2"
+    },
+    "assemblySoftware": {
+      "description": "Assembly software provenance; a legacy name string is also accepted.",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "uri": {
+                "type": "string",
+                "format": "uri"
+              },
+              "version": {
+                "type": "string"
+              },
+              "commandLineOption": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      ]
+    },
+    "assemblyProtocol": {
+      "type": "string",
+      "format": "uri",
+      "description": "URI of the assembly protocol or workflow documentation."
+    },
+    "seqcol_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{32}$",
+      "description": "Unprefixed GA4GH refget sequence collection top-level digest (sha512t24u); supplied by the user, not calculated by FHR.",
+      "minLength": 32,
+      "maxLength": 32
+    }
   },
   "required": [
     "schema",
@@ -184,13 +249,16 @@
     "checksum"
   ],
   "definitions": {
-    "orcidUri": { "format": "uri", 
-                  "pattern": "^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]" },
+    "orcidUri": {
+      "format": "uri",
+      "pattern": "^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]",
+      "type": "string"
+    },
     "sha2": {
       "type": "string",
       "minLength": 44,
       "maxLength": 44,
-      "pattern": "^[A-Za-z0-9/+=]+$",
+      "pattern": "^[A-Za-z0-9/+=]{44}$",
       "description": "sha2-512/256 checksum value for hashing"
     }
   },
