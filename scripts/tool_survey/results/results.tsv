@@ -1,0 +1,184 @@
+type	tool	version	inputs	control_rc	fhr_rc	class	header_lines_in_output	note
+fasta	samtools faidx	samtools 1.24	control.fa vs fhr.fa	0	1	c		[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	samtools faidx	samtools 1.24	control.bgzf.fa.gz vs fhr.bgzf.fa.gz	0	1	c		[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	samtools faidx	samtools 1.24	control.crlf.fa vs fhr.crlf.fa	0	1	c		[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	samtools faidx	samtools 1.24	control.gzip.fa.gz vs fhr.gzip.fa.gz	1	1	n/a		control also fails: [E::fai_build3_core] Cannot index files compressed with gzip, please use bgzip
+fasta	samtools faidx	samtools 1.24	control.fa vs edge.comment1.fa	0	1	c		[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	samtools faidx	samtools 1.24	concat.control.fa vs concat.fhr.fa	0	1	c		[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	samtools faidx	samtools 1.24	concat.control.fa vs concat.mixed.fa	0	1	c		[faidx] Could not build fai index concat.mixed.fa.fai
+fasta	samtools dict	samtools 1.24	control.fa vs fhr.fa	0	0	a	0	
+fasta	samtools dict	samtools 1.24	control.bgzf.fa.gz vs fhr.bgzf.fa.gz	0	0	a	0	
+fasta	samtools dict	samtools 1.24	concat.control.fa vs concat.fhr.fa	0	0	b?	0	
+fasta	samtools dict	samtools 1.24	concat.control.fa vs concat.mixed.fa	0	0	b?	0	
+fasta	bgzip -t	bgzip (htslib) 1.24	control.bgzf.fa.gz vs fhr.bgzf.fa.gz	0	0	a	52	
+fasta	pysam.FastaFile	pysam 0.24.0	control.fa vs fhr.fa	0	1	c	0	[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	pysam.FastaFile	pysam 0.24.0	control.bgzf.fa.gz vs fhr.bgzf.fa.gz	0	1	c	0	[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	pysam.FastaFile	pysam 0.24.0	concat.control.fa vs concat.fhr.fa	0	1	c	0	[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	pysam.FastaFile	pysam 0.24.0	concat.control.fa vs concat.mixed.fa	0	1	c	0	OSError: error when opening file `concat.mixed.fa`
+fasta	pysam.FastxFile	pysam 0.24.0	control.fa vs fhr.fa	0	0	a	0	
+fasta	pysam.FastxFile	pysam 0.24.0	control.gzip.fa.gz vs fhr.gzip.fa.gz	0	0	a	0	
+fasta	pysam.FastxFile	pysam 0.24.0	control.bgzf.fa.gz vs fhr.bgzf.fa.gz	0	0	a	0	
+fasta	pysam.FastxFile	pysam 0.24.0	control.crlf.fa vs fhr.crlf.fa	0	0	a	0	
+fasta	pysam.FastxFile	pysam 0.24.0	control.fa vs edge.comment1.fa	0	0	a	0	
+fasta	pysam.FastxFile	pysam 0.24.0	concat.control.fa vs concat.fhr.fa	0	0	b?	0	
+fasta	pysam.FastxFile	pysam 0.24.0	concat.control.fa vs concat.mixed.fa	0	0	b?	0	
+fasta	seqkit stats	seqkit v2.14.0	control.fa vs fhr.fa	0	0	c(rc0)		[ERRO] fhr.fa: fastx: invalid FASTA/Q format
+fasta	seqkit stats	seqkit v2.14.0	control.gzip.fa.gz vs fhr.gzip.fa.gz	0	0	c(rc0)		[ERRO] fhr.gzip.fa.gz: fastx: invalid FASTA/Q format
+fasta	seqkit stats	seqkit v2.14.0	concat.control.fa vs concat.fhr.fa	0	0	c(rc0)		[ERRO] concat.fhr.fa: fastx: invalid FASTA/Q format
+fasta	seqkit stats	seqkit v2.14.0	concat.control.fa vs concat.mixed.fa	0	0	b?		
+fasta	seqkit seq	seqkit v2.14.0	control.fa vs fhr.fa	0	255	c	0	[ERRO] fastx: invalid FASTA/Q format
+fasta	seqkit seq	seqkit v2.14.0	control.gzip.fa.gz vs fhr.gzip.fa.gz	0	255	c	0	[ERRO] fastx: invalid FASTA/Q format
+fasta	seqkit seq	seqkit v2.14.0	control.fa vs edge.comment1.fa	0	255	c	0	[ERRO] fastx: invalid FASTA/Q format
+fasta	seqkit seq	seqkit v2.14.0	concat.control.fa vs concat.fhr.fa	0	255	c	0	[ERRO] fastx: invalid FASTA/Q format
+fasta	seqkit seq	seqkit v2.14.0	concat.control.fa vs concat.mixed.fa	0	0	b?	2	
+fasta	seqkit grep	seqkit v2.14.0	control.fa vs fhr.fa	0	255	c	0	[ERRO] fastx: invalid FASTA/Q format
+fasta	seqkit grep	seqkit v2.14.0	concat.control.fa vs concat.fhr.fa	0	255	c	0	[ERRO] fastx: invalid FASTA/Q format
+fasta	seqkit grep	seqkit v2.14.0	concat.control.fa vs concat.mixed.fa	0	0	b?	2	
+fasta	seqkit faidx	seqkit v2.14.0	control.fa vs fhr.fa	0	255	c	0	[ERRO] invalid fasta file: fhr.fa
+fasta	seqkit faidx	seqkit v2.14.0	control.bgzf.fa.gz vs fhr.bgzf.fa.gz	255	255	n/a	0	control also fails: [ERRO] gzipped file not supported
+fasta	seqkit faidx	seqkit v2.14.0	concat.control.fa vs concat.fhr.fa	0	255	c	0	[ERRO] invalid fasta file: concat.fhr.fa
+fasta	seqkit faidx	seqkit v2.14.0	concat.control.fa vs concat.mixed.fa	0	255	c	0	
+fasta	seqtk seq	Version: 1.5-r133	control.fa vs fhr.fa	0	0	a	0	
+fasta	seqtk seq	Version: 1.5-r133	control.gzip.fa.gz vs fhr.gzip.fa.gz	0	0	a	0	
+fasta	seqtk seq	Version: 1.5-r133	control.crlf.fa vs fhr.crlf.fa	0	0	a	0	
+fasta	seqtk seq	Version: 1.5-r133	control.fa vs edge.comment1.fa	0	0	a	0	
+fasta	seqtk seq	Version: 1.5-r133	concat.control.fa vs concat.fhr.fa	0	0	b?	2	
+fasta	seqtk seq	Version: 1.5-r133	concat.control.fa vs concat.mixed.fa	0	0	b?	2	
+fasta	seqtk comp	Version: 1.5-r133	control.fa vs fhr.fa	0	0	a		
+fasta	seqtk comp	Version: 1.5-r133	control.gzip.fa.gz vs fhr.gzip.fa.gz	0	0	a		
+fasta	seqtk comp	Version: 1.5-r133	concat.control.fa vs concat.fhr.fa	0	0	b?		
+fasta	seqtk comp	Version: 1.5-r133	concat.control.fa vs concat.mixed.fa	0	0	b?		
+fasta	pyfaidx	pyfaidx 0.9.0.4	control.fa vs fhr.fa	0	1	c	0	raise FastaIndexingError(
+fasta	pyfaidx	pyfaidx 0.9.0.4	control.fa vs edge.comment1.fa	0	0	b?	1	
+fasta	pyfaidx	pyfaidx 0.9.0.4	concat.control.fa vs concat.fhr.fa	0	1	c	0	raise FastaIndexingError(
+fasta	pyfaidx	pyfaidx 0.9.0.4	concat.control.fa vs concat.mixed.fa	0	1	c	0	raise FastaIndexingError(
+fasta	Biopython SeqIO fasta	biopython 1.88	control.fa vs fhr.fa	0	1	c		raise ValueError(
+fasta	Biopython SeqIO fasta	biopython 1.88	control.crlf.fa vs fhr.crlf.fa	0	1	c		raise ValueError(
+fasta	Biopython SeqIO fasta	biopython 1.88	control.fa vs edge.comment1.fa	0	1	c		raise ValueError(
+fasta	Biopython SeqIO fasta	biopython 1.88	concat.control.fa vs concat.fhr.fa	0	1	c		raise ValueError(
+fasta	Biopython SeqIO fasta	biopython 1.88	concat.control.fa vs concat.mixed.fa	0	0	b?	1	
+fasta	Biopython SeqIO fasta-pearson	biopython 1.88	control.fa vs fhr.fa	0	0	a	0	
+fasta	Biopython SeqIO fasta-pearson	biopython 1.88	concat.control.fa vs concat.fhr.fa	0	0	a	0	
+fasta	Biopython SeqIO fasta-pearson	biopython 1.88	concat.control.fa vs concat.mixed.fa	0	0	a	0	
+fasta	Biopython SeqIO fasta-2line	biopython 1.88	control.2line.fa vs fhr.2line.fa	0	1	c	0	raise ValueError(
+fasta	BWA index + mem	Version: 0.7.19-r1273	control.fa vs fhr.fa	0	0	a	0	
+fasta	BWA index + mem	Version: 0.7.19-r1273	control.gzip.fa.gz vs fhr.gzip.fa.gz	0	0	a	0	
+fasta	BWA index + mem	Version: 0.7.19-r1273	control.fa vs edge.comment1.fa	0	0	a	0	
+fasta	BWA index + mem	Version: 0.7.19-r1273	concat.control.fa vs concat.fhr.fa	0	1	c	0	
+fasta	BWA index + mem	Version: 0.7.19-r1273	concat.control.fa vs concat.mixed.fa	0	1	c	0	
+fasta	minimap2 -d + map	minimap2 2.31-r1302	control.fa vs fhr.fa	0	0	a	0	
+fasta	minimap2 -d + map	minimap2 2.31-r1302	control.gzip.fa.gz vs fhr.gzip.fa.gz	0	0	a	0	
+fasta	minimap2 -d + map	minimap2 2.31-r1302	control.fa vs edge.comment1.fa	0	0	a	0	
+fasta	minimap2 -d + map	minimap2 2.31-r1302	concat.control.fa vs concat.fhr.fa	0	0	b?	0	
+fasta	minimap2 -d + map	minimap2 2.31-r1302	concat.control.fa vs concat.mixed.fa	0	0	b?	0	
+fasta	bowtie2-build	bowtie2-build-s version 2.5.5	control.fa vs fhr.fa	0	1	c		Reference file does not seem to be a FASTA file
+fasta	bowtie2-build	bowtie2-build-s version 2.5.5	control.fa vs edge.comment1.fa	0	1	c		Warning: Encountered empty reference sequence
+fasta	bowtie2-build	bowtie2-build-s version 2.5.5	concat.control.fa vs concat.fhr.fa	0	1	c		Reference file does not seem to be a FASTA file
+fasta	bowtie2-build	bowtie2-build-s version 2.5.5	concat.control.fa vs concat.mixed.fa	0	0	b?	0	
+fasta	hisat2-build	hisat2-build version 2.2.3	control.fa vs fhr.fa	0	1	c		Reference file does not seem to be a FASTA file
+fasta	hisat2-build	hisat2-build version 2.2.3	concat.control.fa vs concat.fhr.fa	0	1	c		Reference file does not seem to be a FASTA file
+fasta	hisat2-build	hisat2-build version 2.2.3	concat.control.fa vs concat.mixed.fa	0	0	b?	0	
+fasta	STAR genomeGenerate	STAR 2.7.11b	control.fa vs fhr.fa	0	104	c		EXITING because of INPUT ERROR: the file format of the genomeFastaFile: fhr.fa is not fasta: the first character is ';' (59), not '>'.
+fasta	STAR genomeGenerate	STAR 2.7.11b	concat.control.fa vs concat.fhr.fa	0	104	c		EXITING because of INPUT ERROR: the file format of the genomeFastaFile: concat.fhr.fa is not fasta: the first character is ';' (59), not '>'.
+fasta	STAR genomeGenerate	STAR 2.7.11b	concat.control.fa vs concat.mixed.fa	0	0	b?		
+fasta	salmon index	salmon 2.8.0	control.fa vs fhr.fa	0	1	c		Error: index build failed
+fasta	salmon index	salmon 2.8.0	concat.control.fa vs concat.fhr.fa	0	1	c		Error: index build failed
+fasta	salmon index	salmon 2.8.0	concat.control.fa vs concat.mixed.fa	0	0	b?		
+fasta	kallisto index	kallisto, version 0.52.0	control.fa vs fhr.fa	0	0	a		
+fasta	kallisto index	kallisto, version 0.52.0	control.fa vs edge.comment1.fa	0	0	a		
+fasta	kallisto index	kallisto, version 0.52.0	concat.control.fa vs concat.fhr.fa	0	0	b?		
+fasta	kallisto index	kallisto, version 0.52.0	concat.control.fa vs concat.mixed.fa	0	0	b?		
+fasta	makeblastdb	makeblastdb: 2.17.0+	control.fa vs fhr.fa	0	0	a	0	
+fasta	makeblastdb	makeblastdb: 2.17.0+	control.fa vs edge.comment1.fa	0	0	a	0	
+fasta	makeblastdb	makeblastdb: 2.17.0+	concat.control.fa vs concat.fhr.fa	0	0	a	0	
+fasta	makeblastdb	makeblastdb: 2.17.0+	concat.control.fa vs concat.mixed.fa	0	0	a	0	
+fasta	bedtools getfasta	bedtools v2.31.1	control.fa vs fhr.fa	0	1	c	0	[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	bedtools getfasta	bedtools v2.31.1	control.bgzf.fa.gz vs fhr.bgzf.fa.gz	0	1	c	0	[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	bedtools getfasta	bedtools v2.31.1	control.fa vs edge.comment1.fa	0	1	c	0	[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	bedtools getfasta	bedtools v2.31.1	concat.control.fa vs concat.fhr.fa	0	1	c	0	[E::fai_build_core] Format error, unexpected ";" at line 1
+fasta	bedtools getfasta	bedtools v2.31.1	concat.control.fa vs concat.mixed.fa	0	1	c	0	Warning: malformed fasta index file concat.mixed.fa
+fasta	Picard CreateSequenceDictionary	picard Version:3.5.0	control.fa vs fhr.fa	0	1	c	0	Exception in thread "main" htsjdk.samtools.SAMException: Format exception reading FASTA Picard_CreateSequenceDictionary.0.fhr.fa.fhr/fhr
+fasta	Picard CreateSequenceDictionary	picard Version:3.5.0	control.fa vs edge.comment1.fa	0	1	c	0	Exception in thread "main" htsjdk.samtools.SAMException: Format exception reading FASTA Picard_CreateSequenceDictionary.1.edge.comment1.
+fasta	Picard CreateSequenceDictionary	picard Version:3.5.0	concat.control.fa vs concat.fhr.fa	0	1	c	0	Exception in thread "main" htsjdk.samtools.SAMException: Format exception reading FASTA Picard_CreateSequenceDictionary.2.concat.fhr.fa.
+fasta	Picard CreateSequenceDictionary	picard Version:3.5.0	concat.control.fa vs concat.mixed.fa	0	0	b?	0	
+fasta	UCSC faToTwoBit	ucsc-fatotwobit-482	control.fa vs fhr.fa	0	255	c		Expecting '>' line 1 of fhr.fa
+fasta	UCSC faToTwoBit	ucsc-fatotwobit-482	concat.control.fa vs concat.fhr.fa	0	255	c		Expecting '>' line 1 of concat.fhr.fa
+fasta	UCSC faToTwoBit	ucsc-fatotwobit-482	concat.control.fa vs concat.mixed.fa	0	0	b?	0	
+fasta	UCSC faSize	ucsc-fasize-482	control.fa vs fhr.fa	0	255	c		Expecting '>' line 1 of fhr.fa
+fasta	UCSC faSize	ucsc-fasize-482	concat.control.fa vs concat.fhr.fa	0	255	c		Expecting '>' line 1 of concat.fhr.fa
+fasta	UCSC faSize	ucsc-fasize-482	concat.control.fa vs concat.mixed.fa	0	0	b?		
+fasta	bioawk	bioawk-1.0	control.fa vs fhr.fa	0	0	a	0	
+fasta	bioawk	bioawk-1.0	control.gzip.fa.gz vs fhr.gzip.fa.gz	0	0	a	0	
+fasta	bioawk	bioawk-1.0	control.fa vs edge.comment1.fa	0	0	a	0	
+fasta	bioawk	bioawk-1.0	concat.control.fa vs concat.fhr.fa	0	0	b?	0	
+fasta	bioawk	bioawk-1.0	concat.control.fa vs concat.mixed.fa	0	0	b?	0	
+fasta	pyfastx	pyfastx 2.3.1	control.fa vs fhr.fa	0	1	c	0	RuntimeError: fhr.fa is not plain or gzip compressed fasta formatted file
+fasta	pyfastx	pyfastx 2.3.1	control.gzip.fa.gz vs fhr.gzip.fa.gz	0	1	c	0	RuntimeError: fhr.gzip.fa.gz is not plain or gzip compressed fasta formatted file
+fasta	pyfastx	pyfastx 2.3.1	concat.control.fa vs concat.fhr.fa	0	1	c	0	RuntimeError: concat.fhr.fa is not plain or gzip compressed fasta formatted file
+fasta	pyfastx	pyfastx 2.3.1	concat.control.fa vs concat.mixed.fa	0	0	b?	5	
+fasta	MAFFT	mafft v7.526 (2024/Apr/26)	control.fa vs fhr.fa	0	0	a	0	
+fasta	MAFFT	mafft v7.526 (2024/Apr/26)	control.fa vs edge.comment1.fa	0	0	a	0	
+fasta	MAFFT	mafft v7.526 (2024/Apr/26)	concat.control.fa vs concat.fhr.fa	0	1	c	0	
+fasta	MAFFT	mafft v7.526 (2024/Apr/26)	concat.control.fa vs concat.mixed.fa	0	1	c	0	
+fasta	gffread -g (genome FASTA)	gffread 0.12.9	control.fa vs fhr.fa	0	1	c		Error: sequence lines in a FASTA record must have the same length!
+fasta	gffread -g (genome FASTA)	gffread 0.12.9	concat.control.fa vs concat.fhr.fa	0	1	c		Error: sequence lines in a FASTA record must have the same length!
+fasta	gffread -g (genome FASTA)	gffread 0.12.9	concat.control.fa vs concat.mixed.fa	0	1	c		Error: sequence lines in a FASTA record must have the same length!
+fasta	AGAT/BioPerl Bio::DB::Fasta	AGAT v1.7.0	control.fa vs fhr.fa	0	25	c	0	------------- EXCEPTION -------------
+fasta	AGAT/BioPerl Bio::DB::Fasta	AGAT v1.7.0	concat.control.fa vs concat.fhr.fa	0	25	c	0	------------- EXCEPTION -------------
+fasta	AGAT/BioPerl Bio::DB::Fasta	AGAT v1.7.0	concat.control.fa vs concat.mixed.fa	0	25	c	0	------------- EXCEPTION -------------
+fasta	JBrowse CLI add-assembly	@jbrowse/cli 4.3.0	control.fa vs fhr.fa	0	1	c		Error: Could not resolve to a file or a URL: "fhr.fa.fai"
+fasta	JBrowse CLI add-assembly	@jbrowse/cli 4.3.0	concat.control.fa vs concat.fhr.fa	0	1	c		Error: Could not resolve to a file or a URL: "concat.fhr.fa.fai"
+fasta	JBrowse CLI add-assembly	@jbrowse/cli 4.3.0	concat.control.fa vs concat.mixed.fa	0	1	c		Error: Could not resolve to a file or a URL: "concat.mixed.fa.fai"
+gfa	gfatools stat	gfatools 0.4-r214-dirty	control.gfa vs fhr.gfa	0	0	a		
+gfa	gfatools gfa2fa	gfatools 0.4-r214-dirty	control.gfa vs fhr.gfa	0	0	a	0	
+gfa	gfatools view	gfatools 0.4-r214-dirty	control.gfa vs fhr.gfa	0	0	a	0	
+gfa	vg convert -g -f	vg version v1.76.1	control.gfa vs fhr.gfa	0	0	a	0	
+gfa	vg stats	vg version v1.76.1	control.gfa vs fhr.gfa	0	0	a		
+gfa	odgi build + stats	odgi v0.9.4-0-g5e58a324	control.numeric.gfa vs fhr.numeric.gfa	0	0	a		
+gfa	odgi view	odgi v0.9.4-0-g5e58a324	control.numeric.gfa vs fhr.numeric.gfa	0	0	a	0	
+gfa	gfapy (parse + write)	gfapy 1.2.3	control.gfa vs fhr.gfa	0	0	a	52	
+gff3	gt gff3validator	gt (GenomeTools) 1.6.5	control.gff3 vs fhr.gff3	0	0	a		
+gff3	gt gff3validator	gt (GenomeTools) 1.6.5	control.gff3 vs fhr.sr-before.gff3	0	0	a		
+gff3	gt gff3validator	gt (GenomeTools) 1.6.5	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a		
+gff3	gt gff3 -sort -tidy	gt (GenomeTools) 1.6.5	control.gff3 vs fhr.gff3	0	0	a	25	
+gff3	gt gff3 -sort -tidy	gt (GenomeTools) 1.6.5	control.gff3 vs fhr.sr-before.gff3	0	0	a	25	
+gff3	gt gff3 -sort -tidy	gt (GenomeTools) 1.6.5	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a	25	
+gff3	gffread -T (GTF)	gffread 0.12.9	control.gff3 vs fhr.gff3	0	0	a	0	
+gff3	gffread -T (GTF)	gffread 0.12.9	control.gff3 vs fhr.sr-before.gff3	0	0	a	0	
+gff3	gffread -T (GTF)	gffread 0.12.9	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a	0	
+gff3	gffread -E (GFF3 out)	gffread 0.12.9	control.gff3 vs fhr.gff3	0	0	a	0	
+gff3	gffread -E (GFF3 out)	gffread 0.12.9	control.gff3 vs fhr.sr-before.gff3	0	0	a	0	
+gff3	gffread -E (GFF3 out)	gffread 0.12.9	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a	0	
+gff3	gffread -g -x (CDS extract)	gffread 0.12.9	control.gff3 vs fhr.gff3	0	0	a	0	
+gff3	gffread -g -x (CDS extract)	gffread 0.12.9	control.gff3 vs fhr.sr-before.gff3	0	0	a	0	
+gff3	gffread -g -x (CDS extract)	gffread 0.12.9	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a	0	
+gff3	AGAT agat_convert_sp_gxf2gxf.pl	AGAT v1.7.0	control.gff3 vs fhr.gff3	0	0	a	25	
+gff3	AGAT agat_convert_sp_gxf2gxf.pl	AGAT v1.7.0	control.gff3 vs fhr.sr-before.gff3	0	0	a	25	
+gff3	AGAT agat_convert_sp_gxf2gxf.pl	AGAT v1.7.0	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a	25	
+gff3	AGAT agat_sp_statistics.pl	AGAT v1.7.0	control.gff3 vs fhr.gff3	0	0	a	0	
+gff3	AGAT agat_sp_statistics.pl	AGAT v1.7.0	control.gff3 vs fhr.sr-before.gff3	0	0	a	0	
+gff3	AGAT agat_sp_statistics.pl	AGAT v1.7.0	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a	0	
+gff3	gffutils create_db	gffutils 0.14	control.gff3 vs fhr.gff3	0	0	a		
+gff3	gffutils create_db	gffutils 0.14	control.gff3 vs fhr.sr-before.gff3	0	0	a		
+gff3	gffutils create_db	gffutils 0.14	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a		
+gff3	bedtools sort	bedtools v2.31.1	control.gff3 vs fhr.gff3	0	0	a	25	
+gff3	bedtools sort	bedtools v2.31.1	control.gff3 vs fhr.sr-before.gff3	0	0	a	25	
+gff3	bedtools sort	bedtools v2.31.1	control.fasta.gff3 vs fhr.fasta.gff3	1	1	n/a	0	control also fails: 
+gff3	bedtools intersect	bedtools v2.31.1	control.gff3 vs fhr.gff3	0	0	a	0	
+gff3	bedtools intersect	bedtools v2.31.1	control.gff3 vs fhr.sr-before.gff3	0	0	a	0	
+gff3	bedtools intersect	bedtools v2.31.1	control.fasta.gff3 vs fhr.fasta.gff3	1	1	n/a	0	control also fails: Error: line number 25 of file control.fasta.gff3 has 1 fields, but 9 were expected.
+gff3	bgzip + tabix -p gff	tabix (htslib) 1.24	control.gff3 vs fhr.gff3	0	0	a	0	
+gff3	bgzip + tabix -p gff	tabix (htslib) 1.24	control.gff3 vs fhr.sr-before.gff3	0	0	a	0	
+gff3	bgzip + tabix -p gff	tabix (htslib) 1.24	control.fasta.gff3 vs fhr.fasta.gff3	1	1	n/a		control also fails: [E::get_intv] Failed to parse TBX_GENERIC: was wrong -p [type] used?
+gff3	htseq-count	HTSeq 2.1.2	control.gff3 vs fhr.gff3	0	0	a		
+gff3	htseq-count	HTSeq 2.1.2	control.gff3 vs fhr.sr-before.gff3	0	0	a		
+gff3	htseq-count	HTSeq 2.1.2	control.fasta.gff3 vs fhr.fasta.gff3	1	1	n/a		control also fails: Error processing GFF file (line 24 of file control.fasta.gff3):
+gff3	featureCounts	v2.1.1	control.gff3 vs fhr.gff3	0	0	a		
+gff3	featureCounts	v2.1.1	control.gff3 vs fhr.sr-before.gff3	0	0	a		
+gff3	featureCounts	v2.1.1	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a		
+gff3	JBrowse CLI add-track + text-index	@jbrowse/cli 4.3.0	control.gff3 vs fhr.gff3	0	0	a		
+gff3	JBrowse CLI add-track + text-index	@jbrowse/cli 4.3.0	control.gff3 vs fhr.sr-before.gff3	0	0	a		
+gff3	JBrowse CLI add-track + text-index	@jbrowse/cli 4.3.0	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a		
+gff3	@gmod/gff parser (JBrowse 2)	@gmod/gff 2.1.0	control.gff3 vs fhr.gff3	0	0	a		
+gff3	@gmod/gff parser (JBrowse 2)	@gmod/gff 2.1.0	control.gff3 vs fhr.sr-before.gff3	0	0	a		
+gff3	@gmod/gff parser (JBrowse 2)	@gmod/gff 2.1.0	control.fasta.gff3 vs fhr.fasta.gff3	0	0	a		

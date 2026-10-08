@@ -1,0 +1,10 @@
+--- concat.control.fa
++++ concat.mixed.fa
+@@ -1,6 +1,6 @@
+ SN:chr1	LN:5000
+ SN:chr2	LN:3000
+-SN:chrM	LN:1200
++SN:chrM	LN:2719
+ SN:chrX	LN:800
+ r0_chr1_1694 chr1 1694 150M
+ r1_chr2_2769 chr2 2769 150M

@@ -1,0 +1,8 @@
+--- concat.control.fa
++++ concat.mixed.fa
+@@ -1,4 +1,4 @@
+ SN:chr1	LN:5000	M5:22c7ccb4aebed608d8c3a0903889d6c0
+ SN:chr2	LN:3000	M5:17b8ec78c4bc64691e1568126602cb18
+-SN:chrM	LN:1200	M5:be9558742e6aa11149076b4314e48640
++SN:chrM	LN:2719	M5:174fc1baaf908530c5d91a21848cf2b9
+ SN:chrX	LN:800	M5:fe57f87bff8dc6f317c4ef7919a1ae88

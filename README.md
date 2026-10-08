@@ -50,6 +50,10 @@ explain the change from the old MD5/payload-only documentation.
 files, with expected checksums, for the header parsing and checksum rules. Use
 them to test other FHR implementations.
 
+[Tool compatibility](docs/TOOL_COMPATIBILITY.md) records how common FASTA, GFA
+and GFF3 tools handle files with FHR headers, and gives workarounds. Most
+FASTA indexers, including samtools faidx, need a stripped copy.
+
 JSON/YAML/HTML examples contain synthetic checksum and SeqCol placeholders.
 The FASTA/GFA examples have verified FHR file checksums but retain a synthetic
 SeqCol placeholder; it must not be used as the sequence collection's identity.

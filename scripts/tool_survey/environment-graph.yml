@@ -1,0 +1,9 @@
+# vg and odgi are kept in a second environment to keep the main solve small.
+# micromamba create -n survey-graph -f environment-graph.yml
+name: survey-graph
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - vg=1.76.1
+  - odgi=0.9.4

@@ -1,0 +1,5 @@
+--- concat.control.fa
++++ concat.mixed.fa
+@@ -1,2 +1,2 @@
+ chr2	3000	17b8ec78c4bc64691e1568126602cb18
+-chrM	1200	be9558742e6aa11149076b4314e48640+chrM	2719	174fc1baaf908530c5d91a21848cf2b9

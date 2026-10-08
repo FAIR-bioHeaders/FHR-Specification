@@ -1,0 +1,8 @@
+--- concat.control.fa
++++ concat.mixed.fa
+@@ -1,4 +1,4 @@
+ chr1	5000
+ chr2	3000
+-chrM	1200
++chrM	2279
+ chrX	800

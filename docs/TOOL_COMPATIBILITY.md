@@ -1,0 +1,283 @@
+# Tool compatibility of FHR-headed files
+
+This survey tests how common bioinformatics tools handle FASTA, GFA and GFF3
+files that carry FHR header lines (`;~` in FASTA, `#~` in GFA and GFF3). It
+answers [#40](https://github.com/FAIR-bioHeaders/FHR-Specification/issues/40)
+(FASTA and GFA tools) and
+[#49](https://github.com/FAIR-bioHeaders/FHR-Specification/issues/49) (GFF3
+tools; spec 007 FR-006). Run date: 2026-10-08.
+
+## Method
+
+Every test runs twice in fresh directories. One run uses a header-free control
+file and the other uses the same file with an FHR header. Each output is reduced
+to a fingerprint: record names, lengths and an MD5 of the upper-cased sequence
+for FASTA/SAM output, sorted `S`/`L`/`P` lines for GFA, and an MD5 of the text
+with `;~`/`#~` lines removed for other outputs. For FASTA, only the leading `;`
+block is excluded; `;` text inside a record counts as sequence, so absorbed
+header text shows up as a change. The two fingerprints are then compared.
+Separately, the survey counts how many FHR lines the tool copied into its
+output. The runner marks differences as `b?`. Each one was checked by hand
+against its diff in
+[results/diff](../scripts/tool_survey/results/diff), and all are reported
+below as **b**.
+
+| Class | Meaning |
+| --- | --- |
+| **a** | Works. Exit 0 and output identical to the control run. The header is ignored, or copied through (see "header kept"). |
+| **b** | Works but misreads the header as sequence or names. Exit 0 and output differs from the control: silent corruption. |
+| **c** | Fails. Non-zero exit, or **c (exit 0)**: prints an error and writes no data but exits 0. |
+| n/a | The control file fails too, so the header is not the cause. |
+
+Inputs come from [scripts/tool_survey/make_inputs.py](../scripts/tool_survey/make_inputs.py),
+and the runner is [run_survey.py](../scripts/tool_survey/run_survey.py). The
+raw results are in [results.tsv](../scripts/tool_survey/results/results.tsv).
+
+- **FASTA**: three records (5000, 3000 and 1200 bp; 60-column lines; one
+  soft-masked stretch). The FHR copy is made with `fhr-fasta-combine` 0.3.3 and
+  [example.fhr.yaml](../examples/example.fhr.yaml), giving 52 `;~` lines.
+  Variants: plain; gzip (made with Python `gzip`, not BGZF); BGZF (written by
+  `fhr-fasta-combine -o x.fa.gz`; the BGZF control was made with
+  `fhr-fasta-strip`); CRLF line endings; unwrapped (for `fasta-2line`); and
+  `edge.comment1.fa`, which has one leading `;` line. That edge file is not
+  valid FHR. It probes parsers that read leading lines as an unnamed record.
+  Two concatenations, both invalid under R10, test what happens when header
+  lines follow a record. `concat.fhr.fa` is `cat genome.fhr.fa extra.fhr.fa`.
+  `concat.mixed.fa` is `cat genome.fa extra.fhr.fa`. Both are compared with
+  `cat genome.fa extra.fa`.
+- **GFA**: GFA1 with four segments, four links and two paths. The FHR copy is
+  made with `fhr-gfa-combine`. A copy with numeric segment IDs is used for odgi.
+- **GFF3**: three genes (one with two mRNAs), multi-line CDS features, and two
+  `##sequence-region` lines. FHGFF3 is unreleased, so the 25 `#~` lines are
+  hand-written, schema-like YAML. The lines follow `##gff-version 3` and come
+  either before (`fhr.gff3`) or after (`fhr.sr-before.gff3`) the
+  `##sequence-region` lines. A third variant has a `##FASTA` section.
+- **Mapping**: 20 exact 150 bp reads. A small BAM for the counting tools is made
+  by mapping them to the control genome.
+
+## Environment
+
+Linux x86-64; conda-forge and bioconda through micromamba. The pins are in
+[environment.yml](../scripts/tool_survey/environment.yml) and
+[environment-graph.yml](../scripts/tool_survey/environment-graph.yml). Other
+software: Node 20.19.4 with `@jbrowse/cli` 4.3.0 and `@gmod/gff` 2.1.0
+([package.json](../scripts/tool_survey/package.json)), and the FHR converter
+(`fhr`) 0.3.3.
+
+## FASTA
+
+| Tool | Version | Command | Inputs | Class | Notes |
+| --- | --- | --- | --- | --- | --- |
+| samtools faidx | 1.24 (htslib 1.24) | `samtools faidx x.fa`; region fetch | plain, BGZF, CRLF, edge | **c** | `[E::fai_build_core] Format error, unexpected ";" at line 1`; no `.fai` written. Plain gzip is n/a (the control fails too: gzip, not BGZF). |
+| samtools dict | 1.24 | `samtools dict x.fa` | plain, BGZF | a | Sequence `@SQ` lines (name, length, M5) match the control. |
+| bgzip -t | htslib 1.24 | `bgzip -t x.fa.gz` | BGZF | a | Checks the compression only; the converter's BGZF output is valid. |
+| pysam.FastaFile | 0.24.0 | `FastaFile(x).fetch()` | plain, BGZF | **c** | Calls htslib faidx: `OSError` with the same `;` error. |
+| pysam.FastxFile | 0.24.0 | iterate records | plain, gzip, BGZF, CRLF, edge | a | kseq parser skips lines before the first `>`. |
+| seqkit stats | 2.14.0 | `seqkit stats -T -a` | plain, gzip | **c (exit 0)** | `[ERRO] fastx: invalid FASTA/Q format`; prints only the column header but exits 0. |
+| seqkit seq / grep | 2.14.0 | `seqkit seq`, `seqkit grep -p chr2` | plain, gzip, edge | **c** | Exit 255, `invalid FASTA/Q format`. |
+| seqkit faidx | 2.14.0 | `seqkit faidx x.fa chr2:1-60` | plain | **c** | `invalid fasta file`. BGZF is n/a (seqkit faidx does not support gzip). |
+| seqtk seq / comp | 1.5-r133 | `seqtk seq -l 60`, `seqtk comp` | plain, gzip, CRLF, edge | a | kseq. |
+| bioawk | 1.0 | `bioawk -c fastx` | plain, gzip, edge | a | kseq. |
+| pyfaidx | 0.9.0.4 | `Fasta(x)` | plain | **c** | `FastaIndexingError: Line length of fasta file is not consistent! ... >None at line 2`. |
+| pyfaidx | 0.9.0.4 | `Fasta(x)` | edge (one `;` line) | **b** | Builds a record named `None` whose sequence is the comment text, plus the three real records. See [Silent corruption](#silent-corruption). |
+| Biopython `SeqIO` `fasta` | 1.88 | `SeqIO.parse(x, "fasta")` | plain, CRLF, edge | **c** | `ValueError: This FASTA file contains comments at the beginning of the file...`; the message suggests `fasta-pearson`. |
+| Biopython `fasta-pearson` | 1.88 | `SeqIO.parse(x, "fasta-pearson")` | plain | a | Skips leading lines. |
+| Biopython `fasta-2line` | 1.88 | `SeqIO.parse(x, "fasta-2line")` | unwrapped | **c** | `Expected FASTA record starting with '>'`. |
+| BWA | 0.7.19-r1273 | `bwa index`; `bwa mem` | plain, gzip, edge | a | `@SQ` lines and every alignment (name, contig, position, CIGAR) match the control. |
+| minimap2 | 2.31-r1302 | `minimap2 -d`; `minimap2 -a` | plain, gzip, edge | a | Same comparison as BWA. |
+| bowtie2-build | 2.5.5 | `bowtie2-build x.fa idx` | plain, edge | **c** | `Reference file does not seem to be a FASTA file`. On edge: `Encountered empty reference sequence`, then exit 1. |
+| hisat2-build | 2.2.3 | `hisat2-build x.fa idx` | plain | **c** | Same message as bowtie2. |
+| STAR | 2.7.11b | `--runMode genomeGenerate` | plain | **c** | `the first character is ';' (59), not '>'`. |
+| salmon | 2.8.0 | `salmon index -t x.fa` | plain | **c** | `index build failed`. |
+| kallisto | 0.52.0 | `kallisto index`; `inspect` | plain, edge | a | Target, k-mer and unitig counts match. |
+| makeblastdb | BLAST 2.17.0+ | `makeblastdb -parse_seqids`; `blastdbcmd -entry all` | plain, edge | a | Records extracted from the database match the control. |
+| bedtools getfasta | 2.31.1 | `bedtools getfasta -fi x.fa -bed r.bed` | plain, BGZF, edge | **c** | htslib faidx error; exit 1. |
+| Picard CreateSequenceDictionary | 3.5.0 (htsjdk) | `-R x.fa -O x.dict` | plain, edge | **c** | `SAMException: ... Expected > but saw chr(59)`. Leaves a partial `x.dict` containing only `@HD VN:1.6`. |
+| UCSC faToTwoBit / faSize | 482 | `faToTwoBit`, `faSize -detailed` | plain | **c** | `Expecting '>' line 1`. |
+| pyfastx | 2.3.1 | `pyfastx.Fasta(x)` | plain, gzip | **c** | `not plain or gzip compressed fasta formatted file`. |
+| MAFFT | 7.526 | `mafft --auto` | plain, edge | a | Same alignment as the control. |
+| gffread `-g` | 0.12.9 | `gffread genes.gff3 -g x.fa -x cds.fa` | plain | **c** | `sequence lines in a FASTA record must have the same length!` |
+| AGAT (BioPerl `Bio::DB::Fasta`) | 1.7.0 | `agat_sp_extract_sequences.pl -f x.fa` | plain | **c** | `Each line of the fasta entry must be the same length ... ';~taxon:'`. |
+| JBrowse CLI `add-assembly` | 4.3.0 | `jbrowse add-assembly x.fa` | plain | **c** | Needs a `.fai`, which samtools cannot build for this file. |
+
+bcftools (for example `bcftools norm -f`), GATK and other htslib/htsjdk
+reference consumers were not run separately. They load references through the
+same faidx/htsjdk code, so they inherit the **c** result above.
+
+## GFA
+
+| Tool | Version | Command | Class | Header kept | Notes |
+| --- | --- | --- | --- | --- | --- |
+| gfatools stat | 0.4-r214 (bioconda gfatools 0.5.5) | `gfatools stat` | a | n/a | |
+| gfatools gfa2fa | same | `gfatools gfa2fa` | a | no | |
+| gfatools view | same | `gfatools view` | a | no | `#` lines dropped. |
+| vg | 1.76.1 | `vg convert -g x.gfa -f`; `vg stats -lz` | a | no | Warns `[GFAParser] Ignoring unrecognized # line type`. |
+| odgi | 0.9.4 | `odgi build -g`; `stats -S`; `view -g` | a | no | Numeric-ID copy. odgi rejects non-numeric segment names whether or not there is a header. |
+| gfapy | 1.2.3 | `Gfa.from_file`; `to_file` | a | yes (52) | Comments are kept and written back. |
+
+No GFA tool tested misreads `#~` lines: `#` comments are part of GFA1.
+
+## GFF3
+
+Each row covers three inputs: header before `##sequence-region`, header after
+`##sequence-region`, and a file with a `##FASTA` section. Results did not
+differ between the first two.
+
+| Tool | Version | Command | Class | Header kept | Notes |
+| --- | --- | --- | --- | --- | --- |
+| GenomeTools `gt gff3validator` | 1.6.5 | `gt gff3validator` | a | n/a | `input is valid GFF3` for all three. |
+| GenomeTools `gt gff3` | 1.6.5 | `gt gff3 -sort -tidy -retainids` | a | yes (25) | Moves `##sequence-region` lines above the `#~` block. |
+| gffread | 0.12.9 | `-T`; `-E -o`; `-g genome.fa -x` | a | no | Writes its own `# gffread` comment lines instead. |
+| AGAT | 1.7.0 | `agat_convert_sp_gxf2gxf.pl`; `agat_sp_statistics.pl` | a | yes (25) | Header kept in place (after `##gff-version 3`); statistics identical. |
+| gffutils | 0.14 | `create_db(..., merge_strategy="create_unique")` | a | n/a | Features and `directives` identical; `#~` lines are not stored. |
+| bedtools | 2.31.1 | `sort -header`; `intersect` | a | `sort -header`: yes | The `##FASTA` variant is n/a (bedtools reads the FASTA lines as features). |
+| bgzip + tabix | htslib 1.24 | sort, `bgzip`, `tabix -p gff`, region query | a | `tabix -H`: yes | Header lines must stay at the top when sorting (`grep '^#'` first). `##FASTA` is n/a (tabix cannot parse it). |
+| htseq-count | HTSeq 2.1.2 | `-f bam -t exon -i Parent` | a | n/a | `##FASTA` is n/a (HTSeq rejects it in the control too). |
+| featureCounts | subread 2.1.1 | `-F GTF -t exon -g Parent` | a | n/a | |
+| JBrowse CLI | 4.3.0 | `add-track`; `text-index` | a | n/a | Trix index byte-identical to the control. |
+| `@gmod/gff` (JBrowse 2 parser) | 2.1.0 | `parseStringSync` | a | as comments | `#~` lines come back as comment items; features, directives and sequences match. |
+
+## Concatenated files (invalid under R10)
+
+`cat a.fhr.fa b.fhr.fa` and `cat a.fa b.fhr.fa` leave `;~` lines after the last
+record of the first file. R10 makes such a file invalid, and
+`fhr-fasta-validate` rejects it. Concatenating FASTA files is routine, though,
+so the survey also ran the FASTA tools on these files.
+
+| Tool | `cat fhr + fhr` | `cat plain + fhr` | Effect when it "works" |
+| --- | --- | --- | --- |
+| samtools dict | **b** | **b** | chrM length 1200 → 2613 and a different M5: the header text is counted as chrM sequence. |
+| pysam.FastxFile, seqtk seq/comp, bioawk | **b** | **b** | chrM 1200 → 2719. |
+| minimap2 (`-d`, `-a`) | **b** | **b** | `@SQ SN:chrM LN:2719` in the index and the SAM header. |
+| kallisto index | **b** | **b** | k-mers 9,880 → 11,367 (the header is indexed as target sequence). |
+| seqkit stats/seq/grep | c | **b** | Rejects a leading `;` but absorbs later `;` lines into chrM. |
+| Biopython `fasta` | c | **b** | chrM 1200 → 2613. |
+| bowtie2-build, hisat2-build | c | **b** | chrM 1886 in the index. |
+| STAR, salmon | c | **b** | STAR `chrNameLength` chrM 2719; salmon offsets show chrM 2687. |
+| Picard CreateSequenceDictionary | c | **b** | chrM 2719 with a different M5. |
+| UCSC faToTwoBit, faSize | c | **b** | chrM 2279 (non-letters dropped). |
+| pyfastx | c | **b** | chrM 2714. |
+| BWA | c | c | `bwa index` exits 0, but `bwa mem` then fails: `[bns_restore_core] Parse error reading .amb`. |
+| samtools faidx, bedtools getfasta, pysam.FastaFile | c | c | Fails here only because the header lines differ in width from chrM's lines (`Different line length in sequence 'chrM'`). With equal widths faidx indexes the text: `printf '>a\nACGT\n;mid\n>b\nGG\n'` gives `a` length 8, sequence `ACGT;mid`. |
+| pyfaidx, MAFFT, gffread, AGAT/BioPerl, seqkit faidx, JBrowse | c | c | |
+| makeblastdb, Biopython `fasta-pearson` | a | a | Skip `;` lines anywhere. |
+
+## Silent corruption
+
+**Valid FHR files.** No tool silently changed sequence data, names or
+features. Every class **a** result had a fingerprint identical to its control.
+This covers BWA, minimap2, kallisto, makeblastdb, MAFFT, seqtk, bioawk,
+pysam.FastxFile, Biopython `fasta-pearson`, and all GFA and GFF3 tools.
+
+**Concatenated files (above).** These are the main corruption risk. Most
+tools that accept a leading header silently append a later header to the
+previous record's sequence. That changes its length, its MD5 and SeqCol
+digests, any `.dict`, and the aligner indexes. The tools that reject a leading
+header (STAR, Picard, UCSC, seqkit, bowtie2, salmon) do the same with a header
+that follows a record. The FHR rules already forbid this. Strip each FHR file
+before concatenating it with others, and run `fhr-fasta-validate` on inputs.
+
+**One leading comment line (pyfaidx).** With exactly one leading `;` line, or
+several of equal width, pyfaidx indexes the comment as an unnamed sequence:
+
+```text
+$ printf ';~ab: 1\n;~cd: 2\n>chr1\nACGTACGT\nACGT\n' > eq.fa
+$ python -c 'import pyfaidx; f=pyfaidx.Fasta("eq.fa"); print({k: str(f[k][:]) for k in f.keys()})'
+{'None': ';~ab: 1;~cd: 2', 'chr1': 'ACGTACGTACGT'}
+$ cat eq.fa.fai
+None	14	0	7	8
+chr1	12	22	8	9
+```
+
+Real FHR headers have lines of different widths, so pyfaidx fails with an
+error instead. The edge case still affects files with legacy `;` comments.
+
+Related, smaller risks:
+
+- **Errors with exit 0.** `seqkit stats` reports `invalid FASTA/Q format` but
+  exits 0 and prints an empty table, so a pipeline does not stop. Likewise,
+  `bwa index` succeeds on a concatenated file and the failure appears only at
+  `bwa mem`.
+- **Partial output.** Picard leaves a `.dict` file holding only `@HD`, which a
+  make-style workflow may treat as up to date.
+- **Stale headers in derived files.** `gt gff3`, AGAT, `bedtools sort -header`,
+  tabix and gfapy copy `#~` lines into files whose bytes have changed. The
+  copied `checksum` then no longer matches the file. FHR validation catches
+  this; anything that reads the header without validating it does not. `gt`
+  also reorders `##sequence-region` lines above the header block (relevant to
+  the open placement question in spec 007 FR-001).
+
+## Summary of risks
+
+1. **FASTA indexing is the main gap for valid files.** htslib faidx rejects the
+   file, and so does everything built on it: samtools faidx, pysam.FastaFile,
+   bedtools getfasta, JBrowse assemblies, and bcftools/GATK-style reference
+   loading. htsjdk (Picard), pyfaidx, seqkit, pyfastx, UCSC tools, gffread,
+   BioPerl `Bio::DB::Fasta`, the Burrows-Wheeler builders (bowtie2, HISAT2),
+   STAR and salmon all reject it too. All of these fail loudly.
+2. **kseq-based tools work.** BWA, minimap2, seqtk, bioawk, pysam.FastxFile and
+   kallisto, plus makeblastdb, MAFFT and Biopython `fasta-pearson`, ignore the
+   leading `;` block.
+3. **Concatenation corrupts data silently.** A header after the first record
+   is read as sequence by most tools, including samtools dict, minimap2,
+   STAR, salmon, kallisto and Picard. R10 forbids this layout; validation
+   and stripping before `cat` avoid it.
+4. **GFA and GFF3 headers are compatible** with every tool tested. GFF3 tools
+   either drop `#~` comments or keep them (some reordered). Failures seen with
+   `##FASTA` sections come from the `##FASTA` section, not from the header.
+
+## Recommended workarounds
+
+Strip the header for FASTA tools in class **c**. With the converter (0.3.3),
+the output keeps every other byte; a `.gz` output name gives BGZF, which faidx
+can index:
+
+```bash
+fhr-fasta-strip genome.fhr.fa.gz genome.fa.gz   # BGZF output
+samtools faidx genome.fa.gz                      # verified: index and fetch work
+fhr-fasta-strip genome.fhr.fa genome.fa          # uncompressed
+fhr-fasta-strip genome.fhr.fa - | seqkit stats - # streaming
+```
+
+Without the converter, drop every line that starts with `;`. R10 allows FHR
+lines only before the first record, and samtools rejects any `;` line anyway:
+
+```bash
+sed '/^;/d' genome.fhr.fa > genome.fa
+zcat genome.fhr.fa.gz | sed '/^;/d' | bgzip > genome.fa.gz
+```
+
+Keep the FHR file as the archival copy; the stripped copy is derived. The FHR
+metadata can be kept beside it as JSON/YAML with `fhr-convert`.
+
+- **Biopython**: use `SeqIO.parse(path, "fasta-pearson")`.
+- **GFA**: no action needed. `fhr-gfa-strip` or `grep -v '^#~'` gives the
+  original bytes back.
+- **GFF3**: no action needed. To remove the header use `grep -v '^#~' x.gff3`
+  (verified byte-identical to the control). Re-run FHR combine on derived files
+  instead of keeping the copied header.
+- **tabix**: when sorting, keep all `#` lines on top:
+  `(grep '^#' x.gff3; grep -v '^#' x.gff3 | sort -k1,1 -k4,4n) | bgzip > x.gff3.gz`.
+
+To combine FASTA files, strip each FHR file first:
+
+```bash
+for f in *.fhr.fa; do fhr-fasta-strip "$f" -; done > combined.fa
+```
+
+Then add a new header to the result with `fhr-fasta-combine` if needed.
+
+Native support in htslib would remove most FASTA stripping. The draft proposal
+is [proposals/htslib-fasta-comments.md](proposals/htslib-fasta-comments.md).
+
+## Not tested
+
+- **Bandage**: GUI only.
+- **GATK**: large install; it uses htsjdk, as Picard does.
+- **pybedtools**: wraps bedtools.
+- **EMBOSS**: the bioconda package failed to extract.
+- **GFA2 and rGFA tags**: only GFA1 was tested.
+- **Protein FASTA and MAFFT/MUSCLE protein modes**: not needed for #40.
+- **GFF3 and GFA concatenation**: `#~` lines after features are ordinary
+  comments to these tools, so data cannot be corrupted. The result is still
+  invalid FHR.

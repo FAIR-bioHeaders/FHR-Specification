@@ -1,0 +1,7 @@
+--- concat.control.fa
++++ concat.mixed.fa
+@@ -1,3 +1,3 @@
+ [index] number of targets: 4
+-[index] number of k-mers: 9,880
++[index] number of k-mers: 11,367
+ [inspect] number of unitigs = 4

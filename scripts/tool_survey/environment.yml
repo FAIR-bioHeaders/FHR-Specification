@@ -1,0 +1,40 @@
+# Main survey environment (tested 2026-10-08, linux-64).
+# micromamba create -n survey -f environment.yml
+name: survey
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12.15
+  - samtools=1.24
+  - bcftools=1.24
+  - htslib=1.24
+  - pysam=0.24.0
+  - seqkit=2.14.0
+  - seqtk=1.5
+  - pyfaidx=0.9.0.4
+  - biopython=1.88
+  - pyfastx=2.3.1
+  - bioawk=1.0
+  - bwa=0.7.19
+  - minimap2=2.31
+  - bowtie2=2.5.5
+  - hisat2=2.2.3
+  - star=2.7.11b
+  - salmon=2.8.0
+  - kallisto=0.52.0
+  - blast=2.17.0
+  - bedtools=2.31.1
+  - picard=3.5.0
+  - mafft=7.526
+  - ucsc-fatotwobit=482
+  - ucsc-twobittofa=482
+  - ucsc-fasize=482
+  - gfatools=0.5.5
+  - gfapy=1.2.3
+  - agat=1.7.0
+  - gffread=0.12.9
+  - genometools-genometools=1.6.5
+  - gffutils=0.14
+  - htseq=2.1.2
+  - subread=2.1.1
