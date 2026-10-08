@@ -27,8 +27,7 @@ subset) with source database release and accession.
 
 ## Requirements *(mandatory)*
 
-- **FR-001**: FHP imports the core; subject slot `proteome` [NEEDS CLARIFICATION:
-  name — FHP "FAIR Header Proteome" vs "FHA" for amino acid sets].
+- **FR-001**: FHP imports the core; subject slot `proteome` (FHP is the working name; it may still be revisited (decided in #54)).
 - **FR-002**: Required beyond core: `sourceType` (predicted | curated | mixed).
 - **FR-003**: Optional: `derivedFrom` (genome and annotation checksums),
   `geneticCode` (NCBI translation table ID), `isoformPolicy` (all | longest |

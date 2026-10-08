@@ -31,7 +31,7 @@ annotation it came from (`derivedFrom`, 004).
 - **FR-001**: FHT imports the core; subject slot `transcriptome`.
 - **FR-002**: Required beyond core: `assemblyType` (de novo | genome-guided |
   annotation-derived) and `moleculeType` (mRNA | total RNA | cDNA | ncRNA)
-  [NEEDS CLARIFICATION: which are required vs optional after curator consultation].
+  (starting point, to be confirmed by curator consultation (decided in #54)).
 - **FR-003**: Optional: `assemblySoftware` (structured, as FHR v0.3), `sample`
   (tissue/UBERON, developmental stage, condition, strain), `libraryStrategy`,
   `strandedness`, `sequencingRuns` (accessions, e.g. SRA), `vitalStats`

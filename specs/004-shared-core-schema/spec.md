@@ -36,11 +36,10 @@ A GFF3 header records the genome it annotates by checksum and SeqCol ID.
 - **FR-003**: A `derivedFrom` list of objects: `headerType` (FHR|FHT|FHP|FHGFF3),
   `checksum` (FHR-family checksum), `seqcol_id` (optional), `accessionID`
   (optional), `relationship` (e.g. `annotates`, `transcribedFrom`,
-  `translatedFrom`, `filteredFrom`) [NEEDS CLARIFICATION: controlled vocabulary,
-  or map relationships to PROV-O / RO terms?].
+  `translatedFrom`, `filteredFrom`) Keep these readable terms, each formally mapped to a PROV-O or Relation Ontology term (decided in #54).
 - **FR-004**: Type discrimination: each instance's `schema` URL identifies the type
   and version; schemas are published at versioned, persistent URLs
-  [NEEDS CLARIFICATION: w3id.org/fair-bioheaders/... or GitHub release URLs].
+  via w3id.org (#44) (decided in #54).
 - **FR-005**: FHR's existing JSON Schema MUST stay the published contract until
   the generated one is proven validation-equivalent; no FHR instance changes
   validity.

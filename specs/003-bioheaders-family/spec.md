@@ -23,9 +23,7 @@ close to data, many implementations, FAIR and TRUST).
 | FHGFF3 | GFF3 genome annotation | none (features; optional `##FASTA`) | LinkML GFF3 fork with validator prototype |
 
 Child specs: 004 shared core, 005 RNA/transcriptome, 006 protein, 007 GFF3,
-008 multi-format tools and libraries. [NEEDS CLARIFICATION: "DNA" beyond reference
-genomes — do non-genome nucleotide sets (marker panels, plasmids, contig sets)
-use FHR with a relaxed profile, or need their own header?]
+008 multi-format tools and libraries, 009 one-stop GFF3 validator. Non-genome nucleotide sets (marker panels, plasmids, contig sets) use FHR with a relaxed community profile (decided in #54). 009 specifies the GFF3 validator.
 
 ## Principles carried over from FHR (non-negotiable)
 
@@ -91,11 +89,7 @@ generated from the LinkML schemas, checked against the conformance vectors.
   Zenodo-archived release, following the FHR release process.
 - **FR-004**: Existing FHR metadata MUST remain valid (FHR schemaVersion 1 stays
   compatible; the core refactor is not a breaking change for FHR users).
-- **FR-005**: Repository layout [NEEDS CLARIFICATION: keep one repo per type
-  (FHT-Specification, FHGFF3, new FHP-Specification) importing a core repo, or a
-  single FAIR-bioHeaders specification monorepo with per-type directories?
-  Recommendation: monorepo for schemas and conformance vectors, one converter
-  package, because the core, parsing rules and vectors are shared].
+- **FR-005**: Repository layout: a single specification monorepo (FHR-Specification) with a directory per header type; the core, parsing rules, conformance tooling and CI are shared; releases are tagged per type (decided in #54).
 
 ## Success Criteria *(mandatory)*
 
