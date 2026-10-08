@@ -91,7 +91,7 @@ drift; other JSON changes require an explicit update and maintainer review.
 
 See [CONTRIBUTING](CONTRIBUTING.md), [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md),
 [SECURITY](SECURITY.md), and [AGENTS](AGENTS.md). David and Adam retain schema
-authority; [GOVERNANCE](GOVERNANCE.md) is a successor proposal awaiting adoption.
+authority; [GOVERNANCE](GOVERNANCE.md) describes the current two-maintainer model and a future steering-group option that is not active.
 The [schema diagram](Diagram.svg) is generated with
 `python scripts/render_diagram.py` and summarizes required and optional fields.
 [Release notes](CHANGELOG.md) document compatibility and deferred work.
