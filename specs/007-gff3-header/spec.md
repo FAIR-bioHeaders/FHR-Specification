@@ -31,22 +31,20 @@ comments), or the strip command restores a plain file.
 - **FR-001**: Placement: the first line stays `##gff-version 3` (required by the
   GFF3 spec); `#~` header lines follow it and form the leading header block,
   which ends at the first feature line, `##FASTA` or other non-comment directive
-  [NEEDS CLARIFICATION: may `##sequence-region` and other `##` directives appear
-  before or among `#~` lines?].
+  `##sequence-region` and other `##` directives may appear among the `#~` lines (decided in #54); the tool survey (#58) found no tool affected.
 - **FR-002**: Checksum: R1–R4 over the whole file including any `##FASTA` section;
   `#~` is the prefix, as for GFA. Note `###` (forward-reference resolution) is
   unaffected.
 - **FR-003**: FHGFF3 imports the core; subject slot `annotation`. Required beyond
   core: `derivedFrom` with relationship `annotates` (genome checksum; SeqCol ID
-  recommended) [NEEDS CLARIFICATION: require the genome link, or allow annotation
-  of unpublished assemblies with accession only?].
+  recommended). Either the genome's FHR checksum, or its accession plus SeqCol ID, is required, so annotations of genomes without an FHR header can still be described (decided in #54).
 - **FR-004**: Optional: `annotationSoftware` (structured), `evidence` (RNA-seq
   runs, protein sets, by accession or FHR-family checksum), `soVersion`
   (Sequence Ontology release), `annotationAuthority`, `vitalStats` (gene,
   transcript, CDS counts), `completeness` (BUSCO).
 - **FR-005**: Relationship to the LinkML GFF3 data model: the header schema is
   separate from the feature data model; the existing validator prototype is
-  evaluated for reuse in feature validation [NEEDS CLARIFICATION: in scope now?].
+  GFF3 feature validation is in scope as a one-stop validator built with the Sequence Ontology group, specified separately in 009 (decided in #54).
 - **FR-006**: Survey GFF3 tools for handling of `#~` lines and `##gff-version`
   ordering (see also spec#40 for FASTA tools).
 

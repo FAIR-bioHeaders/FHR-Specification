@@ -35,9 +35,7 @@ Generated R/JS/Java/Julia libraries read headers and pass the vectors.
 
 - **FR-001**: The converter's streaming core is generalised by container
   (FASTA `;~`, GFA/GFF3 `#~`) and schema type; existing `fhr-*` commands keep
-  working unchanged [NEEDS CLARIFICATION: one package with a type registry and
-  new entry points (`fht-*`, `fhp-*`, `fhgff3-*` or a single `bioheader` command),
-  or separate packages sharing a core library? Recommendation: one package].
+  working unchanged One package (`fhr`) with commands for every type; a rename may come later (decided in #54).
 - **FR-002**: Type detection from the `schema` URL; explicit `--type` override.
 - **FR-003**: `verify-links` checks `derivedFrom` checksums against supplied files.
 - **FR-004**: Profiles: LinkML profile schemas layered on a type; `--profile`.
