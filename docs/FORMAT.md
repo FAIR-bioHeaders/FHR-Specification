@@ -30,7 +30,9 @@ in a 44-character base64 representation; older README examples and converter
 helpers used MD5 and described different coverage. v0.3 explicitly adopts:
 
 1. Read the FASTA/GFA as bytes; do not normalize line endings, encoding, comments,
-   sequence wrapping, ordering, or whitespace.
+   sequence wrapping, ordering, or whitespace. For a gzip- or bgzip-compressed
+   file, these are the decompressed bytes: compression is transport, so the same
+   content has the same checksum whatever tool or level compressed it.
 2. Require exactly one root-level header line matching `;~checksum:` (FASTA) or
    `#~checksum:` (GFA), with an unquoted key. Spaces or tabs may appear before
    the key only to match the root indentation of the other header lines, and
