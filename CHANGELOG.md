@@ -11,8 +11,12 @@
 - Adopt exact-byte SHA-512/256 coverage of metadata and sequence, except the checksum
   line; old MD5/payload-only examples must be regenerated, not relabeled.
 - Add CI, explicit schema drift protection, a generated diagram, project guidance,
-  and a successor governance proposal. Reporting contacts/adoption remain review gates.
+  and a successor governance proposal. Private conduct/security reporting contacts
+  and conflict/appeal routing are documented in CODE_OF_CONDUCT and SECURITY.
 - Use verified Chicago bibliography citations with concept DOI links.
 
-Nextflow modules remain a separate future repository. The governance plan is a
-proposal, and the release has not been published.
+Published 2026-10-07 as v0.3.0 (version DOI
+[10.5281/zenodo.23224136](https://doi.org/10.5281/zenodo.23224136)). Reusable
+Nextflow modules are developed in the separate FHR-Nextflow repository (0.1.0-dev,
+not yet released). The governance plan remains a proposal. Reporting-contact
+updates on main after the tag are not included in the v0.3.0 archive.

@@ -102,8 +102,7 @@ Chicago bibliography entries are used below. Cite the published paper for a
 general description of FHR; cite the specification or converter when using that
 resource directly. The software and specification links are concept DOIs; for a
 specific release, use the corresponding version DOI from Zenodo. Authors and
-years follow the records resolved by the concept DOIs at the v0.3 documentation
-update, and can change as later records are published.
+years follow the v0.3.0 records resolved by the concept DOIs, and can change as later records are published.
 
 ### Published paper
 
@@ -111,11 +110,11 @@ Wright, Adam, Mark D. Wilkinson, Christopher Mungall, Scott Cain, Stephen Richar
 
 ### Specification
 
-Molik, David. *FHR Specification*. Data set. 2022. https://doi.org/10.5281/zenodo.6762549.
+Molik, David, and Adam Wright. *FHR Specification*. Data set. 2026. https://doi.org/10.5281/zenodo.6762549.
 
 ### Converter
 
-Molik, David, and Adam Wright. *FHR File Converter*. Computer software. 2024. https://doi.org/10.5281/zenodo.6762547.
+Molik, David, and Adam Wright. *FHR File Converter*. Computer software. 2026. https://doi.org/10.5281/zenodo.6762547.
 
 Machine-readable entries are maintained in
 [FHR-Citation](https://github.com/FAIR-bioHeaders/FHR-Citation/blob/main/citation.bib).
