@@ -1,0 +1,1166 @@
+{
+  "manifestVersion": 1,
+  "specification": "docs/FORMAT.md",
+  "checksumDefinition": "base64(SHA-512/256) over the (decompressed) file bytes except the root-level checksum line and its terminator",
+  "rules": {
+    "R1": {
+      "summary": "Checksum rule 1: hash the exact file bytes without normalization; for gzip/BGZF input, the decompressed bytes."
+    },
+    "R2": {
+      "summary": "Checksum rule 2: exactly one root-level checksum line with an unquoted key; spaces only to match root indentation and before the colon; nested checksum properties stay covered."
+    },
+    "R3": {
+      "summary": "Checksum rule 3: exclude that entire line and its terminator; hash every other byte, so changing covered bytes invalidates the checksum."
+    },
+    "R4": {
+      "summary": "Checksum rule 4: SHA-512/256 digest in standard padded base64, no prefix."
+    },
+    "R5": {
+      "summary": "Header parsing: the checksum value is a single-line YAML scalar on the checksum line; block scalars and continuation lines are invalid."
+    },
+    "R6": {
+      "summary": "Header parsing: FHR header lines are UTF-8 without U+0085, U+2028 or U+2029; bytes outside header lines are not decoded."
+    },
+    "R7": {
+      "summary": "Header parsing: a FASTA/GFA file must not begin with a UTF-8 byte order mark."
+    },
+    "R8": {
+      "summary": "Header parsing: no duplicate mapping keys, YAML anchors, aliases or merge keys."
+    },
+    "R9": {
+      "summary": "Header parsing: microdata repeated attributes and token lists (not applicable to FASTA/GFA vectors).",
+      "notApplicable": "Microdata (HTML) rule; these vectors are FASTA and GFA only."
+    },
+    "R10": {
+      "summary": "Header parsing: FHR lines form the leading header block; a later FHR line, including one from a concatenated file, is invalid."
+    }
+  },
+  "vectors": [
+    {
+      "id": "fasta-lf",
+      "file": "valid/fasta-lf.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R7",
+        "R10"
+      ],
+      "description": "LF line endings; the checksum line is the last FHR line.",
+      "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-crlf",
+      "file": "valid/fasta-crlf.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R3"
+      ],
+      "description": "CRLF line endings; CR bytes are hashed.",
+      "checksum": "Fqk2lrfbdvKOK9yO1tjn8+Ym5I0qcA8L5Ls6ITJBuzU=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-cr",
+      "file": "valid/fasta-cr.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R3"
+      ],
+      "description": "Lone CR line endings.",
+      "checksum": "wna5QGolqnrKDm9VC4p4Cj/mAXt9TeTNhxqfHOL/+gw=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-mixed-endings",
+      "file": "valid/fasta-mixed-endings.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R3"
+      ],
+      "description": "LF, CRLF and CR line endings mixed in one file.",
+      "checksum": "/CZMyPA0UlnIGYIbGwLKI8l0sVju7UcjilaNJbQ4xYA=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-no-final-newline",
+      "file": "valid/fasta-no-final-newline.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R3"
+      ],
+      "description": "The last sequence line has no terminator.",
+      "checksum": "0z6WgY2wc3TQBI6aP+hrsqiTSiGCekvlGK+CqDYETMg=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-comments-and-blank-lines",
+      "file": "valid/fasta-comments-and-blank-lines.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R3",
+        "R10"
+      ],
+      "description": "Ordinary comments, blank lines and a YAML comment before and between FHR lines; all of them are hashed.",
+      "checksum": "1ElMN+aykZKFrsKpbYQParkkjXvD1sksN0Wi07SfnWc=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-root-indented",
+      "file": "valid/fasta-root-indented.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R2"
+      ],
+      "description": "Every FHR line, including the checksum line, has root indentation 1.",
+      "checksum": "kTBfeRHe45PhhNw45Vz7YJx/ko1juquIaT9kszZjgpE=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-space-before-colon",
+      "file": "valid/fasta-space-before-colon.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R2"
+      ],
+      "description": "Spaces before the colon.",
+      "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-nested-checksum",
+      "file": "valid/fasta-nested-checksum.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R2",
+        "R3"
+      ],
+      "description": "A nested taxon.checksum property is ordinary covered metadata.",
+      "checksum": "LDnzswnZNe5GgEl5Xa1Sb8V4HAQZitxCy6Ao2jmb4o0=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-quoted-value",
+      "file": "valid/fasta-quoted-value.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R2",
+        "R5"
+      ],
+      "description": "The checksum value is a quoted single-line scalar; the key is unquoted.",
+      "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-checksum-trailing-spaces",
+      "file": "valid/fasta-checksum-trailing-spaces.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R3",
+        "R5"
+      ],
+      "description": "Trailing spaces on the checksum line are excluded with it.",
+      "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-checksum-first",
+      "file": "valid/fasta-checksum-first.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R2",
+        "R3"
+      ],
+      "description": "The checksum line is the first line of the file.",
+      "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-non-utf8-outside-header",
+      "file": "valid/fasta-non-utf8-outside-header.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R6"
+      ],
+      "description": "Non-UTF-8 bytes in an ordinary comment and a sequence line are hashed, not decoded.",
+      "checksum": "237xouXpgjwjI0CDQ1YA25XLsxisycjQXxHwXUAAA48=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-utf8-metadata",
+      "file": "valid/fasta-utf8-metadata.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R6"
+      ],
+      "description": "Non-ASCII UTF-8 text in a header value.",
+      "checksum": "2YeSn8N3SfAfjBh5BubcPAGOnTLpj+dN3arAA2O8W30=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-yaml-indicators-in-strings",
+      "file": "valid/fasta-yaml-indicators-in-strings.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R8"
+      ],
+      "description": "Anchor, alias and merge-key characters inside a quoted string are text.",
+      "checksum": "dQNY+bPIXHQ1QbdPaiSWUlngigjf73Rm/KnNTK9QD/c=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-lf",
+      "file": "valid/gfa-lf.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R7",
+        "R10"
+      ],
+      "description": "LF line endings; the checksum line is the last FHR line.",
+      "checksum": "MFWCpXtMevl2ovTZL3v5xTeNrsidQGe2YFey0h6udf8=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-crlf",
+      "file": "valid/gfa-crlf.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R3"
+      ],
+      "description": "CRLF line endings; CR bytes are hashed.",
+      "checksum": "8DQXwjAp5k73+eLC1D/UioCZCqd0Et9iReY8qJ7wMRY=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-cr",
+      "file": "valid/gfa-cr.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R3"
+      ],
+      "description": "Lone CR line endings.",
+      "checksum": "vSWECqBpqBrKGUyPXubcBb7rKfXAU+3AeS20YqNDi3c=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-mixed-endings",
+      "file": "valid/gfa-mixed-endings.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R3"
+      ],
+      "description": "LF, CRLF and CR line endings mixed in one file.",
+      "checksum": "t2LufpnQSHw7F4QzfctAxLLUu9G6L6gD4IWuvIcndSA=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-no-final-newline",
+      "file": "valid/gfa-no-final-newline.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R3"
+      ],
+      "description": "The last sequence line has no terminator.",
+      "checksum": "S3tpEue7WtRXpy/A8hz7XJN5on9KVYNr7o1gP7Um2rs=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-comments-and-blank-lines",
+      "file": "valid/gfa-comments-and-blank-lines.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R3",
+        "R10"
+      ],
+      "description": "Ordinary comments, blank lines and a YAML comment before and between FHR lines; all of them are hashed.",
+      "checksum": "Wl6zksyEAgrJBIUBH+1uDDJ7ip+JHxKhNRydBPiUjTA=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-root-indented",
+      "file": "valid/gfa-root-indented.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R2"
+      ],
+      "description": "Every FHR line, including the checksum line, has root indentation 1.",
+      "checksum": "kvV1sC7FRCUHgdAL7goamqhdEvbgYF5ng/CqwVCInGw=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-space-before-colon",
+      "file": "valid/gfa-space-before-colon.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R2"
+      ],
+      "description": "Spaces before the colon.",
+      "checksum": "MFWCpXtMevl2ovTZL3v5xTeNrsidQGe2YFey0h6udf8=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-nested-checksum",
+      "file": "valid/gfa-nested-checksum.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R2",
+        "R3"
+      ],
+      "description": "A nested taxon.checksum property is ordinary covered metadata.",
+      "checksum": "fEFkbLMoAOvFzIwG1QXXN12YY1+Esk2HdUIb/NQ3jA4=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-quoted-value",
+      "file": "valid/gfa-quoted-value.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R2",
+        "R5"
+      ],
+      "description": "The checksum value is a quoted single-line scalar; the key is unquoted.",
+      "checksum": "MFWCpXtMevl2ovTZL3v5xTeNrsidQGe2YFey0h6udf8=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-checksum-trailing-spaces",
+      "file": "valid/gfa-checksum-trailing-spaces.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R3",
+        "R5"
+      ],
+      "description": "Trailing spaces on the checksum line are excluded with it.",
+      "checksum": "MFWCpXtMevl2ovTZL3v5xTeNrsidQGe2YFey0h6udf8=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-checksum-first",
+      "file": "valid/gfa-checksum-first.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R2",
+        "R3"
+      ],
+      "description": "The checksum line is the first line of the file.",
+      "checksum": "MFWCpXtMevl2ovTZL3v5xTeNrsidQGe2YFey0h6udf8=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-non-utf8-outside-header",
+      "file": "valid/gfa-non-utf8-outside-header.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R1",
+        "R6"
+      ],
+      "description": "Non-UTF-8 bytes in an ordinary comment and a sequence line are hashed, not decoded.",
+      "checksum": "+6bZkJDd/Ofjm4Pb4KRcGHYgxEN3/qyx+Q7BBVbmweM=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-utf8-metadata",
+      "file": "valid/gfa-utf8-metadata.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R6"
+      ],
+      "description": "Non-ASCII UTF-8 text in a header value.",
+      "checksum": "6DZbGvXb+CHtRcoJeBcd9rWo1Yy2HRq7RQaXtBQFVCg=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-yaml-indicators-in-strings",
+      "file": "valid/gfa-yaml-indicators-in-strings.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R8"
+      ],
+      "description": "Anchor, alias and merge-key characters inside a quoted string are text.",
+      "checksum": "9EHe6EVoO5bu0LXMAaUK+26l1McrbJXC9e4THeM7Gk8=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-gzip",
+      "file": "valid/fasta-gzip.fhr.fasta.gz",
+      "format": "fasta",
+      "compressed": true,
+      "compression": "gzip",
+      "expected": "valid",
+      "rules": [
+        "R1"
+      ],
+      "description": "fasta-lf compressed as one gzip member; same checksum.",
+      "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-bgzf",
+      "file": "valid/fasta-bgzf.fhr.fasta.gz",
+      "format": "fasta",
+      "compressed": true,
+      "compression": "bgzf",
+      "expected": "valid",
+      "rules": [
+        "R1"
+      ],
+      "description": "fasta-lf compressed as multi-block BGZF; same checksum.",
+      "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-gzip-multimember",
+      "file": "valid/fasta-gzip-multimember.fhr.fasta.gz",
+      "format": "fasta",
+      "compressed": true,
+      "compression": "gzip",
+      "expected": "valid",
+      "rules": [
+        "R1"
+      ],
+      "description": "fasta-lf as two gzip members split inside the checksum line; same checksum.",
+      "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-gzip",
+      "file": "valid/gfa-gzip.fhr.gfa.gz",
+      "format": "gfa",
+      "compressed": true,
+      "compression": "gzip",
+      "expected": "valid",
+      "rules": [
+        "R1"
+      ],
+      "description": "gfa-lf compressed as one gzip member; same checksum.",
+      "checksum": "MFWCpXtMevl2ovTZL3v5xTeNrsidQGe2YFey0h6udf8=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-bgzf",
+      "file": "valid/gfa-bgzf.fhr.gfa.gz",
+      "format": "gfa",
+      "compressed": true,
+      "compression": "bgzf",
+      "expected": "valid",
+      "rules": [
+        "R1"
+      ],
+      "description": "gfa-lf compressed as multi-block BGZF; same checksum.",
+      "checksum": "MFWCpXtMevl2ovTZL3v5xTeNrsidQGe2YFey0h6udf8=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "gfa-gzip-multimember",
+      "file": "valid/gfa-gzip-multimember.fhr.gfa.gz",
+      "format": "gfa",
+      "compressed": true,
+      "compression": "gzip",
+      "expected": "valid",
+      "rules": [
+        "R1"
+      ],
+      "description": "gfa-lf as two gzip members split inside the checksum line; same checksum.",
+      "checksum": "MFWCpXtMevl2ovTZL3v5xTeNrsidQGe2YFey0h6udf8=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked"
+      }
+    },
+    {
+      "id": "fasta-crlf-normalized-checksum",
+      "file": "invalid/fasta-crlf-normalized-checksum.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R1",
+      "reason": "CRLF file whose checksum was computed after converting line endings to LF."
+    },
+    {
+      "id": "fasta-missing-checksum",
+      "file": "invalid/fasta-missing-checksum.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R2",
+      "reason": "No checksum line."
+    },
+    {
+      "id": "fasta-two-checksum-lines",
+      "file": "invalid/fasta-two-checksum-lines.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R2",
+      "reason": "Two root-level checksum lines with the same value."
+    },
+    {
+      "id": "fasta-quoted-key",
+      "file": "invalid/fasta-quoted-key.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R2",
+      "reason": "The checksum key is quoted."
+    },
+    {
+      "id": "fasta-only-nested-checksum",
+      "file": "invalid/fasta-only-nested-checksum.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R2",
+      "reason": "Only a nested taxon.checksum holds the digest; there is no root checksum line."
+    },
+    {
+      "id": "fasta-metadata-tampered",
+      "file": "invalid/fasta-metadata-tampered.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R3",
+      "reason": "Metadata changed after the checksum was computed (checksum mismatch)."
+    },
+    {
+      "id": "fasta-sequence-tampered",
+      "file": "invalid/fasta-sequence-tampered.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R3",
+      "reason": "Sequence changed after the checksum was computed (checksum mismatch)."
+    },
+    {
+      "id": "fasta-checksum-terminator-hashed",
+      "file": "invalid/fasta-checksum-terminator-hashed.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R3",
+      "reason": "Checksum computed with the checksum line's terminator still included."
+    },
+    {
+      "id": "fasta-comment-tampered",
+      "file": "invalid/fasta-comment-tampered.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R3",
+      "reason": "An ordinary comment changed after the checksum was computed; comments are covered."
+    },
+    {
+      "id": "fasta-truncated-sha512",
+      "file": "invalid/fasta-truncated-sha512.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R4",
+      "reason": "SHA-512 truncated to 32 bytes instead of SHA-512/256."
+    },
+    {
+      "id": "fasta-sha256",
+      "file": "invalid/fasta-sha256.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R4",
+      "reason": "SHA-256 instead of SHA-512/256."
+    },
+    {
+      "id": "fasta-block-literal-checksum",
+      "file": "invalid/fasta-block-literal-checksum.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R5",
+      "reason": "The checksum value is a literal block scalar on the next line."
+    },
+    {
+      "id": "fasta-folded-checksum",
+      "file": "invalid/fasta-folded-checksum.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R5",
+      "reason": "The checksum value is a folded block scalar on the next line."
+    },
+    {
+      "id": "fasta-continued-checksum",
+      "file": "invalid/fasta-continued-checksum.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R5",
+      "reason": "The plain checksum value continues on a second FHR line."
+    },
+    {
+      "id": "fasta-quoted-continued-checksum",
+      "file": "invalid/fasta-quoted-continued-checksum.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R5",
+      "reason": "A double-quoted checksum value continues on a second FHR line."
+    },
+    {
+      "id": "fasta-u0085-in-header",
+      "file": "invalid/fasta-u0085-in-header.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R6",
+      "reason": "An FHR header line contains U+0085, a YAML line break."
+    },
+    {
+      "id": "fasta-u2028-in-header",
+      "file": "invalid/fasta-u2028-in-header.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R6",
+      "reason": "An FHR header line contains U+2028, a YAML line break."
+    },
+    {
+      "id": "fasta-u2029-in-header",
+      "file": "invalid/fasta-u2029-in-header.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R6",
+      "reason": "An FHR header line contains U+2029, a YAML line break."
+    },
+    {
+      "id": "fasta-non-utf8-header",
+      "file": "invalid/fasta-non-utf8-header.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R6",
+      "reason": "An FHR header line is not valid UTF-8."
+    },
+    {
+      "id": "fasta-utf8-bom",
+      "file": "invalid/fasta-utf8-bom.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R7",
+      "reason": "The file begins with a UTF-8 byte order mark."
+    },
+    {
+      "id": "fasta-duplicate-key",
+      "file": "invalid/fasta-duplicate-key.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R8",
+      "reason": "The root key genome appears twice."
+    },
+    {
+      "id": "fasta-yaml-anchor",
+      "file": "invalid/fasta-yaml-anchor.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R8",
+      "reason": "A YAML anchor on the genome value."
+    },
+    {
+      "id": "fasta-yaml-alias",
+      "file": "invalid/fasta-yaml-alias.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R8",
+      "reason": "A YAML alias repeats the anchored genome value."
+    },
+    {
+      "id": "fasta-yaml-merge-key",
+      "file": "invalid/fasta-yaml-merge-key.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R8",
+      "reason": "taxon uses a YAML merge key."
+    },
+    {
+      "id": "fasta-fhr-line-after-sequence",
+      "file": "invalid/fasta-fhr-line-after-sequence.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R10",
+      "reason": "An FHR line follows the first record; it is hashed, not ignored or merged."
+    },
+    {
+      "id": "fasta-concatenated",
+      "file": "invalid/fasta-concatenated.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R10",
+      "reason": "Two complete FHR files concatenated; each part has a correct checksum."
+    },
+    {
+      "id": "gfa-crlf-normalized-checksum",
+      "file": "invalid/gfa-crlf-normalized-checksum.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R1",
+      "reason": "CRLF file whose checksum was computed after converting line endings to LF."
+    },
+    {
+      "id": "gfa-missing-checksum",
+      "file": "invalid/gfa-missing-checksum.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R2",
+      "reason": "No checksum line."
+    },
+    {
+      "id": "gfa-two-checksum-lines",
+      "file": "invalid/gfa-two-checksum-lines.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R2",
+      "reason": "Two root-level checksum lines with the same value."
+    },
+    {
+      "id": "gfa-quoted-key",
+      "file": "invalid/gfa-quoted-key.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R2",
+      "reason": "The checksum key is quoted."
+    },
+    {
+      "id": "gfa-only-nested-checksum",
+      "file": "invalid/gfa-only-nested-checksum.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R2",
+      "reason": "Only a nested taxon.checksum holds the digest; there is no root checksum line."
+    },
+    {
+      "id": "gfa-metadata-tampered",
+      "file": "invalid/gfa-metadata-tampered.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R3",
+      "reason": "Metadata changed after the checksum was computed (checksum mismatch)."
+    },
+    {
+      "id": "gfa-sequence-tampered",
+      "file": "invalid/gfa-sequence-tampered.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R3",
+      "reason": "Sequence changed after the checksum was computed (checksum mismatch)."
+    },
+    {
+      "id": "gfa-checksum-terminator-hashed",
+      "file": "invalid/gfa-checksum-terminator-hashed.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R3",
+      "reason": "Checksum computed with the checksum line's terminator still included."
+    },
+    {
+      "id": "gfa-comment-tampered",
+      "file": "invalid/gfa-comment-tampered.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R3",
+      "reason": "An ordinary comment changed after the checksum was computed; comments are covered."
+    },
+    {
+      "id": "gfa-truncated-sha512",
+      "file": "invalid/gfa-truncated-sha512.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R4",
+      "reason": "SHA-512 truncated to 32 bytes instead of SHA-512/256."
+    },
+    {
+      "id": "gfa-sha256",
+      "file": "invalid/gfa-sha256.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R4",
+      "reason": "SHA-256 instead of SHA-512/256."
+    },
+    {
+      "id": "gfa-block-literal-checksum",
+      "file": "invalid/gfa-block-literal-checksum.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R5",
+      "reason": "The checksum value is a literal block scalar on the next line."
+    },
+    {
+      "id": "gfa-folded-checksum",
+      "file": "invalid/gfa-folded-checksum.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R5",
+      "reason": "The checksum value is a folded block scalar on the next line."
+    },
+    {
+      "id": "gfa-continued-checksum",
+      "file": "invalid/gfa-continued-checksum.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R5",
+      "reason": "The plain checksum value continues on a second FHR line."
+    },
+    {
+      "id": "gfa-quoted-continued-checksum",
+      "file": "invalid/gfa-quoted-continued-checksum.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R5",
+      "reason": "A double-quoted checksum value continues on a second FHR line."
+    },
+    {
+      "id": "gfa-u0085-in-header",
+      "file": "invalid/gfa-u0085-in-header.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R6",
+      "reason": "An FHR header line contains U+0085, a YAML line break."
+    },
+    {
+      "id": "gfa-u2028-in-header",
+      "file": "invalid/gfa-u2028-in-header.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R6",
+      "reason": "An FHR header line contains U+2028, a YAML line break."
+    },
+    {
+      "id": "gfa-u2029-in-header",
+      "file": "invalid/gfa-u2029-in-header.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R6",
+      "reason": "An FHR header line contains U+2029, a YAML line break."
+    },
+    {
+      "id": "gfa-non-utf8-header",
+      "file": "invalid/gfa-non-utf8-header.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R6",
+      "reason": "An FHR header line is not valid UTF-8."
+    },
+    {
+      "id": "gfa-utf8-bom",
+      "file": "invalid/gfa-utf8-bom.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R7",
+      "reason": "The file begins with a UTF-8 byte order mark."
+    },
+    {
+      "id": "gfa-duplicate-key",
+      "file": "invalid/gfa-duplicate-key.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R8",
+      "reason": "The root key genome appears twice."
+    },
+    {
+      "id": "gfa-yaml-anchor",
+      "file": "invalid/gfa-yaml-anchor.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R8",
+      "reason": "A YAML anchor on the genome value."
+    },
+    {
+      "id": "gfa-yaml-alias",
+      "file": "invalid/gfa-yaml-alias.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R8",
+      "reason": "A YAML alias repeats the anchored genome value."
+    },
+    {
+      "id": "gfa-yaml-merge-key",
+      "file": "invalid/gfa-yaml-merge-key.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R8",
+      "reason": "taxon uses a YAML merge key."
+    },
+    {
+      "id": "gfa-fhr-line-after-sequence",
+      "file": "invalid/gfa-fhr-line-after-sequence.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R10",
+      "reason": "An FHR line follows the first record; it is hashed, not ignored or merged."
+    },
+    {
+      "id": "gfa-concatenated",
+      "file": "invalid/gfa-concatenated.fhr.gfa",
+      "format": "gfa",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R10",
+      "reason": "Two complete FHR files concatenated; each part has a correct checksum."
+    },
+    {
+      "id": "fasta-gzip-sequence-tampered",
+      "file": "invalid/fasta-gzip-sequence-tampered.fhr.fasta.gz",
+      "format": "fasta",
+      "compressed": true,
+      "compression": "gzip",
+      "expected": "invalid",
+      "rule": "R3",
+      "reason": "Compressed copy of a sequence-tampered file (checksum mismatch)."
+    }
+  ]
+}

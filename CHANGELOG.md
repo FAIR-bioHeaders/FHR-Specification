@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+- Add FASTA/GFA conformance vectors for header parsing and checksum coverage
+  (#34). `conformance/manifest.json` lists the expected outcome for each vector.
+  `scripts/make_conformance.py` generates the vectors and computes their
+  checksums with the standard library only. `scripts/check_conformance.py`
+  checks that the vectors are current, recomputes the checksums, and optionally
+  runs the converter over the vectors. CI runs these checks with converter 0.3.3
+  from PyPI.
+- Label the docs/FORMAT.md checksum and header parsing rules R1 to R10. The labels
+  are non-normative and the rule text is unchanged.
+- Mark the conformance files `-text` in `.gitattributes` so git never converts
+  their line endings.
+
 ## v0.3.1 — 2026-10-08 (documentation patch)
 
 - docs/FORMAT.md specifies how FHR header lines are parsed: a single-line checksum

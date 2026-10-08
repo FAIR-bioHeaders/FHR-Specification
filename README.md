@@ -46,6 +46,10 @@ the scalar FHR checksum line (including that line's newline). Metadata, ordinary
 comments, and sequence bytes all contribute. [Checksum and migration details](docs/FORMAT.md)
 explain the change from the old MD5/payload-only documentation.
 
+[Conformance vectors](conformance/README.md) give valid and invalid FASTA/GFA
+files, with expected checksums, for the header parsing and checksum rules. Use
+them to test other FHR implementations.
+
 JSON/YAML/HTML examples contain synthetic checksum and SeqCol placeholders.
 The FASTA/GFA examples have verified FHR file checksums but retain a synthetic
 SeqCol placeholder; it must not be used as the sequence collection's identity.
@@ -64,6 +68,7 @@ python scripts/validate_examples.py
 python scripts/check_linkml.py
 python scripts/check_schema_drift.py
 python scripts/check_release.py --converter ../FHR-File-Converter
+python scripts/check_conformance.py --converter ../FHR-File-Converter
 python json-schema-generator.py --output /tmp/fhr_linkml.json
 python scripts/project_mixs.py examples/example.fhr.json
 ```
