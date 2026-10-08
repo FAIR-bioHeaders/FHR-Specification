@@ -1,8 +1,18 @@
-# Proposed successor governance
+# Governance
 
-Status: proposal for review, not adopted. David Molik and Adam Wright retain full
-schema/release authority until they explicitly record adoption and complete the
-handover below. v0.3 implementation proceeds under that current authority.
+## Current governance
+
+FHR is maintained by David Molik and Adam Wright, who jointly hold authority over
+the schema, the specification, the companion tools and releases. Changes are
+proposed and discussed in public issues and pull requests, and decisions are
+recorded there. Conduct and security reports follow CODE_OF_CONDUCT.md and
+SECURITY.md, including the routing used when a report involves a maintainer.
+
+No steering group exists and none is being formed at present. The model below is
+documented for a future transition if the project grows; it has no effect until
+David and Adam explicitly adopt it and complete its transition checklist.
+
+# Future option: steering group (not active)
 
 ## Goals and options
 
@@ -62,4 +72,4 @@ code of conduct and its documented private reporting and appeal routing.
 - [ ] Record a first meeting and establish the public decision log.
 - [ ] Update CONTRIBUTING and this status banner to distinguish effective rules from drafts.
 
-Preparing this proposal does not appoint members or transfer authority.
+Documenting this option does not appoint members or transfer authority.

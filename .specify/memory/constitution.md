@@ -2,8 +2,7 @@
 
 > **Status: draft.** Proposed for Spec Kit planning gates. It restates existing
 > AGENTS.md, CONTRIBUTING.md, and docs/FORMAT.md practice and adds no authority.
-> David and Adam must approve it before it is treated as ratified; it does not adopt
-> the GOVERNANCE.md successor proposal.
+> David and Adam must approve it before it is treated as ratified.
 
 ## Core Principles
 
@@ -62,8 +61,8 @@ fixtures, and docs in coordinated, cross-linked PRs.
 
 ## Decision boundaries
 
-David and Adam hold schema authority until a governance model is explicitly
-adopted. Publishing releases, archiving DOIs, adopting governance, and confirming
+David and Adam are the maintainers and jointly hold schema authority
+(GOVERNANCE.md). Publishing releases, archiving DOIs, changing governance, and confirming
 reporting contacts are separate maintainer actions; a spec, plan, or task list
 never authorizes them. Security-relevant findings follow SECURITY.md before any
 public issue or PR.
