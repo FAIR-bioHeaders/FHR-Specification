@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.3.1 — 2026-10-08 (documentation patch)
+
+- docs/FORMAT.md specifies how FHR header lines are parsed: a single-line checksum
+  value on an unquoted root-level key, permitted header characters, byte order
+  mark handling, no duplicate keys or YAML anchors/aliases, microdata attribute
+  rules, and FHR lines forming the leading header block (FASTA and GFA). These
+  match converter 0.3.1 (GHSA-pvq5-772j-fq72).
+- Archive the private reporting and conflict/appeal contacts added after the
+  v0.3.0 tag, and correct stale release, citation and policy wording.
+- Add Spec Kit scaffolding with a draft constitution and draft feature specs.
+
+The schema, examples and schemaVersion 1 are unchanged from v0.3.0.
+
 ## v0.3 — 2026-10-07 (from v0.2)
 
 - Add optional structured assembly software, assembly protocol URI, N90, GC-content
