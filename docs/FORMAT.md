@@ -54,8 +54,11 @@ reader must agree on what the checksum line contains:
 - In microdata, the first of repeated attributes applies, and `itemtype` and
   `itemprop` are space-separated token lists.
 
-Whether FHR header lines must form a contiguous leading block is not yet decided;
-duplicate keys are rejected wherever header lines appear.
+- FHR lines must form the leading header block: every `;~`/`#~` line must come
+  before the first FASTA `>` line, or the first GFA line that is neither a `#`
+  comment nor blank. Ordinary comments and blank lines may be mixed in. A
+  `;~`/`#~` line after that point, including one from a concatenated file, makes
+  the file invalid; it is neither ignored nor merged.
 
 Changing any covered metadata or data bytes invalidates the checksum. The
 checksum does not authenticate an author or protect against malicious rewriting.
