@@ -2,8 +2,10 @@
 
 These FASTA and GFA files show how FHR header lines are parsed and which bytes the
 SHA-512/256 checksum covers, as defined in
-[docs/FORMAT.md](../docs/FORMAT.md#checksum-decision-for-v03). Use them to check
-an FHR reader or writer in any language against the specification.
+[docs/FORMAT.md](../docs/FORMAT.md#checksum-decision-for-v03). The HTML files show
+how FHR metadata is extracted from microdata, as defined in
+[docs/MICRODATA.md](../docs/MICRODATA.md#reading-rules). Use them to check an FHR
+reader or writer in any language against the specification.
 
 ## Layout
 
@@ -18,9 +20,10 @@ open and re-save them in an editor. Run the generator instead.
 
 ## Manifest
 
-`rules` maps each stable rule id (R1 to R10) to a short summary. The same ids
-appear in brackets in docs/FORMAT.md, where the rule text is authoritative. R9
-covers microdata and is marked `notApplicable`: no FASTA/GFA vector tests it.
+`rules` maps each stable rule id to a short summary: R1 to R10 from
+docs/FORMAT.md and M1 to M4 from docs/MICRODATA.md. The same ids appear in
+brackets in those documents, where the rule text is authoritative. R9 (repeated
+attributes and token lists) and M1 to M4 are tested by the microdata vectors.
 
 Every entry in `vectors` has these fields:
 
@@ -28,13 +31,13 @@ Every entry in `vectors` has these fields:
 | --- | --- |
 | `id` | Stable vector name |
 | `file` | Path relative to this directory |
-| `format` | `fasta` or `gfa` |
+| `format` | `fasta`, `gfa` or `microdata` (HTML) |
 | `compressed` | `true` for gzip/BGZF files; `compression` then gives `gzip` or `bgzf` |
 | `expected` | `valid` or `invalid` |
 | `rules` | Valid vectors only: the rules the file exercises |
 | `description` | Valid vectors only: what the file exercises |
-| `checksum` | Valid vectors only: the expected FHR checksum, base64 SHA-512/256 |
-| `metadata` | Valid vectors only: some expected parsed values (`genome`, `version`, `masking`) |
+| `checksum` | Valid FASTA/GFA vectors only: the expected FHR checksum, base64 SHA-512/256 |
+| `metadata` | Valid FASTA/GFA vectors: some expected parsed values (`genome`, `version`, `masking`). Valid microdata vectors: the complete expected metadata object. `microdata-schema-invalid`: the metadata it yields, which fails `fhr.json` |
 | `rule` | Invalid vectors only: the rule the file breaks |
 | `reason` | Invalid vectors only: how the file breaks that rule |
 
@@ -46,19 +49,29 @@ editing the file. Reasons describe the defect, not any implementation's error
 message.
 
 Compressed valid vectors decompress to the bytes of `fasta-lf` or `gfa-lf` and
-have the same checksum. Valid metadata conforms to `fhr.json`. The checksums are
+have the same checksum.
+
+Microdata has no checksum coverage rule: its `checksum` property is an ordinary
+metadata value (here the `fasta-lf` checksum). A valid microdata vector instead
+pins the whole extracted object, so every tricky value (first-wins attributes,
+token lists, implied end tags, value attributes, escaping, typed and untyped
+values) is checked exactly. JSON numbers compare by value, so `1` and `1.0` are
+equal, but strings, numbers and booleans are never equal to each other. Valid metadata conforms to `fhr.json`. The checksums are
 real; valid vectors carry no placeholder checksum or SeqCol value.
 
 ## Using the vectors in another implementation
 
 For each manifest entry, read `file` and decompress it if `compressed` is true.
-For a `valid` vector, your implementation must accept the file, compute
-`checksum`, and parse the listed `metadata` values. For an `invalid` vector, it
+For a `valid` FASTA/GFA vector, your implementation must accept the file, compute
+`checksum`, and parse the listed `metadata` values. For a `valid` microdata vector,
+it must extract exactly `metadata`. For an `invalid` vector, it
 must reject the file. Reporting the rule id is optional. Treat any difference as
 a bug in the implementation or the vectors, and report it as an issue.
 
 To run the FHR File Converter (or another CLI with the same commands and exit
-codes) over the vectors:
+codes) over the vectors. FASTA and GFA vectors go to `fhr-fasta-validate` and
+`fhr-gfa-validate`. Microdata vectors go to `fhr-convert in.html out.json`, and
+the JSON it writes must equal `metadata`:
 
 ```bash
 python scripts/check_conformance.py --converter           # commands on PATH

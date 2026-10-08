@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Add HTML microdata conformance vectors (rule R9). Thirteen valid and ten invalid
+  `.fhr.html` vectors cover repeated attributes (first wins), `itemtype` and
+  `itemprop` token lists, implied end tags, nested unrelated item scopes, value
+  attributes on their defining elements only, HTML escaping, non-ASCII text, a
+  byte order mark, and typed and untyped values. Valid vectors give the complete
+  expected metadata object. docs/MICRODATA.md labels the reading rules M1 to M4
+  (item scope, values, `data-fhr-type`, schema validity); the manifest lists them
+  beside R1 to R10, and R9 is no longer `notApplicable`.
+  `check_conformance.py --converter` runs `fhr-convert in.html out.json` on the
+  microdata vectors and compares the JSON with the manifest. Converter 0.3.3
+  passes every vector; 0.3.0 fails seven microdata vectors.
 - Add a tool-compatibility survey for FHR-headed FASTA, GFA and GFF3 files
   (#40, #49) in `docs/TOOL_COMPATIBILITY.md`, with scripts in
   `scripts/tool_survey/`. htslib faidx and most FASTA indexers reject the

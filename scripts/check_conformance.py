@@ -5,7 +5,9 @@ vectors in a temporary directory and compares bytes, and recomputes each valid
 vector's SHA-512/256 checksum with its own reading of docs/FORMAT.md.
 ``--schema`` also validates valid vectors' metadata against fhr.json (needs
 PyYAML and jsonschema). ``--converter`` runs fhr-fasta-validate/fhr-gfa-validate
-on every vector: valid vectors must exit 0 and invalid vectors nonzero.
+on every FASTA/GFA vector and ``fhr-convert in.html out.json`` on every microdata
+vector: valid vectors must exit 0 (microdata ones must also produce exactly the
+manifest metadata) and invalid vectors nonzero.
 """
 
 import argparse
@@ -25,7 +27,10 @@ ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = ROOT / "scripts" / "make_conformance.py"
 PREFIXES = {"fasta": b";~", "gfa": b"#~"}
 PLACEHOLDER_CHECKSUMS = {"A" * 43 + "="}
-COMMANDS = {"fasta": "fhr-fasta-validate", "gfa": "fhr-gfa-validate"}
+COMMANDS = {"fasta": "fhr-fasta-validate", "gfa": "fhr-gfa-validate", "microdata": "fhr-convert"}
+ENTRY_POINTS = {"fasta": "fasta_validate_main", "gfa": "gfa_validate_main",
+                "microdata": "convert_main"}
+RULE_DOCUMENTS = ("docs/FORMAT.md", "docs/MICRODATA.md")
 
 
 def generated_files(directory):
@@ -116,6 +121,8 @@ def check_checksums(conformance, manifest):
     problems = []
     for vector in manifest["vectors"]:
         name = vector["id"]
+        if vector["format"] == "microdata":
+            continue  # In microdata the checksum is an ordinary metadata value.
         try:
             data = read_vector(conformance, vector)
         except (OSError, ValueError, EOFError) as error:
@@ -141,9 +148,11 @@ def check_checksums(conformance, manifest):
 
 def check_manifest(manifest):
     problems = []
-    format_rules = set(re.findall(r"\[(R\d+)\]", (ROOT / "docs/FORMAT.md").read_text()))
-    if format_rules != set(manifest["rules"]):
-        problems.append(f"docs/FORMAT.md rule ids {sorted(format_rules)} differ from the manifest")
+    labelled = [rule for document in RULE_DOCUMENTS
+                for rule in re.findall(r"\[([RM]\d+)\]", (ROOT / document).read_text())]
+    if labelled != list(manifest["rules"]):
+        problems.append(f"rule ids {labelled} in {', '.join(RULE_DOCUMENTS)} "
+                        "differ from the manifest")
     coverage = {rule: set() for rule in manifest["rules"]}
     for vector in manifest["vectors"]:
         rules = vector["rules"] if vector["expected"] == "valid" else [vector["rule"]]
@@ -168,6 +177,18 @@ def check_schema(conformance, manifest):
     )
     problems = []
     for vector in manifest["vectors"]:
+        if vector["format"] == "microdata":
+            errors = list(validator.iter_errors(vector.get("metadata", {})))
+            if vector["expected"] == "valid":
+                problems += [f"{vector['id']}: {error.json_path}: {error.message}"
+                             for error in errors]
+                if vector["metadata"].get("checksum") in PLACEHOLDER_CHECKSUMS:
+                    problems.append(f"{vector['id']}: placeholder checksum")
+                if "seqcol_id" in vector["metadata"]:
+                    problems.append(f"{vector['id']}: valid vectors must not carry a SeqCol placeholder")
+            elif "metadata" in vector and not errors:
+                problems.append(f"{vector['id']}: extracted metadata unexpectedly matches fhr.json")
+            continue
         if vector["expected"] != "valid":
             continue
         prefix = PREFIXES[vector["format"]]
@@ -194,14 +215,14 @@ def converter_commands(location):
     if location == "PATH":
         found = {kind: shutil.which(name) for kind, name in COMMANDS.items()}
         if not all(found.values()):
-            raise ValueError("fhr-fasta-validate/fhr-gfa-validate are not on PATH")
+            raise ValueError(f"{', '.join(COMMANDS.values())} are not on PATH")
         return lambda kind: [found[kind]]
     path = Path(location)
     if (path / "fhr" / "cli.py").is_file():  # A converter source checkout.
         def from_checkout(kind):
             code = (f"import sys; sys.path.insert(0, {str(path.resolve())!r}); "
                     f"sys.argv[0] = {COMMANDS[kind]!r}; "
-                    f"from fhr.cli import {kind}_validate_main as main; sys.exit(main())")
+                    f"from fhr.cli import {ENTRY_POINTS[kind]} as main; sys.exit(main())")
             return [sys.executable, "-c", code]
         return from_checkout
     for directory in (path, path / "bin", path / "Scripts"):
@@ -211,22 +232,57 @@ def converter_commands(location):
     raise ValueError(f"{location}: no converter checkout, environment or bin directory")
 
 
+def same_json(left, right):
+    """JSON equality that keeps booleans, numbers, strings and containers apart."""
+    if isinstance(left, dict) and isinstance(right, dict):
+        return left.keys() == right.keys() and all(same_json(left[k], right[k]) for k in left)
+    if isinstance(left, list) and isinstance(right, list):
+        return len(left) == len(right) and all(map(same_json, left, right))
+    if isinstance(left, bool) or isinstance(right, bool):
+        return left is right
+    numbers = (int, float)
+    if isinstance(left, numbers) and isinstance(right, numbers):
+        return left == right
+    return type(left) is type(right) and left == right
+
+
 def check_converter(conformance, manifest, location):
     command = converter_commands(location)
     problems = []
     for vector in manifest["vectors"]:
-        result = subprocess.run(
-            command(vector["format"]) + [str(conformance / vector["file"])],
-            capture_output=True, text=True, timeout=120, cwd=tempfile.gettempdir(),
-            env={**os.environ, "PYTHONSAFEPATH": "1"},
-        )
-        accepted = result.returncode == 0
+        with tempfile.TemporaryDirectory() as temporary:
+            arguments = [str(conformance / vector["file"])]
+            output = Path(temporary) / "metadata.json"
+            if vector["format"] == "microdata":
+                arguments.append(str(output))
+            result = subprocess.run(
+                command(vector["format"]) + arguments,
+                capture_output=True, text=True, timeout=120, cwd=temporary,
+                env={**os.environ, "PYTHONSAFEPATH": "1"},
+            )
+            accepted = result.returncode == 0
+            extracted = None
+            if accepted and vector["format"] == "microdata":
+                try:
+                    extracted = json.loads(output.read_text(encoding="utf-8"))
+                except (OSError, ValueError) as error:
+                    problems.append(f"{vector['id']}: converter wrote no JSON metadata ({error})")
+                    continue
         if accepted != (vector["expected"] == "valid"):
             detail = (result.stderr or result.stdout).strip().splitlines()
             detail = detail[-1] if detail else f"exit {result.returncode}"
             outcome = "accepted" if accepted else f"rejected ({detail})"
             expected = vector["expected"] + (f", {vector['rule']}" if "rule" in vector else "")
             problems.append(f"{vector['id']}: converter {outcome}; expected {expected}")
+        elif extracted is not None and not same_json(extracted, vector["metadata"]):
+            differences = sorted(
+                key for key in extracted.keys() | vector["metadata"].keys()
+                if not same_json(extracted.get(key), vector["metadata"].get(key))
+            )
+            problems.append(f"{vector['id']}: converter extracted different metadata for "
+                            f"{', '.join(differences)}: "
+                            + json.dumps({key: extracted.get(key) for key in differences},
+                                         ensure_ascii=False))
     return problems
 
 
@@ -248,7 +304,7 @@ def main():
     steps = []
     if not args.skip_regeneration:
         steps.append(("vectors match the generator", lambda: check_up_to_date(conformance)))
-    steps.append(("manifest covers the docs/FORMAT.md rules", lambda: check_manifest(manifest)))
+    steps.append(("manifest covers the labelled rules", lambda: check_manifest(manifest)))
     steps.append(("checksums recomputed independently", lambda: check_checksums(conformance, manifest)))
     if args.schema:
         steps.append(("valid metadata matches fhr.json", lambda: check_schema(conformance, manifest)))

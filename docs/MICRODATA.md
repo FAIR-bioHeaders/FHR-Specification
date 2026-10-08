@@ -20,6 +20,38 @@ fhr-convert /tmp/example.html /tmp/example.yaml
 fhr-validate /tmp/example.yaml
 ```
 
+## Reading rules
+
+Readers extract FHR metadata from HTML as follows. The first of repeated
+attributes applies, and `itemtype` and `itemprop` are space-separated token lists
+(rule R9 in [FORMAT.md](FORMAT.md#checksum-decision-for-v03)). Converter 0.3.1 and later implement
+these rules.
+
+- [M1] A document holds exactly one FHR item scope: an element with `itemscope`
+  whose `itemtype` tokens include the `fhr.json` URL. A document with none, or
+  with more than one, is invalid. An element with `itemscope` but no `itemprop`
+  inside the FHR scope is a separate item: neither it nor its properties belong
+  to the FHR metadata.
+- [M2] The document is parsed as HTML, so end tags implied by HTML (`p`, `li`,
+  `dt`, `dd`, `td`, `th`, `tr` and others) end their elements. A property's value
+  is the defining attribute of its element if present (`meta[content]`,
+  `a`/`area`/`link[href]`, `audio`/`embed`/`iframe`/`img`/`source`/`track`/`video[src]`,
+  `object[data]`, `data`/`meter[value]`, `time[datetime]`), and otherwise its text
+  content with character references decoded. Those attributes on any other element
+  are ignored.
+- [M3] With `data-fhr-type`, a `string` value is kept exactly, including
+  whitespace, and an `integer`, `number`, `boolean` or `null` value must be JSON of
+  that type, or the document is invalid. Without it, values of schema-defined
+  numeric fields are read as numbers, and values of schema-defined list fields
+  become lists.
+- [M4] The extracted metadata must validate against `fhr.json`. A property that
+  appears more than once becomes a list, so a repeated property whose field
+  takes a single value is invalid.
+
+The ids M1 to M4 are stable labels used by the
+[conformance vectors](../conformance/README.md); they add no requirements beyond
+the converter behaviour described here.
+
 The converter also accepts ordinary repeated scalar properties and nested item
 scopes, converting schema-defined numeric fields and lists. It rejects missing,
 incomplete, or multiple FHR root scopes; legacy examples with flattened nested

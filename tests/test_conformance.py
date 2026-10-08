@@ -74,7 +74,8 @@ class ConformanceTests(unittest.TestCase):
         self.assertIn("invalid/stray.fhr.fasta: not produced by the generator", result.stderr)
 
     def test_every_rule_is_labelled_and_covered(self):
-        labels = re.findall(r"\[(R\d+)\]", (ROOT / "docs/FORMAT.md").read_text())
+        labels = [label for document in ("docs/FORMAT.md", "docs/MICRODATA.md")
+                  for label in re.findall(r"\[([RM]\d+)\]", (ROOT / document).read_text())]
         self.assertEqual(labels, list(self.manifest["rules"]))
         for rule, details in self.manifest["rules"].items():
             outcomes = {
@@ -85,10 +86,19 @@ class ConformanceTests(unittest.TestCase):
             self.assertEqual(outcomes, expected, rule)
 
     def test_manifest_fields(self):
+        required = json.loads((ROOT / "fhr.json").read_text())["required"]
         for vector in self.manifest["vectors"]:
-            self.assertIn(vector["format"], {"fasta", "gfa"})
+            self.assertIn(vector["format"], {"fasta", "gfa", "microdata"})
             self.assertTrue((CONFORMANCE / vector["file"]).is_file(), vector["file"])
             self.assertEqual(vector["file"].split("/")[0], vector["expected"])
+            if vector["format"] == "microdata":
+                self.assertTrue(vector["file"].endswith(".html"), vector["file"])
+                self.assertNotIn("checksum", vector)
+                if vector["expected"] == "valid":
+                    self.assertTrue(set(required) <= vector["metadata"].keys(), vector["id"])
+                else:
+                    self.assertTrue(vector["reason"])
+                continue
             if vector["expected"] == "valid":
                 self.assertRegex(vector["checksum"], r"^[A-Za-z0-9+/]{43}=$")
                 self.assertTrue({"genome", "version"} <= vector["metadata"].keys())
@@ -117,10 +127,20 @@ class ConformanceTests(unittest.TestCase):
             script = bin_directory / name
             script.write_text(f"#!{sys.executable}\nraise SystemExit(0)\n")
             script.chmod(0o755)
+        # A converter that extracts only the genome from every HTML file.
+        script = bin_directory / "fhr-convert"
+        script.write_text(f"#!{sys.executable}\nimport sys\n"
+                          "open(sys.argv[2], 'w').write('{\"genome\": \"Synthetic FHR "
+                          "conformance genome\"}')\n")
+        script.chmod(0o755)
         result = self.check("--skip-regeneration", "--converter", bin_directory)
         self.assertEqual(result.returncode, 1)
         self.assertIn("fasta-u2028-in-header: converter accepted; expected invalid, R6",
                       result.stderr)
+        self.assertIn("microdata-type-mismatch: converter accepted; expected invalid, M3",
+                      result.stderr)
+        self.assertIn("microdata-canonical: converter extracted different metadata for "
+                      "assemblyAuthor,", result.stderr)
         self.assertNotIn("fasta-lf:", result.stderr)
 
     @unittest.skipUnless(os.environ.get("FHR_CONVERTER"), "set FHR_CONVERTER to test a converter")
