@@ -102,7 +102,7 @@ Chicago bibliography entries are used below. Cite the published paper for a
 general description of FHR; cite the specification or converter when using that
 resource directly. The software and specification links are concept DOIs; for a
 specific release, use the corresponding version DOI from Zenodo. Authors and
-years follow the v0.3.0 records resolved by the concept DOIs, and can change as later records are published.
+years follow the v0.3 records resolved by the concept DOIs, and can change as later records are published.
 
 ### Published paper
 

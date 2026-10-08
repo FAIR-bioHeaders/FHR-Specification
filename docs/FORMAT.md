@@ -1,6 +1,7 @@
 # FHR v0.3 format and compatibility
 
-FHR release v0.3 and the converter package 0.3.0 retain numeric schemaVersion 1.
+FHR release v0.3 and the converter 0.3.x packages retain numeric schemaVersion 1.
+The header parsing rules below are implemented from converter 0.3.1.
 The assembly's own version string is independent. No required fields were added.
 Top-level metadata is closed; optional fields may be omitted, not replaced by null.
 
