@@ -1,15 +1,18 @@
-"""Write the FHR FASTA/GFA conformance vectors and their manifest (stdlib only).
+"""Write the FHR FASTA/GFA/microdata conformance vectors and their manifest (stdlib only).
 
 Every vector is built from a small metadata template. Expected checksums are
 computed here with ``hashlib.sha512_256`` and base64 over the bytes the
-docs/FORMAT.md rules cover, never by the FHR File Converter. Output is
-deterministic: compressed vectors use stored deflate blocks, mtime 0 and no file
-name, so rerunning the script reproduces identical bytes.
+docs/FORMAT.md rules cover, never by the FHR File Converter. Expected microdata
+metadata is written out by hand from docs/FORMAT.md and docs/MICRODATA.md.
+Output is deterministic: compressed vectors use stored deflate blocks, mtime 0
+and no file name, so rerunning the script reproduces identical bytes.
 """
 
 import argparse
 import base64
+import copy
 import hashlib
+from html import escape
 import json
 from pathlib import Path
 import re
@@ -40,16 +43,25 @@ RULES = {
           "order mark.",
     "R8": "Header parsing: no duplicate mapping keys, YAML anchors, aliases or "
           "merge keys.",
-    "R9": "Header parsing: microdata repeated attributes and token lists "
-          "(not applicable to FASTA/GFA vectors).",
+    "R9": "Header parsing: in microdata the first of repeated attributes applies; "
+          "itemtype and itemprop are space-separated token lists.",
     "R10": "Header parsing: FHR lines form the leading header block; a later "
            "FHR line, including one from a concatenated file, is invalid.",
+    "M1": "Microdata: exactly one FHR item scope; a nested item scope without "
+          "itemprop is a separate item whose properties do not leak.",
+    "M2": "Microdata: HTML parsing with implied end tags; values come from the "
+          "defining element's value attribute, else its text.",
+    "M3": "Microdata: data-fhr-type values must match the declared JSON type; "
+          "typed strings are exact; untyped schema numbers and lists are converted.",
+    "M4": "Microdata: the extracted metadata must validate against fhr.json; a "
+          "repeated property cannot fill a single-valued field.",
 }
-NOT_APPLICABLE = {"R9": "Microdata (HTML) rule; these vectors are FASTA and GFA only."}
+NOT_APPLICABLE = {}
 
 PREFIX = {"fasta": b";~", "gfa": b"#~"}
+ITEM_TYPE = "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json"
 COMMENT = {"fasta": b";", "gfa": b"#"}
-SUFFIX = {"fasta": ".fhr.fasta", "gfa": ".fhr.gfa"}
+SUFFIX = {"fasta": ".fhr.fasta", "gfa": ".fhr.gfa", "microdata": ".fhr.html"}
 MARK = b"@CHECKSUM@"
 GENOME = "Synthetic FHR conformance genome"
 VERSION = "1.0.0"
@@ -231,12 +243,12 @@ INVALID = []
 
 def valid(name, kind, data, value, rules, description, compression=None):
     VALID.append(dict(name=name, kind=kind, data=data, checksum=value, rules=rules,
-                      description=description, compression=compression))
+                      description=description, compression=compression, status="valid"))
 
 
 def invalid(name, kind, data, rule, reason, compression=None):
     INVALID.append(dict(name=name, kind=kind, data=data, rule=rule, reason=reason,
-                        compression=compression))
+                        compression=compression, status="invalid"))
 
 
 def comments_and_blanks(kind):
@@ -462,12 +474,337 @@ def build():
     invalid("fasta-gzip-sequence-tampered", "fasta",
             gzip_member(data.replace(b"GGTTAACC", b"GGTTAACG")), "R3",
             "Compressed copy of a sequence-tampered file (checksum mismatch).", "gzip")
+    MICRODATA_CHECKSUM[0] = plain["fasta"][1]
+    build_microdata()
+
+# Microdata vectors. The checksum is an ordinary value here (the fasta-lf
+# checksum), so these vectors pin the extracted metadata instead.
+
+MICRODATA_CHECKSUM = [None]
+MD_ROOT = f'itemscope itemtype="{ITEM_TYPE}"'
+PERSON = "https://schema.org/Person"
+
+
+def md_base():
+    return {
+        "schema": ITEM_TYPE,
+        "schemaVersion": 1.0,
+        "genome": GENOME,
+        "taxon": {"name": "Homo sapiens", "uri": "https://identifiers.org/taxonomy:9606"},
+        "version": VERSION,
+        "metadataAuthor": [{"name": "Synthetic metadata author (placeholder)"}],
+        "assemblyAuthor": [{"name": "Synthetic assembly author (placeholder)"}],
+        "dateCreated": "2026-10-08",
+        "masking": MASKING,
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": MICRODATA_CHECKSUM[0],
+    }
+
+
+def md_property(key, value):
+    """One property in the converter's typed serialization (docs/MICRODATA.md)."""
+    prop = escape(key, quote=True)
+    if isinstance(value, dict):
+        content = "".join(md_property(k, v) for k, v in value.items())
+        return f'<span itemprop="{prop}" itemscope data-fhr-type="object">{content}</span>'
+    if isinstance(value, list):
+        content = "".join(md_property("item", v) for v in value)
+        return f'<span itemprop="{prop}" data-fhr-type="array">{content}</span>'
+    if isinstance(value, bool):
+        kind, text = "boolean", json.dumps(value)
+    elif isinstance(value, int):
+        kind, text = "integer", json.dumps(value)
+    elif isinstance(value, float):
+        kind, text = "number", json.dumps(value)
+    else:
+        kind, text = "string", value
+    return f'<span itemprop="{prop}" data-fhr-type="{kind}">{escape(text)}</span>'
+
+
+def md_content(metadata=None, replace=None, after=None):
+    """Typed properties for ``metadata``; ``replace`` maps a key to its own markup
+    ("" drops it) and ``after`` maps a key to markup inserted after it."""
+    metadata = md_base() if metadata is None else metadata
+    replace, after = replace or {}, after or {}
+    parts = []
+    for key, value in metadata.items():
+        parts.append(replace[key] if key in replace else md_property(key, value))
+        parts.append(after.get(key, ""))
+    return "".join(parts)
+
+
+def md_page(content, root=MD_ROOT, before="", after="", bom=False):
+    text = (
+        '<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
+        "<title>FHR conformance vector</title></head><body>\n"
+        f"{before}<div {root}>{content}</div>{after}\n</body></html>\n"
+    )
+    return (b"\xef\xbb\xbf" if bom else b"") + text.encode("utf-8")
+
+
+def md_expect(**changes):
+    metadata = md_base()
+    for key, value in changes.items():
+        if value is None:
+            metadata.pop(key)
+        else:
+            metadata[key] = value
+    return metadata
+
+
+def md_valid(name, data, metadata, rules, description):
+    VALID.append(dict(name=name, kind="microdata", data=data, metadata=metadata, rules=rules,
+                      description=description, compression=None, status="valid"))
+
+
+def md_invalid(name, data, rule, reason, metadata=None):
+    INVALID.append(dict(name=name, kind="microdata", data=data, rule=rule, reason=reason,
+                        metadata=metadata, compression=None, status="invalid"))
+
+
+def build_microdata():
+    s = 'data-fhr-type="string"'
+    canonical = md_base()
+    canonical.update({
+        "genomeSynonym": ["synthetic conformance genome"],
+        "instrument": [],
+        "identifier": ["example:conformance-1"],
+        "relatedLink": ["https://example.org/synthetic"],
+        "assemblySoftware": [{"name": "synthetic-assembler", "version": "1.2.3",
+                              "commandLineOption": ["-t", "2"]}],
+        "assemblyProtocol": "https://example.org/protocols/synthetic-assembly",
+        "vitalStats": {"N50": 20, "L50": 1, "totalBasePairs": 20, "gcContent": 45.5,
+                       "readTechnology": "synthetic"},
+    })
+    md_valid("microdata-canonical", md_page(md_content(canonical)), canonical,
+             ["M1", "M3", "M4"],
+             "The converter's typed serialization: nested objects, arrays, an empty "
+             "array, integers and numbers.")
+
+    md_valid("microdata-first-attribute-wins", md_page(
+        md_content(replace={
+            "genome": f'<span itemprop="genome" itemprop="version" {s} '
+                      f'data-fhr-type="number">{GENOME}</span>',
+            "version": f'<span itemprop="version" {s} data-fhr-type="integer">{VERSION}</span>',
+            "dateCreated": '<time itemprop="dateCreated" datetime="2026-10-08" '
+                           'datetime="1999-01-01">yesterday</time>',
+        }),
+        root=f'itemscope itemtype="{ITEM_TYPE}" itemtype="https://schema.org/Dataset"',
+    ), md_expect(), ["R9", "M2"],
+        "Repeated itemtype, itemprop, data-fhr-type and datetime attributes; the "
+        "first of each applies.")
+
+    md_valid("microdata-itemtype-token-list", md_page(
+        md_content(),
+        root=f'itemscope itemtype="https://schema.org/Dataset\n  {ITEM_TYPE}\t'
+             f'https://example.org/types/Genome "',
+    ), md_expect(), ["R9", "M1"],
+        "The root itemtype lists the FHR type among other types, separated by spaces, "
+        "a tab and a newline.")
+
+    author = [{"name": "Synthetic author of metadata and assembly"}]
+    md_valid("microdata-itemprop-token-list", md_page(md_content(replace={
+        "genome": f'<span itemprop="\tgenome  " {s}>{GENOME}</span>',
+        "metadataAuthor": md_property("metadataAuthor", author).replace(
+            'itemprop="metadataAuthor"', 'itemprop=" metadataAuthor\tassemblyAuthor\n"'),
+        "assemblyAuthor": "",
+    })), md_expect(metadataAuthor=author, assemblyAuthor=author), ["R9"],
+        "One element supplies both metadataAuthor and assemblyAuthor through an itemprop "
+        "token list; another itemprop has surrounding whitespace.")
+
+    md_valid("microdata-implied-end-tags", md_page(md_content(replace={
+        "documentation": f'<p itemprop="documentation" {s}>Paragraph closed by the next '
+                         "p start tag.<p>Unrelated paragraph closed by the list.",
+        "genomeSynonym": "",
+        "version": "",
+        "masking": "",
+        "dateCreated": "",
+    }, after={
+        "documentation": f'<ul itemprop="genomeSynonym" data-fhr-type="array">'
+                         f'<li itemprop="item" {s}>first synonym'
+                         f'<li itemprop="item" {s}>second synonym</ul>'
+                         f'<table><tr><td itemprop="version" {s}>{VERSION}'
+                         f'<td itemprop="masking" {s}>{MASKING}'
+                         "<tr><td>unrelated cell<td>another cell</table>"
+                         f'<dl><dt>Created<dd itemprop="dateCreated" {s}>2026-10-08'
+                         "<dt>Note<dd>unrelated definition</dl>",
+    })), md_expect(dateCreated=None, masking=None, version=None, documentation=None) | {
+        "documentation": "Paragraph closed by the next p start tag.",
+        "genomeSynonym": ["first synonym", "second synonym"],
+        "version": VERSION, "masking": MASKING, "dateCreated": "2026-10-08",
+    }, ["M2"],
+        "Unclosed p, li, td, tr, dt and dd elements inside the FHR scope end where HTML "
+        "implies their end tags.")
+
+    md_valid("microdata-nested-unrelated-scope", md_page(
+        md_content(after={
+            "genome": f'<div itemscope itemtype="{PERSON}"><span itemprop="name">Leaked '
+                      'Person</span><span itemprop="genome">Leaked genome</span>'
+                      '<span itemprop="version">9.9.9</span></div>',
+            "taxon": '<div itemscope><span itemprop="dateCreated">1999-01-01</span>'
+                     '<span itemprop="masking">hard-masked</span></div>',
+        }),
+        before=f'<div itemscope itemtype="{PERSON}"><span itemprop="genome">Genome '
+               "outside the FHR scope</span></div>",
+    ), md_expect(), ["M1"],
+        "Item scopes without itemprop, inside and before the FHR scope, hold genome, "
+        "version, dateCreated and masking properties that are not FHR values.")
+
+    links = ["https://example.org/images/synthetic.png", "https://example.org/synthetic"]
+    vital = {"N50": 20, "gcContent": 45.5}
+    md_valid("microdata-value-attributes", md_page(md_content(replace={
+        "dateCreated": '<time itemprop="dateCreated" datetime="2026-10-08">8 October '
+                       "2026</time>",
+        "version": f'<data itemprop="version" value="{VERSION}">version one</data>',
+        "masking": f'<meta itemprop="masking" content="{MASKING}">',
+        "taxon": '<span itemprop="taxon" itemscope data-fhr-type="object">'
+                 f'<span itemprop="name" {s}>Homo sapiens</span>'
+                 '<a itemprop="uri" href="https://identifiers.org/taxonomy:9606">NCBI '
+                 "Taxonomy 9606</a></span>",
+    }, after={
+        "checksum": '<link itemprop="assemblyProtocol" '
+                    'href="https://example.org/protocols/synthetic-assembly">'
+                    f'<span itemprop="relatedLink" data-fhr-type="array">'
+                    f'<img itemprop="item" src="{links[0]}" alt="figure">'
+                    f'<a itemprop="item" href="{links[1]}">project page</a></span>'
+                    '<span itemprop="vitalStats" itemscope data-fhr-type="object">'
+                    '<data itemprop="N50" value="20" data-fhr-type="integer">twenty</data>'
+                    '<meter itemprop="gcContent" value="45.5" min="0" max="100" '
+                    'data-fhr-type="number">about half</meter></span>',
+    })), md_expect(assemblyProtocol="https://example.org/protocols/synthetic-assembly",
+                   relatedLink=links, vitalStats=vital), ["M2", "M3"],
+        "time[datetime], data[value], meter[value], meta[content], a[href], "
+        "link[href] and img[src] supply the value instead of the element text.")
+
+    md_valid("microdata-value-attributes-elsewhere-ignored", md_page(md_content(replace={
+        "genome": f'<span itemprop="genome" content="Wrong content" value="Wrong value" '
+                  f'{s}>{GENOME}</span>',
+        "version": f'<div itemprop="version" value="9.9.9" datetime="2000-01-01">{VERSION}</div>',
+        "documentation": '<p itemprop="documentation" href="https://example.org/wrong" '
+                         f'src="https://example.org/wrong.png" {s}>'
+                         "Synthetic FHR conformance vector; not a real assembly.</p>",
+        "masking": f'<b itemprop="masking" content="soft-masked">{MASKING}</b>',
+        "dateCreated": '<time itemprop="dateCreated">2026-10-08</time>',
+        "taxon": '<span itemprop="taxon" itemscope data-fhr-type="object">'
+                 f'<span itemprop="name" datetime="2001-01-01" {s}>Homo sapiens</span>'
+                 '<span itemprop="uri" href="https://example.org/wrong" '
+                 f'{s}>https://identifiers.org/taxonomy:9606</span></span>',
+    })), md_expect(), ["M2"],
+        "content, value, datetime, href and src on elements that do not define them "
+        "are ignored; a time without datetime uses its text.")
+
+    md_valid("microdata-html-escaping", md_page(md_content(replace={
+        "genome": f'<span itemprop="genome" {s}>Synthetic &lt;script&gt;alert(1)'
+                  "&lt;/script&gt; &amp; &quot;double&quot; &#39;single&#39; "
+                  "&amp;lt;literal&amp;gt;</span>",
+        "documentation": '<meta itemprop="documentation" content="Attribute text: a '
+                         '&amp; b &lt;c&gt; &quot;d&quot; &#x27;e&#x27;">',
+    })), md_expect(
+        genome="Synthetic <script>alert(1)</script> & \"double\" 'single' &lt;literal&gt;",
+        documentation="Attribute text: a & b <c> \"d\" 'e'",
+    ), ["M2", "M3"],
+        "Escaped markup, ampersands and quotes in text and in an attribute decode once, "
+        "exactly; nothing is executed.")
+
+    unicode_genome = "Synthetic genome café µm — 測試 🧬"
+    spaced = "  Leading and trailing spaces,\ta tab and\na newline are kept.  "
+    authors = [{"name": "Zoë Ångström 測試"}]
+    md_valid("microdata-non-ascii", md_page(md_content(
+        replace={
+            "genome": md_property("genome", unicode_genome),
+            "documentation": md_property("documentation", spaced),
+            "metadataAuthor": f'<span itemprop="metadataAuthor" data-fhr-type="array">'
+                              f'<span itemprop="item" itemscope data-fhr-type="object">'
+                              f'<span itemprop="name" {s}>Zo&euml; &Aring;ngstr&ouml;m '
+                              "&#x6E2C;&#35430;</span></span></span>",
+        })), md_expect(genome=unicode_genome, documentation=spaced, metadataAuthor=authors),
+        ["M2", "M3"],
+        "Non-ASCII UTF-8 text and character references; a typed string keeps its "
+        "leading, trailing and inner whitespace.")
+
+    md_valid("microdata-utf8-bom", md_page(md_content(), bom=True), md_expect(), ["R7"],
+             "HTML metadata beginning with a UTF-8 byte order mark, which is ignored.")
+
+    typed = md_expect(schemaVersion=1.0, version="2")
+    typed.update({
+        "genomeSynonym": ["2", "true", "null", "1.0"],
+        "instrument": [],
+        "assemblySoftware": [{"name": "synthetic-assembler", "commandLineOption": ["-k", "31"]}],
+        "vitalStats": {"N50": 16, "N90": 0, "totalBasePairs": 16, "gcContent": 37.5,
+                       "readTechnology": "100"},
+    })
+    md_valid("microdata-typed-values", md_page(md_content(typed)), typed, ["M3"],
+             "data-fhr-type keeps number-like strings as strings, integers as integers, "
+             "numbers as numbers and an empty array as an empty array.")
+
+    untyped = md_expect(schemaVersion=1)
+    untyped.update({
+        "genomeSynonym": ["only synonym"],
+        "identifier": ["example:one", "example:two"],
+        "vitalStats": {"N50": 16, "gcContent": 37.5},
+    })
+    md_valid("microdata-untyped-schema-values", md_page(md_content(untyped, replace={
+        "schemaVersion": '<span itemprop="schemaVersion">1</span>',
+        "genomeSynonym": '<span itemprop="genomeSynonym">only synonym</span>',
+        "identifier": '<span itemprop="identifier">example:one</span>'
+                      '<span itemprop="identifier">example:two</span>',
+        "vitalStats": '<div itemprop="vitalStats" itemscope><span itemprop="N50">16</span>'
+                      '<span itemprop="gcContent">37.5</span></div>',
+        "metadataAuthor": '<div itemprop="metadataAuthor" itemscope><span itemprop="name">'
+                          "Synthetic metadata author (placeholder)</span></div>",
+    })), untyped, ["M3", "M4"],
+        "Plain microdata without data-fhr-type: schema numbers are converted, a single "
+        "value of a list field becomes a one-item list, repeated values become a list.")
+
+    # Invalid vectors.
+    md_invalid("microdata-no-fhr-scope", md_page(
+        md_content(), root='itemscope itemtype="https://schema.org/Dataset"'), "M1",
+        "The only item scope has a Schema.org type, not the FHR type.")
+    md_invalid("microdata-two-fhr-scopes", md_page(md_content(), after=f"<div {MD_ROOT}>"
+                                                    f"{md_content()}</div>"), "M1",
+               "Two complete FHR item scopes.")
+    md_invalid("microdata-genome-only-in-nested-scope", md_page(md_content(replace={
+        "genome": f'<div itemscope itemtype="{PERSON}"><span itemprop="genome" {s}>'
+                  f"{GENOME}</span></div>"})), "M1",
+        "genome appears only inside a nested item scope without itemprop, so the FHR "
+        "item has no genome.")
+    md_invalid("microdata-itemtype-repeated-attribute", md_page(
+        md_content(),
+        root=f'itemscope itemtype="https://schema.org/Dataset" itemtype="{ITEM_TYPE}"'), "R9",
+        "The FHR type is only in a second itemtype attribute; the first applies, so there "
+        "is no FHR item scope.")
+    md_invalid("microdata-itemprop-repeated-attribute", md_page(md_content(replace={
+        "genome": f'<span itemprop="genomeName" itemprop="genome" {s}>{GENOME}</span>'})),
+        "R9", "genome is only in a second itemprop attribute; the first (genomeName, not an "
+        "FHR property) applies, so genome is missing.")
+    md_invalid("microdata-type-mismatch", md_page(md_content(after={
+        "checksum": '<span itemprop="vitalStats" itemscope data-fhr-type="object">'
+                    '<span itemprop="gcContent" data-fhr-type="number">abc</span></span>'})),
+        "M3", "gcContent is declared a number but its text is abc.")
+    md_invalid("microdata-type-mismatch-value-attribute", md_page(md_content(after={
+        "checksum": '<span itemprop="vitalStats" itemscope data-fhr-type="object">'
+                    '<data itemprop="N50" value="sixteen" data-fhr-type="integer">16</data>'
+                    "</span>"})),
+        "M3", "N50 is declared an integer; its value comes from data[value], sixteen, not "
+        "from the text 16.")
+    md_invalid("microdata-value-attribute-applies", md_page(md_content(replace={
+        "masking": f'<data itemprop="masking" value="partly">{MASKING}</data>'})), "M2",
+        "masking comes from data[value], partly, which fhr.json does not allow; the text "
+        f"{MASKING} is not the value.")
+    md_invalid("microdata-repeated-single-valued", md_page(md_content(after={
+        "genome": f'<span itemprop="genome" {s}>Second genome value</span>'})), "M4",
+        "genome has two values; fhr.json allows one string.")
+    bad = md_expect()
+    bad["vitalStats"] = {"gcContent": 150}
+    md_invalid("microdata-schema-invalid", md_page(md_content(bad)), "M4",
+               "Well-formed microdata whose gcContent of 150 exceeds the fhr.json maximum "
+               "of 100.", metadata=bad)
+
 
 
 def path_for(entry):
     suffix = SUFFIX[entry["kind"]] + (".gz" if entry["compression"] else "")
-    status = "valid" if "checksum" in entry else "invalid"
-    return f"{status}/{entry['name']}{suffix}"
+    return f"{entry['status']}/{entry['name']}{suffix}"
 
 
 def self_check():
@@ -475,11 +812,23 @@ def self_check():
     for entry in VALID + INVALID:
         assert entry["name"] not in names, entry["name"]
         names.add(entry["name"])
+    required = json.loads((ROOT / "fhr.json").read_text())["required"]
+    for entry in VALID + INVALID:
+        if entry["kind"] == "microdata":
+            text = entry["data"].decode("utf-8")
+            assert text.count(ITEM_TYPE) >= 1, entry["name"]
+            if entry["status"] == "valid":
+                assert set(required) <= entry["metadata"].keys(), entry["name"]
+                assert entry["metadata"]["checksum"] == MICRODATA_CHECKSUM[0], entry["name"]
     for entry in VALID:
+        if entry["kind"] == "microdata":
+            continue
         data = decompress(entry["data"]) if entry["compression"] else entry["data"]
         stated, computed = reference_checksum(data, entry["kind"])
         assert stated == computed == entry["checksum"], entry["name"]
     for entry in INVALID:
+        if entry["kind"] == "microdata":
+            continue
         data = decompress(entry["data"]) if entry["compression"] else entry["data"]
         try:
             stated, computed = reference_checksum(data, entry["kind"])
@@ -501,13 +850,18 @@ def manifest():
         }
         if entry["compression"]:
             item["compression"] = entry["compression"]
-        if "checksum" in entry:
-            item.update(expected="valid", rules=entry["rules"], description=entry["description"],
-                        checksum=entry["checksum"], metadata=EXPECTED_METADATA)
+        if entry["status"] == "valid":
+            item.update(expected="valid", rules=entry["rules"], description=entry["description"])
+            if entry["kind"] == "microdata":
+                item.update(metadata=entry["metadata"])
+            else:
+                item.update(checksum=entry["checksum"], metadata=EXPECTED_METADATA)
             for rule in entry["rules"]:
                 covered.setdefault(rule, set()).add("valid")
         else:
             item.update(expected="invalid", rule=entry["rule"], reason=entry["reason"])
+            if entry.get("metadata") is not None:
+                item.update(metadata=entry["metadata"])
             covered.setdefault(entry["rule"], set()).add("invalid")
         vectors.append(item)
     for rule in RULES:
@@ -516,8 +870,10 @@ def manifest():
     return {
         "manifestVersion": MANIFEST_VERSION,
         "specification": "docs/FORMAT.md",
+        "microdataSpecification": "docs/MICRODATA.md",
         "checksumDefinition": "base64(SHA-512/256) over the (decompressed) file bytes except the "
-                    "root-level checksum line and its terminator",
+                    "root-level checksum line and its terminator (FASTA and GFA only; in "
+                    "microdata the checksum is an ordinary metadata value)",
         "rules": {
             rule: {"summary": text, **({"notApplicable": NOT_APPLICABLE[rule]}
                                        if rule in NOT_APPLICABLE else {})}

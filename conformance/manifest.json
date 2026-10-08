@@ -1,7 +1,8 @@
 {
   "manifestVersion": 1,
   "specification": "docs/FORMAT.md",
-  "checksumDefinition": "base64(SHA-512/256) over the (decompressed) file bytes except the root-level checksum line and its terminator",
+  "microdataSpecification": "docs/MICRODATA.md",
+  "checksumDefinition": "base64(SHA-512/256) over the (decompressed) file bytes except the root-level checksum line and its terminator (FASTA and GFA only; in microdata the checksum is an ordinary metadata value)",
   "rules": {
     "R1": {
       "summary": "Checksum rule 1: hash the exact file bytes without normalization; for gzip/BGZF input, the decompressed bytes."
@@ -28,11 +29,22 @@
       "summary": "Header parsing: no duplicate mapping keys, YAML anchors, aliases or merge keys."
     },
     "R9": {
-      "summary": "Header parsing: microdata repeated attributes and token lists (not applicable to FASTA/GFA vectors).",
-      "notApplicable": "Microdata (HTML) rule; these vectors are FASTA and GFA only."
+      "summary": "Header parsing: in microdata the first of repeated attributes applies; itemtype and itemprop are space-separated token lists."
     },
     "R10": {
       "summary": "Header parsing: FHR lines form the leading header block; a later FHR line, including one from a concatenated file, is invalid."
+    },
+    "M1": {
+      "summary": "Microdata: exactly one FHR item scope; a nested item scope without itemprop is a separate item whose properties do not leak."
+    },
+    "M2": {
+      "summary": "Microdata: HTML parsing with implied end tags; values come from the defining element's value attribute, else its text."
+    },
+    "M3": {
+      "summary": "Microdata: data-fhr-type values must match the declared JSON type; typed strings are exact; untyped schema numbers and lists are converted."
+    },
+    "M4": {
+      "summary": "Microdata: the extracted metadata must validate against fhr.json; a repeated property cannot fill a single-valued field."
     }
   },
   "vectors": [
@@ -685,6 +697,544 @@
       }
     },
     {
+      "id": "microdata-canonical",
+      "file": "valid/microdata-canonical.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "M1",
+        "M3",
+        "M4"
+      ],
+      "description": "The converter's typed serialization: nested objects, arrays, an empty array, integers and numbers.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+        "genomeSynonym": [
+          "synthetic conformance genome"
+        ],
+        "instrument": [],
+        "identifier": [
+          "example:conformance-1"
+        ],
+        "relatedLink": [
+          "https://example.org/synthetic"
+        ],
+        "assemblySoftware": [
+          {
+            "name": "synthetic-assembler",
+            "version": "1.2.3",
+            "commandLineOption": [
+              "-t",
+              "2"
+            ]
+          }
+        ],
+        "assemblyProtocol": "https://example.org/protocols/synthetic-assembly",
+        "vitalStats": {
+          "N50": 20,
+          "L50": 1,
+          "totalBasePairs": 20,
+          "gcContent": 45.5,
+          "readTechnology": "synthetic"
+        }
+      }
+    },
+    {
+      "id": "microdata-first-attribute-wins",
+      "file": "valid/microdata-first-attribute-wins.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R9",
+        "M2"
+      ],
+      "description": "Repeated itemtype, itemprop, data-fhr-type and datetime attributes; the first of each applies.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc="
+      }
+    },
+    {
+      "id": "microdata-itemtype-token-list",
+      "file": "valid/microdata-itemtype-token-list.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R9",
+        "M1"
+      ],
+      "description": "The root itemtype lists the FHR type among other types, separated by spaces, a tab and a newline.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc="
+      }
+    },
+    {
+      "id": "microdata-itemprop-token-list",
+      "file": "valid/microdata-itemprop-token-list.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R9"
+      ],
+      "description": "One element supplies both metadataAuthor and assemblyAuthor through an itemprop token list; another itemprop has surrounding whitespace.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic author of metadata and assembly"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic author of metadata and assembly"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc="
+      }
+    },
+    {
+      "id": "microdata-implied-end-tags",
+      "file": "valid/microdata-implied-end-tags.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "M2"
+      ],
+      "description": "Unclosed p, li, td, tr, dt and dd elements inside the FHR scope end where HTML implies their end tags.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+        "documentation": "Paragraph closed by the next p start tag.",
+        "genomeSynonym": [
+          "first synonym",
+          "second synonym"
+        ],
+        "version": "1.0.0",
+        "masking": "not-masked",
+        "dateCreated": "2026-10-08"
+      }
+    },
+    {
+      "id": "microdata-nested-unrelated-scope",
+      "file": "valid/microdata-nested-unrelated-scope.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "M1"
+      ],
+      "description": "Item scopes without itemprop, inside and before the FHR scope, hold genome, version, dateCreated and masking properties that are not FHR values.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc="
+      }
+    },
+    {
+      "id": "microdata-value-attributes",
+      "file": "valid/microdata-value-attributes.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "M2",
+        "M3"
+      ],
+      "description": "time[datetime], data[value], meter[value], meta[content], a[href], link[href] and img[src] supply the value instead of the element text.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+        "assemblyProtocol": "https://example.org/protocols/synthetic-assembly",
+        "relatedLink": [
+          "https://example.org/images/synthetic.png",
+          "https://example.org/synthetic"
+        ],
+        "vitalStats": {
+          "N50": 20,
+          "gcContent": 45.5
+        }
+      }
+    },
+    {
+      "id": "microdata-value-attributes-elsewhere-ignored",
+      "file": "valid/microdata-value-attributes-elsewhere-ignored.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "M2"
+      ],
+      "description": "content, value, datetime, href and src on elements that do not define them are ignored; a time without datetime uses its text.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc="
+      }
+    },
+    {
+      "id": "microdata-html-escaping",
+      "file": "valid/microdata-html-escaping.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "M2",
+        "M3"
+      ],
+      "description": "Escaped markup, ampersands and quotes in text and in an attribute decode once, exactly; nothing is executed.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic <script>alert(1)</script> & \"double\" 'single' &lt;literal&gt;",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Attribute text: a & b <c> \"d\" 'e'",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc="
+      }
+    },
+    {
+      "id": "microdata-non-ascii",
+      "file": "valid/microdata-non-ascii.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "M2",
+        "M3"
+      ],
+      "description": "Non-ASCII UTF-8 text and character references; a typed string keeps its leading, trailing and inner whitespace.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic genome caf\u00e9 \u00b5m \u2014 \u6e2c\u8a66 \ud83e\uddec",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Zo\u00eb \u00c5ngstr\u00f6m \u6e2c\u8a66"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "  Leading and trailing spaces,\ta tab and\na newline are kept.  ",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc="
+      }
+    },
+    {
+      "id": "microdata-utf8-bom",
+      "file": "valid/microdata-utf8-bom.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "R7"
+      ],
+      "description": "HTML metadata beginning with a UTF-8 byte order mark, which is ignored.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc="
+      }
+    },
+    {
+      "id": "microdata-typed-values",
+      "file": "valid/microdata-typed-values.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "M3"
+      ],
+      "description": "data-fhr-type keeps number-like strings as strings, integers as integers, numbers as numbers and an empty array as an empty array.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "2",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+        "genomeSynonym": [
+          "2",
+          "true",
+          "null",
+          "1.0"
+        ],
+        "instrument": [],
+        "assemblySoftware": [
+          {
+            "name": "synthetic-assembler",
+            "commandLineOption": [
+              "-k",
+              "31"
+            ]
+          }
+        ],
+        "vitalStats": {
+          "N50": 16,
+          "N90": 0,
+          "totalBasePairs": 16,
+          "gcContent": 37.5,
+          "readTechnology": "100"
+        }
+      }
+    },
+    {
+      "id": "microdata-untyped-schema-values",
+      "file": "valid/microdata-untyped-schema-values.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "M3",
+        "M4"
+      ],
+      "description": "Plain microdata without data-fhr-type: schema numbers are converted, a single value of a list field becomes a one-item list, repeated values become a list.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+        "genomeSynonym": [
+          "only synonym"
+        ],
+        "identifier": [
+          "example:one",
+          "example:two"
+        ],
+        "vitalStats": {
+          "N50": 16,
+          "gcContent": 37.5
+        }
+      }
+    },
+    {
       "id": "fasta-crlf-normalized-checksum",
       "file": "invalid/fasta-crlf-normalized-checksum.fhr.fasta",
       "format": "fasta",
@@ -1161,6 +1711,123 @@
       "expected": "invalid",
       "rule": "R3",
       "reason": "Compressed copy of a sequence-tampered file (checksum mismatch)."
+    },
+    {
+      "id": "microdata-no-fhr-scope",
+      "file": "invalid/microdata-no-fhr-scope.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "M1",
+      "reason": "The only item scope has a Schema.org type, not the FHR type."
+    },
+    {
+      "id": "microdata-two-fhr-scopes",
+      "file": "invalid/microdata-two-fhr-scopes.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "M1",
+      "reason": "Two complete FHR item scopes."
+    },
+    {
+      "id": "microdata-genome-only-in-nested-scope",
+      "file": "invalid/microdata-genome-only-in-nested-scope.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "M1",
+      "reason": "genome appears only inside a nested item scope without itemprop, so the FHR item has no genome."
+    },
+    {
+      "id": "microdata-itemtype-repeated-attribute",
+      "file": "invalid/microdata-itemtype-repeated-attribute.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R9",
+      "reason": "The FHR type is only in a second itemtype attribute; the first applies, so there is no FHR item scope."
+    },
+    {
+      "id": "microdata-itemprop-repeated-attribute",
+      "file": "invalid/microdata-itemprop-repeated-attribute.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "R9",
+      "reason": "genome is only in a second itemprop attribute; the first (genomeName, not an FHR property) applies, so genome is missing."
+    },
+    {
+      "id": "microdata-type-mismatch",
+      "file": "invalid/microdata-type-mismatch.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "M3",
+      "reason": "gcContent is declared a number but its text is abc."
+    },
+    {
+      "id": "microdata-type-mismatch-value-attribute",
+      "file": "invalid/microdata-type-mismatch-value-attribute.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "M3",
+      "reason": "N50 is declared an integer; its value comes from data[value], sixteen, not from the text 16."
+    },
+    {
+      "id": "microdata-value-attribute-applies",
+      "file": "invalid/microdata-value-attribute-applies.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "M2",
+      "reason": "masking comes from data[value], partly, which fhr.json does not allow; the text not-masked is not the value."
+    },
+    {
+      "id": "microdata-repeated-single-valued",
+      "file": "invalid/microdata-repeated-single-valued.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "M4",
+      "reason": "genome has two values; fhr.json allows one string."
+    },
+    {
+      "id": "microdata-schema-invalid",
+      "file": "invalid/microdata-schema-invalid.fhr.html",
+      "format": "microdata",
+      "compressed": false,
+      "expected": "invalid",
+      "rule": "M4",
+      "reason": "Well-formed microdata whose gcContent of 150 exceeds the fhr.json maximum of 100.",
+      "metadata": {
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json",
+        "schemaVersion": 1.0,
+        "genome": "Synthetic FHR conformance genome",
+        "taxon": {
+          "name": "Homo sapiens",
+          "uri": "https://identifiers.org/taxonomy:9606"
+        },
+        "version": "1.0.0",
+        "metadataAuthor": [
+          {
+            "name": "Synthetic metadata author (placeholder)"
+          }
+        ],
+        "assemblyAuthor": [
+          {
+            "name": "Synthetic assembly author (placeholder)"
+          }
+        ],
+        "dateCreated": "2026-10-08",
+        "masking": "not-masked",
+        "documentation": "Synthetic FHR conformance vector; not a real assembly.",
+        "checksum": "3an6Cqo2eomqlt75XIpyWXDtls3GhA8EOpjK97S+ykc=",
+        "vitalStats": {
+          "gcContent": 150
+        }
+      }
     }
   ]
 }

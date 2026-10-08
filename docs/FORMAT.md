@@ -65,8 +65,9 @@ reader must agree on what the checksum line contains:
 
 The bracketed ids R1 to R10 are stable labels for the rules above, used by the
 [conformance vectors](../conformance/README.md); they add no requirements.
-The vectors give each rule valid and invalid FASTA/GFA files (R9, microdata, has
-none) with expected checksums computed independently of the converter.
+The vectors give each rule valid and invalid files: FASTA/GFA files with expected
+checksums computed independently of the converter, and for R9 HTML microdata files
+with the expected extracted metadata (see [MICRODATA.md](MICRODATA.md)).
 
 Changing any covered metadata or data bytes invalidates the checksum. The
 checksum does not authenticate an author or protect against malicious rewriting.
