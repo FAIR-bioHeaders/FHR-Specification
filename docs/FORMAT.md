@@ -30,13 +30,32 @@ helpers used MD5 and described different coverage. v0.3 explicitly adopts:
 
 1. Read the FASTA/GFA as bytes; do not normalize line endings, encoding, comments,
    sequence wrapping, ordering, or whitespace.
-2. Require exactly one scalar header line matching `;~checksum:` (FASTA) or
-   `#~checksum:` (GFA); spaces around the key are accepted at the YAML root indentation.
+2. Require exactly one root-level header line matching `;~checksum:` (FASTA) or
+   `#~checksum:` (GFA), with an unquoted key. Spaces or tabs may appear before
+   the key only to match the root indentation of the other header lines, and
+   before the colon.
    Nested properties named checksum remain covered.
 3. Exclude that entire line and its line terminator. Hash every other byte,
    including all other metadata and ordinary comments.
 4. Apply SHA-512/256 (the SHA-512/256 algorithm, not SHA-512 truncated manually).
    Encode its 32-byte digest using standard padded base64, with no `md5:` prefix.
+
+Header lines are identified on the same byte lines that are hashed, so every
+reader must agree on what the checksum line contains:
+
+- The checksum value must appear on the checksum line itself as a single-line
+  YAML scalar; block scalars and continuation lines are invalid.
+- FHR header lines must be UTF-8 and must not contain U+0085, U+2028, or U+2029,
+  which YAML treats as line breaks. Bytes outside header lines are not decoded.
+- A FASTA/GFA file must not begin with a UTF-8 byte order mark. JSON, YAML, and
+  HTML metadata may begin with one; it is ignored.
+- FHR metadata must not contain duplicate mapping keys, YAML anchors, aliases,
+  or merge keys.
+- In microdata, the first of repeated attributes applies, and `itemtype` and
+  `itemprop` are space-separated token lists.
+
+Whether FHR header lines must form a contiguous leading block is not yet decided;
+duplicate keys are rejected wherever header lines appear.
 
 Changing any covered metadata or data bytes invalidates the checksum. The
 checksum does not authenticate an author or protect against malicious rewriting.
