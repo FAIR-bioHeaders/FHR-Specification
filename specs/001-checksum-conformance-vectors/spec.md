@@ -54,9 +54,9 @@ Each needs at least one vector:
 - Leading UTF-8 BOM in FASTA/GFA.
 - Duplicate keys, YAML anchors, aliases, merge keys.
 - Non-UTF-8 bytes in sequence description lines (valid: not decoded).
-- FHR lines after sequence data [NEEDS CLARIFICATION: must FHR header lines form a
-  contiguous leading block? The vector's expected outcome depends on this
-  maintainer decision].
+- FHR lines after sequence data, and two concatenated FHR files (invalid: FHR
+  lines must form the leading header block).
+- Ordinary comments and blank lines before or between FHR lines (valid).
 
 ## Requirements *(mandatory)*
 
