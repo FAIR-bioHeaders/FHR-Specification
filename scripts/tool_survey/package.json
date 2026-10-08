@@ -1,0 +1,9 @@
+{
+  "name": "fhr-tool-survey-node",
+  "private": true,
+  "description": "JBrowse 2 CLI and GFF3 parser used by run_survey.py (node 20)",
+  "dependencies": {
+    "@gmod/gff": "2.1.0",
+    "@jbrowse/cli": "4.3.0"
+  }
+}

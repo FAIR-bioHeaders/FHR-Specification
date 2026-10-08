@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Add a tool-compatibility survey for FHR-headed FASTA, GFA and GFF3 files
+  (#40, #49) in `docs/TOOL_COMPATIBILITY.md`, with scripts in
+  `scripts/tool_survey/`. htslib faidx and most FASTA indexers reject the
+  leading `;~` block; kseq-based tools ignore it; all GFA and GFF3 tools tested
+  accept `#~` lines. Concatenated FHR files (invalid under R10) are silently
+  misread as sequence by many tools. Also adds a draft, unfiled htslib proposal
+  in `docs/proposals/htslib-fasta-comments.md`.
 - Split the LinkML model into a shared FAIR-bioHeaders core
   (`schemas/core.yaml`) and the FHR module (`fhr_linkml.yml`), which imports it
   (#43, spec 004). The core holds the slots every header type shares, with
