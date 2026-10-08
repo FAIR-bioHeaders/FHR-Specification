@@ -38,8 +38,12 @@ partial or lossy projections explicitly. Placeholders are labelled as placeholde
 ### V. Minimal and interoperable
 
 Keep required metadata and runtime dependencies small. Favour incremental,
-interoperable changes over speculative frameworks, guided by FAIR and TRUST as
-interpreted in the 2024 FHR paper.
+interoperable changes over speculative frameworks. The 2024 FHR paper's design
+goals guide every change: provide the metadata needed to identify a genome's
+provenance unambiguously; keep metadata and data close (the FASTA header sits
+at the top of the file); support a variety of implementations and
+serialisations; and enable FAIR and TRUST. Low implementation effort is part of
+the design: stripping the header must stay trivial for tools that cannot read it.
 
 ## Verification gates
 
