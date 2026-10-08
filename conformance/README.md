@@ -1,0 +1,88 @@
+# FHR conformance vectors
+
+These FASTA and GFA files show how FHR header lines are parsed and which bytes the
+SHA-512/256 checksum covers, as defined in
+[docs/FORMAT.md](../docs/FORMAT.md#checksum-decision-for-v03). Use them to check
+an FHR reader or writer in any language against the specification.
+
+## Layout
+
+- `valid/`: files that a conforming implementation must accept.
+- `invalid/`: files that it must reject.
+- `manifest.json`: the expected outcome for every file.
+- `*.gz`: gzip or BGZF copies. Validate their decompressed bytes.
+
+Every file is byte-exact. `.gitattributes` turns off line-ending conversion for
+this directory, so CR and CRLF vectors stay unchanged in every checkout. Don't
+open and re-save them in an editor. Run the generator instead.
+
+## Manifest
+
+`rules` maps each stable rule id (R1 to R10) to a short summary. The same ids
+appear in brackets in docs/FORMAT.md, where the rule text is authoritative. R9
+covers microdata and is marked `notApplicable`: no FASTA/GFA vector tests it.
+
+Every entry in `vectors` has these fields:
+
+| Field | Meaning |
+| --- | --- |
+| `id` | Stable vector name |
+| `file` | Path relative to this directory |
+| `format` | `fasta` or `gfa` |
+| `compressed` | `true` for gzip/BGZF files; `compression` then gives `gzip` or `bgzf` |
+| `expected` | `valid` or `invalid` |
+| `rules` | Valid vectors only: the rules the file exercises |
+| `description` | Valid vectors only: what the file exercises |
+| `checksum` | Valid vectors only: the expected FHR checksum, base64 SHA-512/256 |
+| `metadata` | Valid vectors only: some expected parsed values (`genome`, `version`, `masking`) |
+| `rule` | Invalid vectors only: the rule the file breaks |
+| `reason` | Invalid vectors only: how the file breaks that rule |
+
+An invalid vector breaks one rule and is otherwise correct. Where possible its
+stated checksum matches the bytes, so an implementation can't pass by failing the
+checksum comparison by accident. The R1, R3 and R4 vectors are the exception:
+they deliberately carry a checksum computed the wrong way, or one made stale by
+editing the file. Reasons describe the defect, not any implementation's error
+message.
+
+Compressed valid vectors decompress to the bytes of `fasta-lf` or `gfa-lf` and
+have the same checksum. Valid metadata conforms to `fhr.json`. The checksums are
+real; valid vectors carry no placeholder checksum or SeqCol value.
+
+## Using the vectors in another implementation
+
+For each manifest entry, read `file` and decompress it if `compressed` is true.
+For a `valid` vector, your implementation must accept the file, compute
+`checksum`, and parse the listed `metadata` values. For an `invalid` vector, it
+must reject the file. Reporting the rule id is optional. Treat any difference as
+a bug in the implementation or the vectors, and report it as an issue.
+
+To run the FHR File Converter (or another CLI with the same commands and exit
+codes) over the vectors:
+
+```bash
+python scripts/check_conformance.py --converter           # commands on PATH
+python scripts/check_conformance.py --converter .venv     # a virtual environment
+python scripts/check_conformance.py --converter ../FHR-File-Converter  # a checkout
+```
+
+## Regenerating and checking
+
+`scripts/make_conformance.py` builds every vector from small templates. It
+computes the checksums with Python's `hashlib` (`sha512_256`) and `base64`,
+independently of the converter. It writes gzip and BGZF data as stored deflate
+blocks with mtime 0 and no file name, so the output doesn't depend on the local
+zlib build. Rerunning it reproduces identical bytes.
+
+```bash
+python scripts/make_conformance.py            # rewrite valid/, invalid/, manifest.json
+python scripts/check_conformance.py           # standard library only
+python scripts/check_conformance.py --schema  # also validate metadata (PyYAML, jsonschema)
+```
+
+`check_conformance.py` regenerates the vectors in a temporary directory and
+compares the bytes. It then checks that the manifest covers every rule in
+docs/FORMAT.md, and recomputes each checksum with a separate reading of the
+rules. CI runs these checks and then runs the released converter (`fhr` from PyPI)
+over every vector. To add a vector, edit the generator, rerun it, and commit the
+script together with its output.
