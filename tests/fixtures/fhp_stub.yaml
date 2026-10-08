@@ -1,0 +1,37 @@
+# Test fixture only: a hypothetical protein header (FHP) stub proving that a new
+# header type can import the shared core. It is not an FHP specification.
+id: https://example.org/fhp-stub
+name: FHPStub
+prefixes:
+  linkml: https://w3id.org/linkml/
+  ex: https://example.org/
+default_prefix: ex
+default_range: string
+imports:
+- linkml:types
+- ../../schemas/core
+slots:
+  proteome:
+    description: Name of the proteome
+    required: true
+classes:
+  FHPStub:
+    tree_root: true
+    slots:
+    - schema
+    - schemaVersion
+    - proteome
+    - taxon
+    - version
+    - metadataAuthor
+    - dateCreated
+    - checksum
+    - identifier
+    - accessionID
+    - scholarlyArticle
+    - documentation
+    - relatedLink
+    - funding
+    - reuseConditions
+    - voucherSpecimen
+    - derivedFrom

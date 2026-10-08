@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- Split the LinkML model into a shared FAIR-bioHeaders core
+  (`schemas/core.yaml`) and the FHR module (`fhr_linkml.yml`), which imports it
+  (#43, spec 004). The core holds the slots every header type shares, with
+  FHR's current names and constraints. It also adds a provisional `DerivedFrom`
+  class and `derivedFrom` slot (`headerType`, `checksum`, optional `seqcol_id`
+  and `accessionID`, `relationship`). The relationship values await a decision
+  on a PROV-O/RO mapping (#54). FHR does not include `derivedFrom`. `fhr.json`
+  is unchanged and the generated schema is still validation-equivalent.
+  `json-schema-generator.py` gains `generate_from()` for any schema that
+  imports the core. A test generates a toy FHP stub from the core.
 - Add FASTA/GFA conformance vectors for header parsing and checksum coverage
   (#34). `conformance/manifest.json` lists the expected outcome for each vector.
   `scripts/make_conformance.py` generates the vectors and computes their

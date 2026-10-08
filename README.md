@@ -81,6 +81,20 @@ annotations and ordering of required fields. Generated output does not overwrite
 the published `fhr.json`. [MIxS/MIGS mapping limits](docs/MAPPINGS.md) include
 partial/lossy terms and omissions; the output is not a complete MIGS submission.
 
+### Schema files
+
+- `fhr.json`: the published FHR JSON Schema (the contract).
+- `schemas/core.yaml`: the LinkML core shared by the FAIR-bioHeaders family
+  (`schema`, `schemaVersion`, `taxon`, `version`, `metadataAuthor`,
+  `dateCreated`, `checksum` and the optional provenance slots, plus `Taxon`,
+  `Author`, `AccessionID`, the `sha2` type and `seqcol_id`). It also defines a
+  provisional `DerivedFrom` class and `derivedFrom` slot that link a file to a
+  parent by checksum; FHR schemaVersion 1 does not use them.
+- `fhr_linkml.yml`: the FHR LinkML model. It imports the core and adds FHR-only
+  slots (`genome`, `assemblyAuthor`, `masking`, `vitalStats`, ...).
+- `tests/fixtures/fhp_stub.yaml`: a test-only stub showing how a future header
+  type imports the core.
+
 For intentional schema edits, explain compatibility and update the review baseline:
 
 ```bash

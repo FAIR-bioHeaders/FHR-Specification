@@ -16,7 +16,7 @@ it as current authority.
 
 ## Repository map
 
-`fhr.json` is the published contract; `fhr_linkml.yml` is its LinkML model. `json-schema-generator.py` generates a separate schema. `scripts/check_linkml.py` compares validation constraints, and `scripts/check_schema_drift.py` checks the explicit review baseline. `fhr_mappings.yml` and `scripts/project_mixs.py` define a partial MIxS/MIGS projection. Examples, docs, and `Diagram.svg` must agree.
+`fhr.json` is the published contract; `fhr_linkml.yml` is its LinkML model, which imports the family-wide core in `schemas/core.yaml`. `json-schema-generator.py` generates a separate schema. `scripts/check_linkml.py` compares validation constraints, and `scripts/check_schema_drift.py` checks the explicit review baseline. `fhr_mappings.yml` and `scripts/project_mixs.py` define a partial MIxS/MIGS projection. Examples, docs, and `Diagram.svg` must agree.
 
 ## Verification
 
