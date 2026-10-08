@@ -50,7 +50,7 @@ obtain retrospective group review within fourteen days.
 Governance amendments follow the public proposal process and need two-thirds of
 non-conflicted group members, with quorum. Review the model annually and publish
 a short record of membership and decisions. Participation remains subject to the
-code of conduct; its reporting/enforcement channel must be adopted separately.
+code of conduct and its documented private reporting and appeal routing.
 
 ## Transition and adoption checklist
 
