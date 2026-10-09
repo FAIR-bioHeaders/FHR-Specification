@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-08
 
-**Status**: Draft
+**Status**: Implemented on `release-v0.4` (decisions recorded in #35, 2026-10-09)
 
 **Input**: Review finding for FHR-Specification#29 (decision 4): "Review retained
 legacy constraints and unknown-property behavior rather than silently tightening
@@ -71,17 +71,17 @@ constraint, each with a changelog line.
 - **FR-002**: All `vitalStats` integer statistics MUST have `minimum: 0`.
 - **FR-003**: The checksum pattern MUST require valid padded base64 for a 32-byte
   digest (43 base64 characters, then `=`).
-- **FR-004**: `schemaVersion` MUST be constrained [NEEDS CLARIFICATION: `const: 1`
-  for v0.4, or an `enum` of supported versions, or bump to 2 if any tightening
-  counts as breaking?].
-- **FR-005**: Nested unknown properties [NEEDS CLARIFICATION: close nested objects
-  (`additionalProperties: false`), or keep them open and only warn?].
-- **FR-006**: N50/N90 MUST state whether they refer to contigs or scaffolds
-  [NEEDS CLARIFICATION: add scaffold variants, or define both as contig?].
+- **FR-004**: `schemaVersion` MUST be constrained. Decided: it stays 1 and is
+  restricted with `enum: [1]`; version 2 is reserved for a structural change.
+- **FR-005**: Nested unknown properties. Decided: nested objects are closed
+  (`additionalProperties: false`); extra fields belong in profiles (#51).
+- **FR-006**: N50/N90 MUST state whether they refer to contigs or scaffolds.
+  Decided: N50/N90/L50/L90 are contig statistics; optional `scaffoldN50`,
+  `scaffoldN90`, `scaffoldL50` and `scaffoldL90` are added.
 - **FR-007**: LinkML, both converter schema copies, docs, and the diagram MUST be
   updated together; `check_linkml.py` and `check_release.py` MUST pass.
-- **FR-008**: `gcContent` fractions MUST NOT be silently accepted [NEEDS
-  CLARIFICATION: keep 0–100 and document it, or warn when the value is at most 1?].
+- **FR-008**: `gcContent` fractions. Decided: keep 0–100 and document the
+  fraction pitfall; `0.42` is a legitimate 0.42 percent, so it is not rejected.
 
 ## Success Criteria *(mandatory)*
 

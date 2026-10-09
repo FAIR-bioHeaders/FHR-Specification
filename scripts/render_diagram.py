@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def render(schema):
     required = schema["required"]
     optional = [key for key in schema["properties"] if key not in required]
-    height = 170 + max(len(required), len(optional)) * 38 + 210
+    height = 170 + max(len(required), len(optional)) * 38 + 240
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="{height}" viewBox="0 0 1200 {height}">',
         "<title>FHR metadata field overview</title>",
@@ -37,12 +37,13 @@ def render(schema):
             parts.append(
                 f'<text x="{x}" y="{170+i*38}" font-size="18">{escape(key)}: {escape(kind)}</text>'
             )
-    y = height - 155
+    y = height - 185
     for i, line in enumerate(
         [
             "assemblySoftware objects: name (required), uri, version, commandLineOption[]",
-            "vitalStats: N50, L50, N90, L90, totalBasePairs, numberContigs, numberScaffolds, gcContent, readTechnology",
-            "N90: base pairs · gcContent: 0–100 percent · seqcol_id: supplied 32-character base64url digest",
+            "vitalStats: contig N50, L50, N90, L90; scaffoldN50, scaffoldL50, scaffoldN90, scaffoldL90; totalBasePairs,",
+            "numberContigs, numberScaffolds, gcContent, readTechnology · nested objects reject unknown keys",
+            "N50/N90: base pairs · gcContent: 0–100 percent · seqcol_id: supplied 32-character base64url digest",
             "checksum: exact-byte SHA-512/256 including metadata and sequence, except its checksum line",
             "This overview is generated from fhr.json; the JSON Schema defines the full contract.",
         ]
