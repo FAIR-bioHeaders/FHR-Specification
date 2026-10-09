@@ -22,9 +22,12 @@ def generate_from(schema_path):
             not_closed=False,
         ).serialize()
     )
-    # Legacy FHR nested objects in the core are open; newer objects stay closed.
-    for name in ("Taxon", "Author", "AccessionID"):
-        generated["$defs"].get(name, {}).pop("additionalProperties", None)
+    # All nested objects are closed (v0.4). The published contract writes the
+    # schemaVersion restriction as an enum so later versions can be listed.
+    for node in (generated, *generated["$defs"].values()):
+        version = node.get("properties", {}).get("schemaVersion", {})
+        if "const" in version:
+            version["enum"] = [version.pop("const")]
     # A trailing newline satisfies "$" in Python regexes; pin the exact length.
     for node in (generated, *generated["$defs"].values()):
         for name, length in EXACT_LENGTHS.items():
@@ -36,7 +39,6 @@ def generate_from(schema_path):
 
 def generate():
     generated = generate_from(ROOT / "fhr_linkml.yml")
-    generated["$defs"]["VitalStats"].pop("additionalProperties", None)
     # LinkML emits a scalar type beside a heterogeneous union. Retain the union.
     for node in (generated, generated["$defs"]["FHR"]):
         node["properties"]["assemblySoftware"].pop("type", None)

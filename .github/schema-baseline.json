@@ -5,20 +5,21 @@
   "definitions": {
     "orcidUri": {
       "format": "uri",
-      "pattern": "^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]",
+      "pattern": "^https://orcid\\.org/[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]$",
       "type": "string"
     },
     "sha2": {
-      "description": "sha2-512/256 checksum value for hashing",
+      "description": "sha2-512/256 checksum value: standard padded base64 of the 32-byte digest (43 characters, then =)",
       "maxLength": 44,
       "minLength": 44,
-      "pattern": "^[A-Za-z0-9/+=]{44}$",
+      "pattern": "^[A-Za-z0-9+/]{43}=$",
       "type": "string"
     }
   },
   "description": "FAIR Header Reference genome Schema for Genome Assemblies",
   "properties": {
     "accessionID": {
+      "additionalProperties": false,
       "description": "accessionID genome assembly was created",
       "properties": {
         "name": {
@@ -33,6 +34,7 @@
     },
     "assemblyAuthor": {
       "items": {
+        "additionalProperties": false,
         "description": "Assembler of the Genome (Person or Org)",
         "properties": {
           "name": {
@@ -115,9 +117,9 @@
       "type": "array"
     },
     "identifier": {
-      "description": "Identifies of the genome",
+      "description": "Identifiers of the genome as prefix:accession (CURIE-like)",
       "items": {
-        "pattern": "[a-z0-9]*:.*",
+        "pattern": "^[A-Za-z0-9._-]+:.+$",
         "type": "string"
       },
       "type": "array"
@@ -131,11 +133,12 @@
     },
     "masking": {
       "description": "masking applied to the genome assembly",
-      "pattern": "(not-masked|hard-masked|soft-masked|repeat-masked|unknown)",
+      "pattern": "^(not-masked|hard-masked|soft-masked|repeat-masked|unknown)$",
       "type": "string"
     },
     "metadataAuthor": {
       "items": {
+        "additionalProperties": false,
         "description": "Author of the FHR Instance (Person or Org)",
         "properties": {
           "name": {
@@ -166,12 +169,15 @@
       "type": "string"
     },
     "schemaVersion": {
-      "description": "Version of FHR",
+      "description": "Version of FHR; restricted to 1 (version 2 is reserved for a structural change)",
+      "enum": [
+        1
+      ],
       "type": "number"
     },
     "scholarlyArticle": {
-      "description": "Scholarly article genome was published e.g. 10.5281/zenodo.6762550 ",
-      "pattern": "^10.",
+      "description": "DOI (without a resolver prefix) of the scholarly article where the genome was published, e.g. 10.5281/zenodo.6762550",
+      "pattern": "^10\\.[0-9]+(\\.[0-9]+)*/\\S+$",
       "type": "string"
     },
     "seqcol_id": {
@@ -182,6 +188,7 @@
       "type": "string"
     },
     "taxon": {
+      "additionalProperties": false,
       "description": "Species name and URL of the species information at identifiers.org",
       "properties": {
         "name": {
@@ -189,7 +196,7 @@
         },
         "uri": {
           "format": "uri",
-          "pattern": "https://identifiers.org/taxonomy:[0-9]+",
+          "pattern": "^https://identifiers\\.org/taxonomy:[0-9]+$",
           "type": "string"
         }
       },
@@ -200,18 +207,22 @@
       "type": "string"
     },
     "vitalStats": {
-      "description": "general statistics about the genome assembly",
+      "additionalProperties": false,
+      "description": "general statistics about the genome assembly; N50, N90, L50 and L90 are contig statistics, the scaffold* fields are scaffold statistics",
       "properties": {
         "L50": {
-          "description": "L50 of the genome assembly",
+          "description": "Contig L50: the smallest number of contigs whose lengths sum to at least 50 percent of the assembly length.",
+          "minimum": 0,
           "type": "integer"
         },
         "L90": {
-          "description": "L90 of the genome assembly",
+          "description": "Contig L90: the smallest number of contigs whose lengths sum to at least 90 percent of the assembly length.",
+          "minimum": 0,
           "type": "integer"
         },
         "N50": {
-          "description": "N50 of the genome assembly",
+          "description": "Contig N50: contig length in base pairs at 50 percent of the assembly length.",
+          "minimum": 0,
           "type": "integer"
         },
         "N90": {
@@ -220,25 +231,48 @@
           "type": "integer"
         },
         "gcContent": {
-          "description": "GC content as a percentage (0 to 100), not a fraction.",
+          "description": "GC content as a percentage (0 to 100), not a fraction: write 42.0 for 42 percent; 0.42 means 0.42 percent.",
           "maximum": 100,
           "minimum": 0,
           "type": "number"
         },
         "numberContigs": {
           "description": "number of contigs of the genome assembly",
+          "minimum": 0,
           "type": "integer"
         },
         "numberScaffolds": {
           "description": "number of scaffolds of the genome assembly",
+          "minimum": 0,
           "type": "integer"
         },
         "readTechnology": {
           "description": "read technology of the genome assembly (short, long, hifi, etc...)",
           "type": "string"
         },
+        "scaffoldL50": {
+          "description": "Scaffold L50: the smallest number of scaffolds whose lengths sum to at least 50 percent of the assembly length.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "scaffoldL90": {
+          "description": "Scaffold L90: the smallest number of scaffolds whose lengths sum to at least 90 percent of the assembly length.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "scaffoldN50": {
+          "description": "Scaffold N50: scaffold length in base pairs at 50 percent of the assembly length.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "scaffoldN90": {
+          "description": "Scaffold N90: scaffold length in base pairs at 90 percent of the assembly length.",
+          "minimum": 0,
+          "type": "integer"
+        },
         "totalBasePairs": {
           "description": "total base pairs of the genome assembly",
+          "minimum": 0,
           "type": "integer"
         }
       },

@@ -4,7 +4,8 @@ description: >-
   Shared core for the FAIR-bioHeaders family (FHR, FHT, FHP, FHGFF3). Header-type
   schemas import this module, list the core slots on their root class, and add
   their own subject slot and type-specific slots. Slot names, types, patterns and
-  constraints match FHR schemaVersion 1. The id is provisional pending the
+  constraints match FHR schemaVersion 1 as tightened for v0.4
+  (docs/SCHEMA-CHANGES-v0.4.md). The id is provisional pending the
   persistent schema URL decision (specs/004-shared-core-schema FR-004).
 prefixes:
   linkml: https://w3id.org/linkml/
@@ -16,16 +17,20 @@ imports:
 types:
   sha2:
     base: str
-    pattern: ^[A-Za-z0-9/+=]{44}$
-    description: Base64 SHA-512/256 digest (44 characters), as defined for FHR checksums.
+    pattern: ^[A-Za-z0-9+/]{43}=$
+    description: >-
+      Base64 SHA-512/256 digest: standard padded base64 of 32 bytes (43 base64
+      characters, then one "="), as defined for FHR checksums. A syntactic check
+      only; it does not verify the file.
 slots:
   # Required core slots (FR-001).
   schema:
     description: Centralized schema file
     required: true
   schemaVersion:
-    description: Version of the header schema
+    description: Version of the header schema; restricted to 1
     range: float
+    equals_number: 1
     required: true
   taxon:
     description: Species name and URL of the species information at identifiers.org
@@ -53,14 +58,14 @@ slots:
   identifier:
     description: Identifiers of the described data
     multivalued: true
-    pattern: '[a-z0-9]*:.*'
+    pattern: ^[A-Za-z0-9._-]+:.+$
   accessionID:
     description: Accession of the described data
     range: AccessionID
     inlined: true
   scholarlyArticle:
-    description: Scholarly article where the data was published
-    pattern: ^10.
+    description: DOI (without a resolver prefix) of the scholarly article where the data was published
+    pattern: ^10\.[0-9]+(\.[0-9]+)*/\S+$
   documentation:
     description: Documentation about the described data
   relatedLink:
@@ -105,7 +110,7 @@ classes:
       uri:
         description: Taxonomy URI
         range: uri
-        pattern: https://identifiers.org/taxonomy:[0-9]+
+        pattern: ^https://identifiers\.org/taxonomy:[0-9]+$
   Author:
     description: Person or organization; uri is an ORCID URI
     attributes:
@@ -114,7 +119,7 @@ classes:
       uri:
         description: ORCID URI
         range: uri
-        pattern: ^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]
+        pattern: ^https://orcid\.org/[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]$
   AccessionID:
     description: Accession identifier
     attributes:
