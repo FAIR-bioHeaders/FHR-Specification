@@ -304,13 +304,19 @@ def build():
               "Every FHR line, including the checksum line, has root indentation 1.")
         data, value = assemble(header(k, key="checksum  : ") + body(k))
         valid(f"{k}-space-before-colon", k, data, value, ["R2"], "Spaces before the colon.")
-        lines = with_metadata(k, insert=[(
-            "  uri: https://identifiers.org/taxonomy:9606",
-            ["  checksum: nested property, hashed like other metadata"],
-        )])
+        # Nested FHR objects are closed (v0.4), so the nested checksum line sits
+        # in a block scalar rather than under taxon, keeping the metadata valid.
+        lines = with_metadata(k, replacements=[(
+            "documentation: Synthetic FHR conformance vector; not a real assembly.",
+            "documentation: |-",
+        )], insert=[("documentation: |-", [
+            "  Synthetic FHR conformance vector; not a real assembly.",
+            "  checksum: nested line, hashed like other metadata",
+        ])])
         data, value = assemble(lines + body(k))
         valid(f"{k}-nested-checksum", k, data, value, ["R2", "R3"],
-              "A nested taxon.checksum property is ordinary covered metadata.")
+              "An indented checksum line nested in a block scalar (documentation) is "
+              "ordinary covered metadata, not the root checksum line.")
         quote = "'" if k == "fasta" else '"'
         lines = header(k)
         lines[-1].text = lines[-1].text.replace(MARK, quote.encode() + MARK + quote.encode())

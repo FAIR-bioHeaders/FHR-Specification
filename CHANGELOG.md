@@ -1,7 +1,42 @@
 # Changelog
 
-## Unreleased
+## Unreleased (v0.4)
 
+- Tighten loose schema constraints (#35, spec 002). `schemaVersion` stays 1;
+  every change rejects values that were already malformed.
+  docs/SCHEMA-CHANGES-v0.4.md lists each change with a before/after example and
+  a migration hint. Possibly breaking for existing metadata:
+  - `schemaVersion` is restricted to 1 (`enum: [1]`); `99` or `2` now fail.
+  - Nested objects (`taxon`, `metadataAuthor`/`assemblyAuthor` items,
+    `accessionID`, `vitalStats`) reject unknown keys, so a typo such as
+    `vitalStats.n50` now fails. Use profiles (#51) for extra fields.
+  - `masking` must be exactly one of its five values (anchored pattern).
+  - `scholarlyArticle` must be a bare DOI `10.<registrant>/<suffix>` (escaped
+    dot, non-empty suffix, no spaces).
+  - `identifier` items must be `prefix:accession` with a non-empty prefix of
+    letters, digits, `.`, `_` or `-` (uppercase now explicitly allowed) and a
+    non-empty accession (anchored).
+  - `taxon.uri` and ORCID URIs are anchored at both ends with escaped dots;
+    ORCID `X` check digits remain valid and `https://` is still required.
+  - `checksum` must be standard padded base64 of a 32-byte digest
+    (`^[A-Za-z0-9+/]{43}=$`); 44 `=` characters or unpadded values now fail.
+  - `N50`, `L50`, `L90`, `totalBasePairs`, `numberContigs` and
+    `numberScaffolds` have `minimum: 0`, like `N90`.
+- Add optional `vitalStats.scaffoldN50`, `scaffoldN90`, `scaffoldL50` and
+  `scaffoldL90` (nonnegative integers). `N50`, `N90`, `L50` and `L90` are now
+  described as contig statistics.
+- Document that `gcContent` is a percentage from 0 to 100, not a fraction; `0.42`
+  remains valid as 0.42 percent.
+- LinkML (`schemas/core.yaml`, `fhr_linkml.yml`) carries the same constraints;
+  `json-schema-generator.py` no longer reopens nested objects and emits
+  `schemaVersion` as `enum: [1]`. The schema review baseline was updated
+  deliberately. New tests cover each rejected value against both schemas, real
+  edge forms (ORCID `X`, preprint DOIs, uppercase CURIEs, low GC percentages)
+  and all examples. The `fasta-nested-checksum`/`gfa-nested-checksum`
+  conformance vectors move their nested `checksum:` line from `taxon` into a
+  `documentation` block scalar so their metadata stays valid; their expected
+  checksums changed. The converter's three bundled schema copies must be
+  updated to match.
 - Add HTML microdata conformance vectors (rule R9). Thirteen valid and ten invalid
   `.fhr.html` vectors cover repeated attributes (first wins), `itemtype` and
   `itemprop` token lists, implied end tags, nested unrelated item scopes, value

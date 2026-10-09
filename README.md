@@ -21,8 +21,9 @@ Required fields: `schema`, `schemaVersion`, `genome`, `taxon`, `version`,
 `metadataAuthor`, `assemblyAuthor`, `dateCreated`, `masking`, and `checksum`.
 See [the minimal instance](examples/minimal.fhr.json) and
 [the annotated field reference](docs/FORMAT.md). Top-level unknown fields are
-rejected by the schema. Many nested objects remain open for existing metadata;
-software provenance objects have an explicit field set.
+rejected by the schema. From v0.4 nested objects (`taxon`, authors,
+`accessionID`, `vitalStats`, software provenance) reject unknown keys too; see
+[the v0.4 schema changes](docs/SCHEMA-CHANGES-v0.4.md).
 
 The [rich YAML example](examples/example.fhr.yaml) shows optional
 `assemblySoftware`, `assemblyProtocol`, `vitalStats.N90`, `vitalStats.gcContent`,
@@ -78,8 +79,9 @@ python scripts/project_mixs.py examples/example.fhr.json
 ```
 
 CI checks JSON/YAML examples, the explicit schema review baseline, and LinkML
-validation equivalence. Generation uses pinned LinkML 1.11.1 and preserves
-legacy open nested objects and checksum length constraints. Equivalence checking
+validation equivalence. Generation uses pinned LinkML 1.11.1, closes every
+nested object, writes `schemaVersion` as `enum: [1]`, and pins checksum length
+constraints. Equivalence checking
 resolves local references and compares validation keywords, ignoring descriptive
 annotations and ordering of required fields. Generated output does not overwrite
 the published `fhr.json`. [MIxS/MIGS mapping limits](docs/MAPPINGS.md) include

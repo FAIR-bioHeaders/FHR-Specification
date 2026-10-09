@@ -5,14 +5,22 @@ The header parsing rules below are implemented from converter 0.3.1.
 The assembly's own version string is independent. No required fields were added.
 Top-level metadata is closed; optional fields may be omitted, not replaced by null.
 
+The unreleased v0.4 schema keeps schemaVersion 1 but tightens loose constraints:
+`schemaVersion` must be 1, nested objects reject unknown keys, patterns are
+anchored, the checksum must be padded base64 of 32 bytes, statistics are
+nonnegative, and optional scaffold statistics are added. See
+[SCHEMA-CHANGES-v0.4.md](SCHEMA-CHANGES-v0.4.md) for every change and a
+migration hint.
+
 ## New optional fields
 
 | Field | Value | Meaning |
 | --- | --- | --- |
 | `assemblySoftware` | Legacy string or array of objects | Assembly software name; objects require `name`, with optional `uri`, `version`, and `commandLineOption` (array of argument strings). |
 | `assemblyProtocol` | URI string | External assembly protocol/workflow documentation. |
-| `vitalStats.N90` | Nonnegative integer | Contig length in base pairs at the 90% cumulative assembly-length threshold. |
-| `vitalStats.gcContent` | Number from 0 to 100 | Percentage of G/C bases; contributors must document how ambiguous bases were handled. |
+| `vitalStats.N90` | Nonnegative integer | Contig length in base pairs at the 90% cumulative assembly-length threshold. `N50`, `L50` and `L90` are also contig statistics (stated from v0.4). |
+| `vitalStats.scaffoldN50`, `scaffoldN90`, `scaffoldL50`, `scaffoldL90` | Nonnegative integer (v0.4) | The same statistics computed over scaffolds. |
+| `vitalStats.gcContent` | Number from 0 to 100 | Percentage of G/C bases, not a fraction: write `42.0` for 42%; `0.42` means 0.42%. Contributors must document how ambiguous bases were handled. |
 | `seqcol_id` | 32 base64url characters | Unprefixed level-zero GA4GH refget sequence collection digest. |
 
 SeqCol uses [sha512t24u](https://ga4gh.github.io/refget/seqcols/): SHA-512 truncated
@@ -37,7 +45,9 @@ helpers used MD5 and described different coverage. v0.3 explicitly adopts:
    `#~checksum:` (GFA), with an unquoted key. Spaces or tabs may appear before
    the key only to match the root indentation of the other header lines, and
    before the colon.
-   Nested properties named checksum remain covered.
+   Nested properties named checksum remain covered. (From v0.4 FHR's nested
+   objects reject unknown keys, so in FHR such a line occurs only inside a
+   scalar; header types with nested checksums, such as `derivedFrom`, keep it.)
 3. [R3] Exclude that entire line and its line terminator. Hash every other byte,
    including all other metadata and ordinary comments.
 4. [R4] Apply SHA-512/256 (the SHA-512/256 algorithm, not SHA-512 truncated manually).

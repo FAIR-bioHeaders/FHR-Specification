@@ -4,7 +4,6 @@
 #~taxon:
 #~  name: Homo sapiens
 #~  uri: https://identifiers.org/taxonomy:9606
-#~  checksum: nested property, hashed like other metadata
 #~version: 1.0.0
 #~metadataAuthor:
 #~- name: Synthetic metadata author (placeholder)
@@ -12,7 +11,9 @@
 #~- name: Synthetic assembly author (placeholder)
 #~dateCreated: '2026-10-08'
 #~masking: not-masked
-#~documentation: Synthetic FHR conformance vector; not a real assembly.
-#~checksum: fEFkbLMoAOvFzIwG1QXXN12YY1+Esk2HdUIb/NQ3jA4=
+#~documentation: |-
+#~  Synthetic FHR conformance vector; not a real assembly.
+#~  checksum: nested line, hashed like other metadata
+#~checksum: 7t3CLRLf1nwyB8T0VGFIDsvDKyLDoZto19jNiJARQY4=
 H	VN:Z:1.0
 S	Contig1	ACGTACGTACGGTTAACCAT

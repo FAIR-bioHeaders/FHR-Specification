@@ -204,8 +204,8 @@
         "R2",
         "R3"
       ],
-      "description": "A nested taxon.checksum property is ordinary covered metadata.",
-      "checksum": "LDnzswnZNe5GgEl5Xa1Sb8V4HAQZitxCy6Ao2jmb4o0=",
+      "description": "An indented checksum line nested in a block scalar (documentation) is ordinary covered metadata, not the root checksum line.",
+      "checksum": "8djBDcQIIm7bJPLI/xYdw/+yQ59e3LLpmC0O2nH+lbY=",
       "metadata": {
         "genome": "Synthetic FHR conformance genome",
         "version": "1.0.0",
@@ -474,8 +474,8 @@
         "R2",
         "R3"
       ],
-      "description": "A nested taxon.checksum property is ordinary covered metadata.",
-      "checksum": "fEFkbLMoAOvFzIwG1QXXN12YY1+Esk2HdUIb/NQ3jA4=",
+      "description": "An indented checksum line nested in a block scalar (documentation) is ordinary covered metadata, not the root checksum line.",
+      "checksum": "7t3CLRLf1nwyB8T0VGFIDsvDKyLDoZto19jNiJARQY4=",
       "metadata": {
         "genome": "Synthetic FHR conformance genome",
         "version": "1.0.0",

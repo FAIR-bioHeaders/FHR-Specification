@@ -31,7 +31,7 @@ slots:
     multivalued: true
   masking:
     description: Masking applied to the genome assembly
-    pattern: (not-masked|hard-masked|soft-masked|repeat-masked|unknown)
+    pattern: ^(not-masked|hard-masked|soft-masked|repeat-masked|unknown)$
     required: true
   vitalStats:
     description: General statistics about the genome assembly
@@ -104,34 +104,70 @@ classes:
       reuseConditions:
         description: Reuse conditions or license for the genome
   VitalStats:
-    description: General statistics about the genome assembly
+    description: >-
+      General statistics about the genome assembly. N50, N90, L50 and L90 are
+      contig statistics; the scaffold* variants are the scaffold statistics.
     attributes:
       L50:
-        description: L50 of the genome assembly
+        description: Contig L50, the smallest number of contigs whose lengths sum
+          to at least 50 percent of the assembly length
         range: integer
+        minimum_value: 0
       N50:
-        description: N50 of the genome assembly
+        description: Contig N50, the contig length in base pairs at 50 percent of
+          the assembly length
         range: integer
+        minimum_value: 0
       L90:
-        description: L90 of the genome assembly
+        description: Contig L90, the smallest number of contigs whose lengths sum
+          to at least 90 percent of the assembly length
         range: integer
+        minimum_value: 0
       totalBasePairs:
         description: Total base pairs of the genome assembly
         range: integer
+        minimum_value: 0
       numberContigs:
         exact_mappings:
         - MIXS:0000060
         description: Number of contigs of the genome assembly
         range: integer
+        minimum_value: 0
       numberScaffolds:
         description: Number of scaffolds of the genome assembly
         range: integer
+        minimum_value: 0
       readTechnology:
         description: Read technology of the genome assembly
       N90:
+        description: Contig N90, the contig length in base pairs at 90 percent of
+          the assembly length
+        range: integer
+        minimum_value: 0
+      scaffoldN50:
+        description: Scaffold N50, the scaffold length in base pairs at 50 percent
+          of the assembly length
+        range: integer
+        minimum_value: 0
+      scaffoldN90:
+        description: Scaffold N90, the scaffold length in base pairs at 90 percent
+          of the assembly length
+        range: integer
+        minimum_value: 0
+      scaffoldL50:
+        description: Scaffold L50, the smallest number of scaffolds whose lengths
+          sum to at least 50 percent of the assembly length
+        range: integer
+        minimum_value: 0
+      scaffoldL90:
+        description: Scaffold L90, the smallest number of scaffolds whose lengths
+          sum to at least 90 percent of the assembly length
         range: integer
         minimum_value: 0
       gcContent:
+        description: >-
+          GC content as a percentage from 0 to 100, not a fraction (write 42.0
+          for 42 percent; 0.42 means 0.42 percent)
         range: float
         minimum_value: 0
         maximum_value: 100
