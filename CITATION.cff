@@ -44,7 +44,8 @@ keywords:
 - gfa
 - microdata
 - genome assembly
-license: PDDL-1.0
+license: MPL-2.0
+# Historical permissions and third-party exceptions are documented in LICENSE.
 doi: 10.5281/zenodo.6762549
 url: https://github.com/FAIR-bioHeaders/FHR-Specification
 preferred-citation:

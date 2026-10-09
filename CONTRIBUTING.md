@@ -36,3 +36,7 @@ transferring repository ownership. Keep companion PRs linked for coordinated rev
 Guidance and README changes are tracked in [specification issue #23](https://github.com/FAIR-bioHeaders/FHR-Specification/issues/23). Both private conduct/security contacts and the conflict/appeal routing are documented in the policies.
 
 Use Chicago bibliography entries with DOI resolver links in human-readable citations. Keep the published paper, preprint, specification and converter distinct; preserve concept DOI meaning and existing BibTeX keys. CFF/BibTeX remain machine-readable metadata. The file audit and companion PRs are recorded in [FHR-Citation/AUDIT.md](https://github.com/FAIR-bioHeaders/FHR-Citation/blob/main/AUDIT.md), tracked by [issue #25](https://github.com/FAIR-bioHeaders/FHR-Specification/issues/25).
+
+## License of contributions
+
+New project contributions from March 2025 onward use [MPL-2.0](LICENSE). David Molik left USDA in February 2025. Historical USDA public-domain material remains public domain within the United States; its original notice is preserved in LICENSE. Previously granted permissions and third-party terms remain intact. The project includes both historical material and subsequent MPL-2.0 contributions; file notices and history identify provenance. New contributions must have the rights needed for their declared license; retain source notices.

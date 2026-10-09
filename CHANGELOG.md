@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Document the MPL-2.0 transition for new project contributions from March 2025 onward, preserve historical permissions and third-party notices, and align README/package/citation licensing. No runtime behavior changes.
+
 - Add HTML microdata conformance vectors (rule R9). Thirteen valid and ten invalid
   `.fhr.html` vectors cover repeated attributes (first wins), `itemtype` and
   `itemprop` token lists, implied end tags, nested unrelated item scopes, value
