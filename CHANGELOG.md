@@ -53,10 +53,15 @@
   context (Bioschemas `keywords`, `url` and `conformsTo`), author typing from
   ORCID or ROR, and what converting to RDF loses.
   `mappings/fhr-jsonld-dcmi.yml` maps every field to Dublin Core (DCMI Terms),
-  with a summary in `docs/MAPPINGS.md`. The conformance suite gains JSON-LD
-  vectors. A GitHub Pages site (`scripts/build_pages.py`,
+  with a summary in `docs/MAPPINGS.md`. The conformance suite gains 23 JSON-LD
+  vectors, 11 of them for rules J3 to J5 (other forms, read by JSON-LD
+  expansion with bundled contexts only: expanded, schema.org `@vocab`, one-node
+  `@graph`, IRIs as strings, and the invalid unknown-term, remote-context,
+  two-node, two-value, flattened, `xsd:dateTime` and root-`@id` cases). A GitHub Pages site (`scripts/build_pages.py`,
   `.github/workflows/jsonld-pages.yml`) serves the context and vocabulary with
-  JSON-LD and Turtle media types; w3id redirects for the vocabulary namespace and
+  JSON-LD and Turtle media types. The context also defines every node type at
+  the root, so JSON-LD 1.0 tools such as validator.schema.org recognise them;
+  w3id redirects for the vocabulary namespace and
   release contexts are prepared for perma-id/w3id.org.
 
 - Add the FAIR header guideline `docs/FAIR_HEADER_GUIDELINE.md` (feature 010,

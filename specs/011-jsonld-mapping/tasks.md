@@ -269,11 +269,17 @@ repositories, offline.
   - a link to FHR-Specification `docs/JSONLD.md`.
 
   Also add an `Unreleased` entry to `FAIR-bioHeaders-Tools/CHANGELOG.md`, and add `bioheaders/jsonld.py` and `bioheaders/fhr.context.jsonld` to the repository map in `FAIR-bioHeaders-Tools/AGENTS.md`
-- [ ] T027 [US1] Run quickstart V1, V3, V4, V5, V6 (the J1/J2/J6/J7 vectors) and V7 in both repositories. Do V8 by hand: paste `examples/example.fhr.jsonld` into <https://validator.schema.org/> and record the result (the recognised types and any errors) in the FHR-Specification PR description
+- [X] T027 [US1] Run quickstart V1, V3, V4, V5, V6 (the J1/J2/J6/J7 vectors) and V7 in both repositories. Do V8 by hand: paste `examples/example.fhr.jsonld` into <https://validator.schema.org/> and record the result (the recognised types and any errors) in the FHR-Specification PR description
 
   *Status (2026-10-10):* V1, V3, V4, V5 (Python 3.9 and 3.13), V6 (all 124 vectors through the
-  toolkit checkout) and V7 (installed wheel, outside the checkout) pass. V8 is open: it needs the
-  online validator and a PR description, so it is left to the PR
+  toolkit checkout) and V7 (installed wheel, outside the checkout) pass.
+  *V8 (2026-10-10):* `examples/example.fhr.jsonld` posted to <https://validator.schema.org/>.
+  The first run recognised `Dataset` and `Grant` but read the nested types as relative IRIs:
+  the validator does not implement JSON-LD 1.1 property-scoped contexts. The context now also
+  defines every node type at the root (same IRIs), and the rerun recognises `Dataset`, `Taxon`,
+  `Person`, `PropertyValue`, `SoftwareApplication`, `Grant` and `fhr:VitalStats`. One error
+  remains, and it is the example's data: `license` is the text "public domain", where schema.org
+  expects a URL or `CreativeWork` (guideline item 7 already recommends a licence URL)
 
 **Checkpoint**: US1 is complete. The JSON-LD of every example and vector expands to allowed
 vocabularies and round-trips, and the toolkit converts `.jsonld` in both directions on Python 3.9
@@ -357,12 +363,12 @@ same FHR record, offline. Terms outside the mapping are reported, never silently
 
 ### Tests for User Story 3 (write first, must fail) ⚠️
 
-- [ ] T033 [P] [US3] Extend `FHR-Specification/scripts/make_conformance.py` with the J3–J5 vectors, written as literal documents (no PyLD, so that regeneration stays deterministic):
+- [X] T033 [P] [US3] Extend `FHR-Specification/scripts/make_conformance.py` with the J3–J5 vectors, written as literal documents (no PyLD, so that regeneration stays deterministic):
   - valid `jsonld-expanded`, `jsonld-schemaorg-vocab-compaction` (`{"@vocab": "http://schema.org/", "fhr": "https://w3id.org/fair-bioheaders/terms#"}`, `dateCreated` as a typed value object), `jsonld-graph-single-node` and `jsonld-iri-as-string` (`relatedLink` given as a string under `@vocab` compaction);
   - invalid `jsonld-unknown-term` (`http://schema.org/keywords`), `jsonld-remote-context` (`"@context": "https://schema.org/"`), `jsonld-two-nodes`, `jsonld-two-genome-values`, `jsonld-flattened`, `jsonld-datetime-datecreated` and `jsonld-root-id`.
 
   Add the manifest entries with rules `J3`–`J5` and the expected `metadata`. Add the rule text for J3–J5 to `FHR-Specification/docs/JSONLD.md`, worded as in research R-13. Regenerate `FHR-Specification/conformance/`
-- [ ] T034 [P] [US3] Extend `FAIR-bioHeaders-Tools/tests/jsonld_test.py` with general-path tests (`pytest.importorskip("pyld")`). They cover:
+- [X] T034 [P] [US3] Extend `FAIR-bioHeaders-Tools/tests/jsonld_test.py` with general-path tests (`pytest.importorskip("pyld")`). They cover:
   - every `jsonld` vector copied from FHR-Specification `conformance/` (into `tests/fixtures/jsonld/`), with the manifest's expected outcome;
   - for each example, the PyLD-expanded form reads back equal under data-model §8;
   - the reverse map derived from `CONTEXT` covers all 45 paths;
@@ -372,7 +378,7 @@ same FHR record, offline. Terms outside the mapping are reported, never silently
 
 ### Implementation for User Story 3
 
-- [ ] T035 [US3] Implement the general path in `FAIR-bioHeaders-Tools/bioheaders/jsonld.py`. It has:
+- [X] T035 [US3] Implement the general path in `FAIR-bioHeaders-Tools/bioheaders/jsonld.py`. It has:
   - a document loader that returns only the bundled `RELEASED_CONTEXTS` for `KNOWN_CONTEXT_URLS` and raises `JsonLdError(..., code="loading document failed")` otherwise;
   - `pyld.jsonld.expand(doc, {"documentLoader": loader}, on_property_dropped=...)`;
   - a single-node check that allows a single-item `@graph`;
@@ -381,8 +387,28 @@ same FHR record, offline. Terms outside the mapping are reported, never silently
   - unknown-term collection (data-model §7) with `reason` `dropped`, `unmapped` or `root-id`, which raises unless `ignore_unknown_terms` and otherwise calls `warn`.
 
   Output keys follow `fhr.json` property order. PyLD is imported only inside this path
-- [ ] T036 [US3] Add `--ignore-unknown-terms` to `convert` and `validate` in `FAIR-bioHeaders-Tools/bioheaders/cli.py` (`_convert_arguments`, `_validate_arguments`). Pass it through `read_metadata(path, ..., ignore_unknown_terms=...)` to `input_jsonld`; it is ignored for other formats. Help text: "JSON-LD input only: report terms that do not map to an FHR field as warnings instead of errors". T034 passes after this task
-- [ ] T037 [US3] Install the toolkit with `--extras jsonld` on Python 3.13, and run `python scripts/check_conformance.py --converter ../FHR-File-Converter` from FHR-Specification (quickstart V6, all `jsonld` vectors). Add the general path and the `--ignore-unknown-terms` option to `FAIR-bioHeaders-Tools/README.md` and the `Unreleased` entry of `FAIR-bioHeaders-Tools/CHANGELOG.md`
+- [X] T036 [US3] Add `--ignore-unknown-terms` to `convert` and `validate` in `FAIR-bioHeaders-Tools/bioheaders/cli.py` (`_convert_arguments`, `_validate_arguments`). Pass it through `read_metadata(path, ..., ignore_unknown_terms=...)` to `input_jsonld`; it is ignored for other formats. Help text: "JSON-LD input only: report terms that do not map to an FHR field as warnings instead of errors". T034 passes after this task
+- [X] T037 [US3] Install the toolkit with `--extras jsonld` on Python 3.13, and run `python scripts/check_conformance.py --converter ../FHR-File-Converter` from FHR-Specification (quickstart V6, all `jsonld` vectors). Add the general path and the `--ignore-unknown-terms` option to `FAIR-bioHeaders-Tools/README.md` and the `Unreleased` entry of `FAIR-bioHeaders-Tools/CHANGELOG.md`
+
+  *As implemented (US3, 2026-10-10):*
+  - The vectors are generated by `expand_canonical` and `vocab_compact` in
+    `make_conformance.py`, which rewrite the reference writer's output without a JSON-LD
+    processor. `tests/test_jsonld_roundtrip.py` checks with PyLD that each valid vector
+    expands to the same RDF (URDNA2015 N-Quads) as the canonical document, except
+    `jsonld-iri-as-string`, whose plain strings are literals in RDF.
+  - `jsonld-root-id` is in expanded form: under J1 a root `@id` is now export metadata
+    (maintainer decision 2), so only the general path reports it (reason `root-id`).
+  - `jsonld-flattened` gives the taxon only as `{"@id": ...}`. A flattened document with the
+    taxon as a second top-level node already fails J4.
+  - The toolkit copies the 23 `jsonld` vectors with their manifest entries into
+    `tests/fixtures/jsonld/`. A test compares them with a sibling FHR-Specification checkout
+    when one exists.
+  - A dropped term has no location, so its message ends "(dropped by JSON-LD expansion: it
+    has no IRI)". Several unknown terms are listed in one message, separated by commas.
+  - A language-tagged value is an error, as a datatype is, because FHR cannot keep it.
+  - PyLD is the optional `jsonld` extra and also a dev dependency (Python 3.10+), so the
+    toolkit CI runs the general-path tests on 3.13 and skips them on 3.9 without a workflow
+    change.
 
 **Checkpoint**: All user stories are independently functional.
 
@@ -402,9 +428,13 @@ consistency.
   - that the term IRIs never change (FR-008).
 
   Regenerate, and confirm that `--check` passes
-- [ ] T041 Run every FHR-Specification gate in plan.md (`unittest`, `validate_examples.py`, `check_linkml.py`, `check_schema_drift.py`, `make_jsonld.py --check`, `check_conformance.py --schema`, `check_release.py --converter ../FHR-File-Converter`, `check_conformance.py --converter ../FHR-File-Converter`), and record any environment limitation
-- [ ] T042 Run every FAIR-bioHeaders-Tools gate in plan.md on Python 3.9 and 3.13 (`poetry install --extras jsonld`, `pytest`, `ruff`, `isort`, `black`, `poetry build`, `python -m build compat/fhr`). Run the installed-wheel check from outside the checkout (quickstart V7). On 3.9, confirm that the general-path tests are reported as skipped, not failed
-- [ ] T043 Cross-check the spec trace: walk `specs/011-jsonld-mapping/checklists/traceability.md`, confirm each FR/SC has its tasks done, and cross-link the FHR-Specification and FAIR-bioHeaders-Tools PRs (and Tools#35, spec#56). Comment on spec#56 with a link to `mappings/fhr-jsonld-dcmi.yml` **only after merge, and only by a maintainer**
+- [X] T041 Run every FHR-Specification gate in plan.md (`unittest`, `validate_examples.py`, `check_linkml.py`, `check_schema_drift.py`, `make_jsonld.py --check`, `check_conformance.py --schema`, `check_release.py --converter ../FHR-File-Converter`, `check_conformance.py --converter ../FHR-File-Converter`), and record any environment limitation
+- [X] T042 Run every FAIR-bioHeaders-Tools gate in plan.md on Python 3.9 and 3.13 (`poetry install --extras jsonld`, `pytest`, `ruff`, `isort`, `black`, `poetry build`, `python -m build compat/fhr`). Run the installed-wheel check from outside the checkout (quickstart V7). On 3.9, confirm that the general-path tests are reported as skipped, not failed
+- [X] T043 Cross-check the spec trace: walk `specs/011-jsonld-mapping/checklists/traceability.md`, confirm each FR/SC has its tasks done, and cross-link the FHR-Specification and FAIR-bioHeaders-Tools PRs (and Tools#35, spec#56). Comment on spec#56 with a link to `mappings/fhr-jsonld-dcmi.yml` **only after merge, and only by a maintainer**
+  *Done (2026-10-10):* T041 and T042 ran in the US3 PRs (FHR-Specification#86,
+  FAIR-bioHeaders-Tools#44): every gate passes; toolkit 1053 passed on 3.13, and on 3.9 the
+  general-path tests are skipped. The trace walk is recorded at the end of
+  `checklists/traceability.md`
 
 ### Maintainer decisions (plan.md, 2026-10-10)
 
