@@ -1,0 +1,10 @@
+# SOURCE-URL: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/002/985/GCA_000002985.3_WBcel235/GCA_000002985.3_WBcel235_genomic.gff.gz
+# FETCHED: 2026-10-10T12:32Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build WBcel235
+#!genome-build-accession NCBI_Assembly:GCA_000002985.3
+##sequence-region BX284601.5 1 15072434
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239

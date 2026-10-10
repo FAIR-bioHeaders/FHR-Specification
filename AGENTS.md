@@ -16,7 +16,7 @@ it as current authority.
 
 ## Repository map
 
-`fhr.json` is the published contract; `fhr_linkml.yml` is its LinkML model, which imports the family-wide core in `schemas/core.yaml`. `json-schema-generator.py` generates a separate schema. `scripts/check_linkml.py` compares validation constraints, and `scripts/check_schema_drift.py` checks the explicit review baseline. `fhr_mappings.yml` and `scripts/project_mixs.py` define a partial MIxS/MIGS projection. Examples, docs, and `Diagram.svg` must agree.
+`fhr.json` is the published contract; `fhr_linkml.yml` is its LinkML model, which imports the family-wide core in `schemas/core.yaml`. `json-schema-generator.py` generates a separate schema. `scripts/check_linkml.py` compares validation constraints, and `scripts/check_schema_drift.py` checks the explicit review baseline. `fhr_mappings.yml` and `scripts/project_mixs.py` define a partial MIxS/MIGS projection. `jsonld/` holds the JSON-LD context and the FAIR-bioHeaders vocabulary, generated with `docs/TERMS.md` and `examples/*.fhr.jsonld` by `scripts/make_jsonld.py` from the LinkML annotations (never edit them by hand). `mappings/fhr-jsonld-dcmi.yml` maps every FHR field to its JSON-LD term and DCMI Terms equivalents: term IRIs come from LinkML; the mapping table is curated and test-checked against it. Examples, docs, and `Diagram.svg` must agree.
 
 ## Verification
 
@@ -24,10 +24,12 @@ Run relevant checks from the repository root:
 
 ```bash
 python -m pip install -r requirements-linkml.txt
+python -m pip install -r requirements-jsonld.txt
 python -m unittest discover -s tests -v
 python scripts/validate_examples.py
 python scripts/check_linkml.py
 python scripts/check_schema_drift.py
+python scripts/make_jsonld.py --check
 ```
 
 For schema changes, inspect compatibility of valid existing instances, required
@@ -48,3 +50,12 @@ Update examples, README, citations, and release notes alongside behavior changes
 Keep cross-repo PR links current. Publishing, adoption of governance, and reporting
 contact confirmation are separate maintainer actions. Do not fabricate contacts
 or claim a policy has been adopted.
+
+## Licensing policy (2026-10-09)
+
+New FAIR BioHeaders project contributions from March 2025 onward use MPL-2.0.
+David Molik left USDA in February 2025. Preserve historical USDA public-domain
+material, previously granted permissions, and third-party licenses/notices;
+do not label all current contributors as government employees. See LICENSE
+for scope. Do not rewrite historical releases or silently relicense upstream
+material. Keep README badges, package metadata and citation metadata consistent.
