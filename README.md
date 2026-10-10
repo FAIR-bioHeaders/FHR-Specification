@@ -57,6 +57,14 @@ them to test other FHR implementations.
 and GFF3 tools handle files with FHR headers, and gives workarounds. Most
 FASTA indexers, including samtools faidx, need a stripped copy.
 
+The [FAIR header guideline](docs/FAIR_HEADER_GUIDELINE.md) is guidance for the
+headers of any data file (FASTA, GFF3, VCF, GAF, GFA and others), organised as 8
+items mapped to the RDA FAIR Data Maturity Model indicators, with examples in
+each format's own convention. It changes no schema. `bioheaders assess` in
+FAIR-bioHeaders-Tools reports a checklist against it, and the
+[assessment fixtures](assessment/README.md) let other implementations test the
+same expected outcomes.
+
 JSON/YAML/HTML examples contain synthetic checksum and SeqCol placeholders.
 The FASTA/GFA examples have verified FHR file checksums but retain a synthetic
 SeqCol placeholder; it must not be used as the sequence collection's identity.

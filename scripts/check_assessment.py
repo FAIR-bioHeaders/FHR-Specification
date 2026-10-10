@@ -8,22 +8,28 @@ entry of assessment/manifest.json, validates each report against the tool's own
 bundled report schema (needs jsonschema), and compares only the fields listed
 under ``expected``. Prints ``ok: <id>`` or the differences, and exits 1 if any
 fixture differs. Modelled on check_conformance.py.
+
+``--guideline`` also compares the tool's bundled rubric.json with the item table
+of docs/FAIR_HEADER_GUIDELINE.md, in both directions.
 """
 
 import argparse
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSESSMENT = ROOT / "assessment"
-REPORT_SCHEMA = "bioheaders/assess/data/assessment-report.schema.json"
-SCHEMA_CODE = ("from importlib.resources import files; import sys; "
-               "sys.stdout.write(files('bioheaders.assess').joinpath('data')"
-               ".joinpath('assessment-report.schema.json').read_text(encoding='utf-8'))")
+GUIDELINE = ROOT / "docs" / "FAIR_HEADER_GUIDELINE.md"
+DATA = "bioheaders/assess/data/"
+REPORT_SCHEMA = "assessment-report.schema.json"
+DATA_CODE = ("from importlib.resources import files; import sys; "
+             "sys.stdout.write(files('bioheaders.assess').joinpath('data')"
+             ".joinpath(sys.argv[1]).read_text(encoding='utf-8'))")
 
 
 class Tool:
@@ -55,15 +61,19 @@ class Tool:
                 return
         raise ValueError(f"{location}: no toolkit checkout, environment or bin directory")
 
-    def schema(self):
+    def data(self, name):
+        """A JSON data file bundled with the tool (bioheaders/assess/data/NAME)."""
         if self.checkout is not None:
-            return json.loads((self.checkout / REPORT_SCHEMA).read_text(encoding="utf-8"))
+            return json.loads((self.checkout / DATA / name).read_text(encoding="utf-8"))
         if self.python is None:
-            raise ValueError("cannot find the Python of the tool to read its report schema")
-        result = subprocess.run([self.python, "-c", SCHEMA_CODE], capture_output=True, text=True)
+            raise ValueError(f"cannot find the Python of the tool to read its {name}")
+        result = subprocess.run([self.python, "-c", DATA_CODE, name], capture_output=True, text=True)
         if result.returncode:
-            raise ValueError(f"cannot read the tool's report schema: {result.stderr.strip()}")
+            raise ValueError(f"cannot read the tool's {name}: {result.stderr.strip()}")
         return json.loads(result.stdout)
+
+    def schema(self):
+        return self.data(REPORT_SCHEMA)
 
     def assess(self, entry, assessment):
         arguments = ["assess", "--format", "json"]
@@ -179,6 +189,73 @@ def check(tool, manifest, assessment, validator):
     return failures
 
 
+def guideline_tables(text):
+    """The summary rows {item: row} and out-of-scope rows {indicator: row} of the guideline."""
+    summary, out_of_scope = {}, {}
+    lines = text.splitlines()
+    for index, line in enumerate(lines[:-1]):
+        if not (line.startswith("|") and re.match(r"^\|[-| :]+\|$", lines[index + 1])):
+            continue
+        header = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        target = {"Item": summary, "Indicator": out_of_scope}.get(header[0])
+        if target is None:
+            continue
+        for row_line in lines[index + 2:]:
+            if not row_line.startswith("|"):
+                break
+            row = dict(zip(header, (c.strip() for c in row_line.strip().strip("|").split("|"))))
+            target[row[header[0]]] = row
+    return summary, out_of_scope
+
+
+def _ids(cell):
+    return {part.strip() for part in cell.split(",") if part.strip()}
+
+
+def check_guideline(rubric, text):
+    """Differences between the rubric and the guideline item table, in both directions."""
+    problems = []
+    summary, out_of_scope = guideline_tables(text)
+    if not summary:
+        return ["guideline: no item table (columns Item | Title | ...)"]
+    indicators = {indicator["id"]: indicator for indicator in rubric["indicators"]}
+    by_item = {}
+    for identifier, indicator in indicators.items():
+        by_item.setdefault(indicator["guideline_item"], set()).add(identifier)
+    for item in sorted(set(summary) | {i for i in by_item if i != "out-of-scope"}):
+        row = summary.get(item)
+        rubric_ids = by_item.get(item, set())
+        if row is None:
+            problems.append(f"{item}: in the rubric ({', '.join(sorted(rubric_ids))}) but not in the guideline")
+            continue
+        listed = _ids(row["Indicators"])
+        checks = _ids(row["Checks"])
+        for missing in sorted(rubric_ids - listed):
+            problems.append(f"{item}: rubric indicator {missing} is not listed under the item")
+        for extra in sorted(listed - rubric_ids):
+            where = indicators[extra]["guideline_item"] if extra in indicators else "not in the rubric"
+            problems.append(f"{item}: guideline lists {extra}, rubric says {where}")
+        assessed = {i for i in rubric_ids if indicators[i]["assessability"] != "deferred"}
+        for missing in sorted(assessed - checks):
+            problems.append(f"{item}: rubric check {missing} is not among the item's checks")
+        for extra in sorted(checks - assessed):
+            problems.append(f"{item}: guideline check {extra} is not an assessed rubric indicator of {item}")
+    rubric_out = by_item.get("out-of-scope", set())
+    for missing in sorted(rubric_out - set(out_of_scope)):
+        problems.append(f"out of scope: rubric indicator {missing} is not in the guideline's table")
+    for extra in sorted(set(out_of_scope) - rubric_out):
+        problems.append(f"out of scope: guideline lists {extra}, rubric does not mark it out of scope")
+    for identifier in sorted(rubric_out & set(out_of_scope)):
+        if out_of_scope[identifier]["Reason"].strip("`") != indicators[identifier]["reason"]:
+            problems.append(f"out of scope: {identifier} reason differs from the rubric")
+    for identifier, indicator in sorted(indicators.items()):
+        for convention, template in sorted((indicator.get("suggestions") or {}).items()):
+            if f"see guideline {indicator['guideline_item']}" not in template["text"]:
+                problems.append(f"{identifier}: the {convention} suggestion text does not name "
+                                f"guideline {indicator['guideline_item']}")
+    return problems
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--tool", default="PATH", metavar="LOCATION",
@@ -186,6 +263,8 @@ def main():
                              "or PATH (the default)")
     parser.add_argument("--assessment", type=Path, default=ASSESSMENT,
                         help="fixture directory (default: assessment/)")
+    parser.add_argument("--guideline", action="store_true",
+                        help="also compare the tool's rubric.json with docs/FAIR_HEADER_GUIDELINE.md")
     args = parser.parse_args()
     try:
         from jsonschema import Draft202012Validator, FormatChecker
@@ -201,6 +280,17 @@ def main():
     failures = check(tool, manifest, args.assessment, validator)
     total = len(manifest["fixtures"])
     print(f"{total - failures} of {total} fixtures match")
+    if args.guideline:
+        rubric = tool.data("rubric.json")
+        if rubric["rubric_version"] != manifest["rubric_version"]:
+            print(f"note: the tool's rubric is {rubric['rubric_version']}, "
+                  f"the manifest was written for {manifest['rubric_version']}")
+        problems = check_guideline(rubric, GUIDELINE.read_text(encoding="utf-8"))
+        for problem in problems:
+            print(f"FAIL guideline: {problem}")
+        if not problems:
+            print(f"ok: guideline items agree with rubric {rubric['rubric_version']}")
+        failures += bool(problems)
     return 1 if failures else 0
 
 

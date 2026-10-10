@@ -266,7 +266,7 @@ listed as out of scope (quickstart V6).
 
 ### Tests for User Story 3 (write first, must fail) ⚠️
 
-- [ ] T043 [P] [US3] Write `FHR-Specification/tests/test_assessment_guideline.py` (unittest). It parses the item table and the per-item example tables of `docs/FAIR_HEADER_GUIDELINE.md` and asserts:
+- [X] T043 [P] [US3] Write `FHR-Specification/tests/test_assessment_guideline.py` (unittest). It parses the item table and the per-item example tables of `docs/FAIR_HEADER_GUIDELINE.md` and asserts:
   - there are exactly the 8 items G1–G8;
   - "every offline, online and deferred indicator appears in exactly one item";
   - the 10 not-applicable indicators appear under "Out of scope for headers", each with a repository-level action;
@@ -279,7 +279,7 @@ listed as out of scope (quickstart V6).
 
 ### Implementation for User Story 3
 
-- [ ] T044 [US3] Write `FHR-Specification/docs/FAIR_HEADER_GUIDELINE.md`, following research R-17. It needs:
+- [X] T044 [US3] Write `FHR-Specification/docs/FAIR_HEADER_GUIDELINE.md`, following research R-17. It needs:
   - a status line saying it is guidance and changes no schema;
   - a summary table of items, principles, RDA ids, core fields and checks;
   - the 8 items, each with its rationale and examples. Take examples from real surveyed lines where they exist (for example `#!genome-build-accession NCBI_Assembly:GCF_000002985.6`, `##species …?id=6239`, `!go-version: …`), as FHR `;~`/`#~`, GFF3 `#!`, VCF `##` and GAF `!` lines;
@@ -288,9 +288,9 @@ listed as out of scope (quickstart V6).
   - the RDA CC BY 4.0 attribution (research R-19).
 
   Licensed MPL-2.0 (makes T043 pass)
-- [ ] T045 [US3] Add a cross-check to `FHR-Specification/scripts/check_assessment.py`, the `--guideline` step. It reads the tool's bundled `bioheaders/assess/data/rubric.json` from `--tool` and fails if any rubric `guideline_item` or check id disagrees with the guideline's item table, in either direction
-- [ ] T046 [US3] Align `FAIR-bioHeaders-Tools/bioheaders/assess/data/rubric.json` with the guideline. Every suggestion `text` names its guideline item (for example "see guideline G7"), and `suggestion.guideline_item` is filled. Bump `rubric_version` to the next minor version if any text changes, and update `FHR-Specification/assessment/manifest.json` `rubric_version` to match
-- [ ] T047 [P] [US3] Link the guideline and `assessment/` from `FHR-Specification/README.md` and `FHR-Specification/docs/TOOL_COMPATIBILITY.md`, and add a `CHANGELOG.md` entry in FHR-Specification marked guidance-only, with no schema change
+- [X] T045 [US3] Add a cross-check to `FHR-Specification/scripts/check_assessment.py`, the `--guideline` step. It reads the tool's bundled `bioheaders/assess/data/rubric.json` from `--tool` and fails if any rubric `guideline_item` or check id disagrees with the guideline's item table, in either direction
+- [X] T046 [US3] Align `FAIR-bioHeaders-Tools/bioheaders/assess/data/rubric.json` with the guideline. Every suggestion `text` names its guideline item (for example "see guideline G7"), and `suggestion.guideline_item` is filled. Bump `rubric_version` to the next minor version if any text changes, and update `FHR-Specification/assessment/manifest.json` `rubric_version` to match
+- [X] T047 [P] [US3] Link the guideline and `assessment/` from `FHR-Specification/README.md` and `FHR-Specification/docs/TOOL_COMPATIBILITY.md`, and add a `CHANGELOG.md` entry in FHR-Specification marked guidance-only, with no schema change
 
 **Checkpoint**: The guideline is published in the specification repository, and it agrees with
 the rubric in the tool.

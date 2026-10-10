@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- Add the FAIR header guideline `docs/FAIR_HEADER_GUIDELINE.md` (feature 010,
+  US3). **Guidance only; no schema change**: `fhr.json`, `schemas/core.yaml`
+  and `fhr_linkml.yml` are untouched. It has 8 items (identify the file;
+  describe it; declare format and convention; identifiers not labels; derived
+  from; provenance; licence; where to get the data), each mapped to the RDA FAIR
+  Data Maturity Model indicators and FAIR principles, with examples in at least
+  two file types taken from the 34-file provider survey where they exist. Core
+  field names are suggested as keys only where a format has no native key. The
+  10 indicators that cannot apply to a header are listed with repository-level
+  actions. RDA text is used under CC BY 4.0 with attribution
+  (doi:10.15497/rda00050). `tests/test_assessment_guideline.py` checks the item
+  table, and `scripts/check_assessment.py --guideline` compares it with the
+  toolkit's rubric. The assessment fixture manifest now targets rubric 1.1.0.
 - Document the MPL-2.0 transition for new project contributions from March 2025 onward, preserve historical permissions and third-party notices, and align README and citation licensing. No runtime behavior changes.
 
 - Add HTML microdata conformance vectors (rule R9). Thirteen valid and ten invalid
