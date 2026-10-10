@@ -265,29 +265,37 @@ FAIR-bioHeaders-Tools/                      (local checkout ../FHR-File-Converte
 - **Phase 2**: [tasks.md](tasks.md) (from `/speckit-tasks`), with
   [checklists/traceability.md](checklists/traceability.md).
 
-## Open questions for maintainers
+## Maintainer decisions (Adam, 2026-10-10)
 
-None of these blocks the MVP (US1 and US2). The tasks follow the stated default until a
-maintainer decides otherwise.
+The four open questions are settled by following established practice. Tasks T044 to T048
+implement them.
 
-1. **A dereferenceable context and vocabulary URL.** The default is to embed the context, keep
-   raw-main authoritative, and point the w3id `terms` rule at raw-main Turtle and the GitHub
-   documentation page. Raw GitHub serves `text/plain`. Should the context and `terms.ttl` also be
-   served with `application/ld+json` and `text/turtle`, for example from GitHub Pages (website
-   repository) behind w3id rules `/fair-bioheaders/context` and `/fair-bioheaders/terms`? After
-   that, records could reference the context by URL. This touches website#15's raw-main wording.
-2. **Bioschemas conformance.** FHR lacks the Dataset profile minimum `dct:conformsTo`, `keywords`
-   and `url` (a landing page). The default is to follow the profiles without claiming
-   conformance. The alternatives: optional FHR fields, which would be a schema change under
-   constitution II, or #56's separate export context supplying them.
-3. **`documentation` → `sdo:description`.** The default maps it to schema.org's description, with
-   the condition "the value is descriptive text", because the Bioschemas Dataset minimum and
-   search engines need a description. The alternative is an FHR term, `fhr:documentation`, if
-   `documentation` is meant to hold links.
-4. **Name-only authors.** The default types them `fhr:Agent` ("not classified"). Authors with an
-   ORCID are `sdo:Person`. Should FHR gain an explicit person-or-organization indicator (an
-   additive optional field), so that organizations can be typed `sdo:Organization`? #56 needs the
-   same distinction for DataCite `nameType`.
+1. **Dereferenceable context and vocabulary** (W3C JSON-LD 1.1; W3C *Best Practice Recipes
+   for Publishing RDF Vocabularies*):
+   - Serve each release's context at a **versioned** URL
+     (`https://w3id.org/fair-bioheaders/fhr/vX.Y.Z/context.jsonld`) with
+     `Content-Type: application/ld+json` and CORS.
+   - Serve the **unversioned** term namespace `https://w3id.org/fair-bioheaders/terms#` with
+     content negotiation: HTML for people, Turtle and JSON-LD for software.
+   - Host both on GitHub Pages, which sends these types and CORS headers, behind w3id.org
+     redirects.
+   - Keep the embedded context as the offline fallback. Raw-main remains the canonical
+     source of the files; Pages only serves them with correct media types.
+2. **Bioschemas Dataset profile.** The FHR core stays small, so no required fields are added.
+   - The JSON-LD writer maps what FHR has: `genome`→`name`, `documentation`→`description`,
+     `reuseConditions`→`license`, identifiers and accessions→`identifier`.
+   - `keywords` and the landing-page `url` come from an optional export context, shared with
+     #56.
+   - `dct:conformsTo` the Bioschemas Dataset profile is emitted only when every minimum
+     property is present.
+3. **`documentation`** maps to `sdo:description` (and `dcterms:description`) when the value is
+   text. When it is an absolute URL it maps to `sdo:subjectOf`.
+4. **Author type.**
+   - Infer from the identifier: an ORCID gives `sdo:Person`, a ROR ID gives
+     `sdo:Organization`, and anything else gives `fhr:Agent` ("not classified").
+   - Add an optional author `type` field with DataCite's `nameType` values (`Personal`,
+     `Organizational`) as an additive v0.4 schema change on `release-v0.4` (T047), so #56's
+     DataCite export gets `nameType` too.
 
 Maintainer actions, which are not tasks:
 - submit the w3id `terms` rule (text in [contracts/vocabulary.md](contracts/vocabulary.md));

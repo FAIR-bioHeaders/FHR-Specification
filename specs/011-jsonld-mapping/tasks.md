@@ -351,6 +351,22 @@ consistency.
 - [ ] T042 Run every FAIR-bioHeaders-Tools gate in plan.md on Python 3.9 and 3.13 (`poetry install --extras jsonld`, `pytest`, `ruff`, `isort`, `black`, `poetry build`, `python -m build compat/fhr`). Run the installed-wheel check from outside the checkout (quickstart V7). On 3.9, confirm that the general-path tests are reported as skipped, not failed
 - [ ] T043 Cross-check the spec trace: walk `specs/011-jsonld-mapping/checklists/traceability.md`, confirm each FR/SC has its tasks done, and cross-link the FHR-Specification and FAIR-bioHeaders-Tools PRs (and Tools#35, spec#56). Comment on spec#56 with a link to `mappings/fhr-jsonld-dcmi.yml` **only after merge, and only by a maintainer**
 
+### Maintainer decisions (plan.md, 2026-10-10)
+
+- [ ] T044 [P] Publish the JSON-LD files on GitHub Pages from FHR-Specification. Add `.github/workflows/jsonld-pages.yml` that builds a site with:
+  - `vX.Y.Z/context.jsonld` for every release tag that has `jsonld/context.jsonld`, plus the current `main` build for preview;
+  - `terms/` with `index.html` (from `docs/TERMS.md`), `terms.ttl` and `terms.jsonld`.
+
+  Pages must serve `application/ld+json` and `text/turtle` with CORS. Verify with `curl -I`. Adam enables Pages (Settings → Pages → Source: GitHub Actions)
+- [ ] T045 [P] Extend the T038 w3id rule text:
+  - `/fair-bioheaders/fhr/vX.Y.Z/context.jsonld` goes to the Pages copy;
+  - `/fair-bioheaders/terms` does content negotiation (Accept `text/turtle` → `terms.ttl`, `application/ld+json` → `terms.jsonld`, default → HTML), with a 406-safe fallback.
+
+  Run `w3id-check`. A maintainer submits it (prepared, not opened)
+- [ ] T046 [US1] In the toolkit JSON-LD writer (and `make_jsonld.py` documentation), type authors from their identifier: ORCID → `sdo:Person`, ROR → `sdo:Organization`, otherwise `fhr:Agent`. Map `documentation` to `sdo:description` for text and `sdo:subjectOf` for an absolute URL. Add tests for each case, and a round trip
+- [ ] T047 Optional author `type` (`Personal` | `Organizational`, DataCite `nameType`) as an additive schema change on `release-v0.4`, in a separate FHR-Specification PR. It touches the LinkML core, `fhr.json`, the schema-change notes, examples and conformance. The writer prefers an explicit `type` over inference (T046)
+- [ ] T048 [US1] Bioschemas: an optional export context file (`--export-context PATH`, same format as #56 will use) supplies `keywords` and `url`. The writer emits `dct:conformsTo` <https://bioschemas.org/profiles/Dataset/1.1-RELEASE> only when every Dataset minimum property is present. Test complete and incomplete cases
+
 ---
 
 ## Dependencies & Execution Order
