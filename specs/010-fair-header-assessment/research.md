@@ -198,7 +198,7 @@ classified as exactly one kind:
 
 | Rank | Kind | Sources | Indicator credit (RDA-I3-02M / RDA-I3-04M) |
 |---|---|---|---|
-| 1 | `checksum` / `seqcol` / `sequence-digests` | FAIR-bioHeaders `derivedFrom.checksum` / `derivedFrom.seqcol_id`; VCF `##contig md5=` on every contig; FASTA defline `MD5=` (per sequence) | Identifier form: evidenced if a relationship is stated |
+| 1 | `checksum` / `seqcol` / `sequence-digests` | FAIR-bioHeaders `derivedFrom.checksum` / `derivedFrom.seqcol_id`; VCF `##contig md5=` on every contig. (Implementation note: a FASTA defline `MD5=`, as in FlyBase, is the digest of that record's *own* sequence, so it is credited as record-level identity under RDA-F1-02D, not as a link to related data) | Identifier form: evidenced if a relationship is stated |
 | 2 | `accession` | `derivedFrom.accessionID`; GFF3 `#!genome-build-accession` (optional `NCBI_Assembly:` prefix, pattern `GC[AF]_\d{9}\.\d+`); accession inside `#!annotation-source`/`annotationSource`; VCF `##reference`/`##contig assembly=` matching that pattern | Identifier form: evidenced if a relationship is stated |
 | 3 | `url` | VCF `##reference=<URL>`, `##contig URL=` | Identifier form. A directory URL is credited as partial, with a finding `url-names-directory` |
 | 4 | `name` | GFF3 `#!genome-build`, `##genome-build`, `#!genome-version`, `#!assembly`; VCF `##reference=GRCh38`; Ensembl defline assembly field; FlyBase `release=` | **partially_evidenced** ("named, not identified") |
@@ -471,7 +471,7 @@ rubric's version changes whenever a rule or a suggestion changes.
   - the file-header interpretation (paraphrased, marked as an adaptation);
   - the reason code if not applicable;
   - `conditions` (concepts and required value forms);
-  - `evidenced_when` / `partial_when` (all, any, or minimum counts);
+  - `evidenced_when` / `partial_when` (all, any, never, minimum counts, or named `any_of`/`all_of` condition lists);
   - an optional named `check` for the rules that cannot be expressed as data (`derived-link`,
     `fhr-conformance`, `format-declared`, `record-sample-parse`);
   - the guideline item id;

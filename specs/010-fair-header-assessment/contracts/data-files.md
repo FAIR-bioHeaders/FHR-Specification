@@ -85,6 +85,10 @@ The version rules:
 ```
 
 **Rules** (enforced by the schema plus a tool test):
+- `evidenced_when` and `partial_when` are `all`, `any`, `never`, `{"min": n}`, or a named list
+  `{"any_of": [condition ids]}` / `{"all_of": [condition ids]}`. Placeholders are written
+  `<label, e.g. example>`: they contain a space and an example, which tells them apart from VCF
+  `<ID=…>` structures.
 - There are exactly 41 indicators, with unique ids equal to the RDA Table 1 set. Of them, 25
   are `offline`, 4 `online`, 10 `not_applicable` and 2 `deferred`.
 - `offline` and `online` indicators have conditions, rules and a `fair-bioheaders` suggestion.
@@ -189,7 +193,9 @@ All three files share this shape:
 - `id-schemes` entries: `{prefix, pattern, persistent, resolver}`. For example
   `{"prefix": "taxonomy", "pattern": "^\\d+$", "persistent": true, "resolver": "https://identifiers.org/taxonomy:"}`.
 - `formats` entries: `{format, fairsharing, version_directive, versions}`. For example
-  `{"format": "vcf", "fairsharing": "FAIRsharing.pxr7x2", "version_directive": "##fileformat=VCFv", "versions": ["4.1","4.2","4.3","4.4","4.5"]}`.
+  `{"format": "gff3", "fairsharing": "FAIRsharing.dnk0f6", "version_directive": "##gff-version", "versions": ["3"]}`.
+  `fairsharing` is null when no FAIRsharing record id could be confirmed (the earlier illustrative
+  VCF id `FAIRsharing.pxr7x2` is in fact the SwissLipids record).
 
 The `version` and `retrieved` values above are illustrative. The implementation task pins the
 real values when it creates each file. Refreshing a table changes its `version`, which every

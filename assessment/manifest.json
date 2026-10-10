@@ -1,0 +1,1094 @@
+{
+  "manifest_version": "1.0.0",
+  "rubric_version": "1.0.0",
+  "fixtures": [
+    {
+      "id": "alliance-gff3-mgi",
+      "file": "headers/alliance_gff3_GFF_MGI_1.gff",
+      "format": "gff3",
+      "source_url": "https://download.alliancegenome.org/9.1.0/GFF/MGI/GFF_MGI_1.gff.gz",
+      "fetched": "2026-10-10T12:35Z",
+      "release": "Alliance 9.1.0",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I3-02M": "evidenced",
+          "RDA-I3-04M": "evidenced",
+          "RDA-R1.2-01M": "evidenced",
+          "RDA-R1.3-01M": "evidenced"
+        },
+        "evidence_lines": {
+          "RDA-I3-04M": [
+            5
+          ]
+        },
+        "links": [
+          {
+            "kind": "accession",
+            "value": "GCF_000001635.27"
+          },
+          {
+            "kind": "name",
+            "value": "GRCm39"
+          }
+        ],
+        "findings": [
+          {
+            "kind": "format-irregularity",
+            "line": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "alliance-gff3-wb",
+      "file": "headers/alliance_gff3_GFF_WB_4.gff",
+      "format": "gff3",
+      "source_url": "https://download.alliancegenome.org/8.3.0/GFF/WB/GFF_WB_4.gff.gz",
+      "fetched": "2026-10-10T12:35Z",
+      "release": "Alliance 8.3.0 (WormBase WS298)",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I3-02M": "partially_evidenced",
+          "RDA-I3-04M": "partially_evidenced",
+          "RDA-R1.2-01M": "partially_evidenced",
+          "RDA-R1.3-01M": "partially_evidenced"
+        },
+        "links": [
+          {
+            "kind": "name",
+            "value": "WBcel235"
+          }
+        ],
+        "findings": [
+          {
+            "kind": "format-irregularity",
+            "line": 1
+          },
+          {
+            "kind": "unrecognised-comment",
+            "line": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "alliance-gaf-wb",
+      "file": "headers/alliance_gaf_GAF_WB_1.gaf",
+      "format": "gaf",
+      "source_url": "https://download.alliancegenome.org/9.1.0/GAF/WB/GAF_WB_1.gaf.gz",
+      "fetched": "2026-10-10T12:35Z",
+      "release": "Alliance 9.1.0",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I3-02M": "evidenced",
+          "RDA-I3-04M": "not_evidenced",
+          "RDA-R1.2-01M": "partially_evidenced",
+          "RDA-R1.3-01M": "evidenced"
+        },
+        "evidence_lines": {
+          "RDA-I3-02M": [
+            4
+          ]
+        },
+        "links": []
+      }
+    },
+    {
+      "id": "alliance-vcf-wbcel235",
+      "file": "headers/alliance_vcf_VCF-GZ_WBcel235_38.vcf",
+      "format": "vcf",
+      "source_url": "https://download.alliancegenome.org/3.2.0/VCF-GZ/WBcel235/VCF-GZ_WBcel235_38.vcf.gz",
+      "fetched": "2026-10-10T12:35Z",
+      "release": "Alliance 3.2.0",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "partially_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "partially_evidenced",
+          "RDA-I3-02M": "partially_evidenced",
+          "RDA-I3-04M": "partially_evidenced",
+          "RDA-R1.2-01M": "partially_evidenced",
+          "RDA-R1.3-01M": "evidenced"
+        },
+        "links": [
+          {
+            "kind": "name",
+            "value": "WBcel235"
+          }
+        ]
+      }
+    },
+    {
+      "id": "alliance-fasta-grcz12tu",
+      "file": "headers/alliance_fasta-genome_FASTA_GRCz12tu_0.fa",
+      "format": "fasta",
+      "source_url": "https://download.alliancegenome.org/9.1.0/FASTA/GRCz12tu/FASTA_GRCz12tu_0.fa.gz",
+      "fetched": "2026-10-10T12:35Z",
+      "release": "Alliance 9.1.0",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F1-02D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-F3-01M": "not_evidenced",
+          "RDA-A1-01M": "not_evidenced",
+          "RDA-I1-01M": "not_evidenced",
+          "RDA-I1-01D": "not_evidenced",
+          "RDA-I1-02M": "not_evidenced",
+          "RDA-I1-02D": "not_evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I2-01D": "not_evidenced",
+          "RDA-I3-01M": "not_evidenced",
+          "RDA-I3-02M": "not_evidenced",
+          "RDA-I3-03M": "not_evidenced",
+          "RDA-I3-04M": "not_evidenced",
+          "RDA-R1-01M": "not_evidenced",
+          "RDA-R1.1-02M": "not_evidenced",
+          "RDA-R1.1-03M": "not_evidenced",
+          "RDA-R1.2-01M": "not_evidenced",
+          "RDA-R1.2-02M": "not_evidenced",
+          "RDA-R1.3-01M": "not_evidenced",
+          "RDA-R1.3-01D": "not_evidenced",
+          "RDA-R1.3-02M": "not_evidenced",
+          "RDA-R1.3-02D": "not_evidenced"
+        },
+        "links": [],
+        "findings": []
+      }
+    },
+    {
+      "id": "wormbase-gff3-ws298",
+      "file": "headers/wormbase_gff3_c_elegans.PRJNA13758.WS298.annotations.gff3",
+      "format": "gff3",
+      "source_url": "https://ftp.ebi.ac.uk/pub/databases/wormbase/releases/WS298/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.WS298.annotations.gff3.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "WormBase WS298 (EBI mirror)",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I3-02M": "not_evidenced",
+          "RDA-I3-04M": "not_evidenced",
+          "RDA-R1.2-01M": "not_evidenced",
+          "RDA-R1.3-01M": "evidenced"
+        },
+        "links": []
+      }
+    },
+    {
+      "id": "wormbase-fasta-protein-ws298",
+      "file": "headers/wormbase_fasta-protein_c_elegans.PRJNA13758.WS298.protein.fa",
+      "format": "fasta",
+      "source_url": "https://ftp.ebi.ac.uk/pub/databases/wormbase/releases/WS298/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.WS298.protein.fa.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "WormBase WS298 (EBI mirror)",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F1-02D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-F3-01M": "not_evidenced",
+          "RDA-A1-01M": "not_evidenced",
+          "RDA-I1-01M": "not_evidenced",
+          "RDA-I1-01D": "not_evidenced",
+          "RDA-I1-02M": "not_evidenced",
+          "RDA-I1-02D": "not_evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I2-01D": "not_evidenced",
+          "RDA-I3-01M": "not_evidenced",
+          "RDA-I3-02M": "not_evidenced",
+          "RDA-I3-03M": "not_evidenced",
+          "RDA-I3-04M": "not_evidenced",
+          "RDA-R1-01M": "not_evidenced",
+          "RDA-R1.1-02M": "not_evidenced",
+          "RDA-R1.1-03M": "not_evidenced",
+          "RDA-R1.2-01M": "not_evidenced",
+          "RDA-R1.2-02M": "not_evidenced",
+          "RDA-R1.3-01M": "not_evidenced",
+          "RDA-R1.3-01D": "not_evidenced",
+          "RDA-R1.3-02M": "not_evidenced",
+          "RDA-R1.3-02D": "not_evidenced"
+        },
+        "links": []
+      }
+    },
+    {
+      "id": "wormbase-vcf-ws298",
+      "file": "headers/wormbase_vcf_c_elegans.PRJNA13758.WS298.variations.vcf",
+      "format": "vcf",
+      "source_url": "https://ftp.ebi.ac.uk/pub/databases/wormbase/releases/WS298/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.WS298.variations.vcf.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "WormBase WS298 (EBI mirror)",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "partially_evidenced",
+          "RDA-I3-02M": "not_evidenced",
+          "RDA-I3-04M": "not_evidenced",
+          "RDA-R1.2-01M": "not_evidenced",
+          "RDA-R1.3-01M": "evidenced"
+        },
+        "links": []
+      }
+    },
+    {
+      "id": "flybase-gff3-r6.69",
+      "file": "headers/flybase_gff3_dmel-all-r6.69.gff.gz",
+      "format": "gff3",
+      "source_url": "https://s3ftp.flybase.org/genomes/Drosophila_melanogaster/current/gff/dmel-all-r6.69.gff.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "FlyBase FB2026_03 / r6.69",
+      "expected": {
+        "scope": "out_of_scope/archive-not-supported",
+        "statuses": {
+          "RDA-I1-01D": "not_assessed/archive-not-supported",
+          "RDA-I3-04M": "not_assessed/archive-not-supported",
+          "RDA-A2-01M": "not_applicable/repository-level"
+        }
+      },
+      "notes": "The provider file is a gzipped tar archive whose member dmel-all-r6.69.gff begins with these header lines; the fixture keeps that packaging (tar member mtime 0, gzip mtime 0). The 1,865 further ##sequence-region lines that the survey elided are not reconstructed."
+    },
+    {
+      "id": "flybase-fasta-transcript-r6.69",
+      "file": "headers/flybase_fasta-transcript_dmel-all-transcript-r6.69.fasta",
+      "format": "fasta",
+      "source_url": "https://s3ftp.flybase.org/genomes/Drosophila_melanogaster/current/fasta/dmel-all-transcript-r6.69.fasta.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "FlyBase FB2026_03 / r6.69",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F1-02D": "partially_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "not_evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I3-02M": "partially_evidenced",
+          "RDA-I3-04M": "partially_evidenced",
+          "RDA-R1.2-01M": "not_evidenced",
+          "RDA-R1.3-01M": "not_evidenced"
+        },
+        "links": [
+          {
+            "kind": "name",
+            "value": "r6.69"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ensembl-gff3-grch38-116",
+      "file": "headers/ensembl_gff3_Homo_sapiens.GRCh38.116.chr.gff3",
+      "format": "gff3",
+      "source_url": "https://ftp.ensembl.org/pub/current_gff3/homo_sapiens/Homo_sapiens.GRCh38.116.chr.gff3.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "Ensembl 116",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I3-02M": "evidenced",
+          "RDA-I3-04M": "evidenced",
+          "RDA-R1.2-01M": "partially_evidenced",
+          "RDA-R1.3-01M": "evidenced"
+        },
+        "evidence_lines": {
+          "RDA-I3-04M": [
+            30
+          ]
+        },
+        "links": [
+          {
+            "kind": "accession",
+            "value": "GCA_000001405.29"
+          },
+          {
+            "kind": "name",
+            "value": "Genome Reference Consortium GRCh38.p14"
+          },
+          {
+            "kind": "name",
+            "value": "GRCh38"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ensembl-fasta-protein-grch38-116",
+      "file": "headers/ensembl_fasta-protein_Homo_sapiens.GRCh38.pep.all.fa",
+      "format": "fasta",
+      "source_url": "https://ftp.ensembl.org/pub/current_fasta/homo_sapiens/pep/Homo_sapiens.GRCh38.pep.all.fa.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "Ensembl 116",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "not_evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I3-02M": "partially_evidenced",
+          "RDA-I3-04M": "partially_evidenced",
+          "RDA-R1.2-01M": "not_evidenced",
+          "RDA-R1.3-01M": "not_evidenced"
+        },
+        "links": [
+          {
+            "kind": "name",
+            "value": "GRCh38"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ensembl-vcf-chrmt-116",
+      "file": "headers/ensembl_vcf_homo_sapiens-chrMT.vcf",
+      "format": "vcf",
+      "source_url": "https://ftp.ensembl.org/pub/current_variation/vcf/homo_sapiens/homo_sapiens-chrMT.vcf.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "Ensembl 116",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "partially_evidenced",
+          "RDA-A1-01M": "evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I3-02M": "partially_evidenced",
+          "RDA-I3-04M": "partially_evidenced",
+          "RDA-R1.2-01M": "partially_evidenced",
+          "RDA-R1.3-01M": "evidenced"
+        },
+        "links": [
+          {
+            "kind": "url",
+            "value": "https://ftp.ensembl.org/pub/release-116/fasta/homo_sapiens/dna/"
+          }
+        ],
+        "findings": [
+          {
+            "kind": "url-names-directory",
+            "line": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "ncbi-refseq-gff3-wbcel235",
+      "file": "headers/ncbi-refseq_gff3_GCF_000002985.6_WBcel235_genomic.gff",
+      "format": "gff3",
+      "source_url": "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/002/985/GCF_000002985.6_WBcel235/GCF_000002985.6_WBcel235_genomic.gff.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "NCBI RefSeq assembly GCF_000002985.6",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "partially_evidenced",
+          "RDA-I3-02M": "evidenced",
+          "RDA-I3-04M": "evidenced",
+          "RDA-R1.2-01M": "partially_evidenced",
+          "RDA-R1.3-01M": "evidenced"
+        },
+        "evidence_lines": {
+          "RDA-I3-04M": [
+            5
+          ],
+          "RDA-I2-01M": [
+            8
+          ],
+          "RDA-I1-01D": [
+            1
+          ]
+        },
+        "links": [
+          {
+            "kind": "accession",
+            "value": "NCBI_Assembly:GCF_000002985.6"
+          },
+          {
+            "kind": "name",
+            "value": "WBcel235"
+          }
+        ],
+        "findings": []
+      }
+    },
+    {
+      "id": "ncbi-refseq-fasta-wbcel235",
+      "file": "headers/ncbi-refseq_fasta-genome_GCF_000002985.6_WBcel235_genomic.fna",
+      "format": "fasta",
+      "source_url": "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/002/985/GCF_000002985.6_WBcel235/GCF_000002985.6_WBcel235_genomic.fna.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "NCBI RefSeq assembly GCF_000002985.6",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F1-02D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-F3-01M": "not_evidenced",
+          "RDA-A1-01M": "not_evidenced",
+          "RDA-I1-01M": "not_evidenced",
+          "RDA-I1-01D": "not_evidenced",
+          "RDA-I1-02M": "not_evidenced",
+          "RDA-I1-02D": "not_evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I2-01D": "not_evidenced",
+          "RDA-I3-01M": "not_evidenced",
+          "RDA-I3-02M": "not_evidenced",
+          "RDA-I3-03M": "not_evidenced",
+          "RDA-I3-04M": "not_evidenced",
+          "RDA-R1-01M": "not_evidenced",
+          "RDA-R1.1-02M": "not_evidenced",
+          "RDA-R1.1-03M": "not_evidenced",
+          "RDA-R1.2-01M": "not_evidenced",
+          "RDA-R1.2-02M": "not_evidenced",
+          "RDA-R1.3-01M": "not_evidenced",
+          "RDA-R1.3-01D": "not_evidenced",
+          "RDA-R1.3-02M": "not_evidenced",
+          "RDA-R1.3-02D": "not_evidenced"
+        },
+        "links": []
+      }
+    },
+    {
+      "id": "go-gaf-wb",
+      "file": "headers/go_gaf_wb.gaf",
+      "format": "gaf",
+      "source_url": "https://current.geneontology.org/annotations/wb.gaf.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "GO current (release 2026-08-05)",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I3-02M": "not_evidenced",
+          "RDA-I3-04M": "not_evidenced",
+          "RDA-R1.2-01M": "partially_evidenced",
+          "RDA-R1.3-01M": "evidenced"
+        },
+        "links": []
+      }
+    },
+    {
+      "id": "ncbi-clinvar-vcf",
+      "file": "headers/ncbi-clinvar_vcf_clinvar.vcf",
+      "format": "vcf",
+      "source_url": "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "ClinVar weekly, fileDate 2026-10-04",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I3-02M": "partially_evidenced",
+          "RDA-I3-04M": "partially_evidenced",
+          "RDA-R1.2-01M": "partially_evidenced",
+          "RDA-R1.3-01M": "evidenced"
+        },
+        "links": [
+          {
+            "kind": "name",
+            "value": "GRCh38"
+          }
+        ],
+        "findings": [
+          {
+            "kind": "format-irregularity",
+            "line": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-no-header-fasta",
+      "file": "edge/no-header.fa",
+      "format": "fasta",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "scope": "assessed",
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-01D": "not_evidenced",
+          "RDA-F1-02D": "not_evidenced",
+          "RDA-F2-01M": "not_evidenced",
+          "RDA-F3-01M": "not_evidenced",
+          "RDA-A1-01M": "not_evidenced",
+          "RDA-I1-01M": "not_evidenced",
+          "RDA-I1-01D": "not_evidenced",
+          "RDA-I1-02M": "not_evidenced",
+          "RDA-I1-02D": "not_evidenced",
+          "RDA-I2-01M": "not_evidenced",
+          "RDA-I2-01D": "not_evidenced",
+          "RDA-I3-01M": "not_evidenced",
+          "RDA-I3-02M": "not_evidenced",
+          "RDA-I3-03M": "not_evidenced",
+          "RDA-I3-04M": "not_evidenced",
+          "RDA-R1-01M": "not_evidenced",
+          "RDA-R1.1-02M": "not_evidenced",
+          "RDA-R1.1-03M": "not_evidenced",
+          "RDA-R1.2-01M": "not_evidenced",
+          "RDA-R1.2-02M": "not_evidenced",
+          "RDA-R1.3-01M": "not_evidenced",
+          "RDA-R1.3-01D": "not_evidenced",
+          "RDA-R1.3-02M": "not_evidenced",
+          "RDA-R1.3-02D": "not_evidenced"
+        },
+        "links": [],
+        "conformance": null
+      }
+    },
+    {
+      "id": "edge-gzip-refseq-gff3",
+      "file": "edge/gzip-refseq.gff.gz",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I3-04M": "evidenced",
+          "RDA-R1.3-01D": "evidenced"
+        },
+        "links": [
+          {
+            "kind": "accession",
+            "value": "NCBI_Assembly:GCF_000002985.6"
+          },
+          {
+            "kind": "name",
+            "value": "WBcel235"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-bgzf-refseq-gff3",
+      "file": "edge/bgzf-refseq.gff.gz",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I3-04M": "evidenced",
+          "RDA-R1.3-01D": "evidenced"
+        },
+        "links": [
+          {
+            "kind": "accession",
+            "value": "NCBI_Assembly:GCF_000002985.6"
+          },
+          {
+            "kind": "name",
+            "value": "WBcel235"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-gff3-in-tar",
+      "file": "edge/gff3-in-tar.gff.gz",
+      "format": "archive",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "scope": "out_of_scope/archive-not-supported"
+      }
+    },
+    {
+      "id": "edge-bam-stub",
+      "file": "edge/stub.bam",
+      "format": "binary",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "scope": "out_of_scope/binary-format-out-of-scope"
+      }
+    },
+    {
+      "id": "edge-fhr-and-directives-gff3",
+      "file": "edge/fhr-and-directives.gff3",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "evidenced",
+          "RDA-F3-01M": "evidenced",
+          "RDA-R1.3-01M": "evidenced",
+          "RDA-R1.3-02M": "evidenced"
+        },
+        "conformance": {
+          "result": "valid",
+          "header_type": "FHR"
+        }
+      }
+    },
+    {
+      "id": "edge-unknown-convention",
+      "file": "edge/unknown-convention.txt",
+      "format": "unknown-text",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-I1-01M": "not_evidenced",
+          "RDA-I1-01D": "not_evidenced"
+        },
+        "findings": [
+          {
+            "kind": "unrecognised-comment",
+            "line": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-accession-in-comment",
+      "file": "edge/accession-in-comment.gff3",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-I3-04M": "not_evidenced",
+          "RDA-I3-02M": "not_evidenced"
+        },
+        "links": [],
+        "findings": [
+          {
+            "kind": "identifier-in-free-text",
+            "line": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-malformed-checksum",
+      "file": "edge/malformed-checksum.gff3",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-I3-04M": "partially_evidenced"
+        },
+        "links": [
+          {
+            "kind": "checksum",
+            "well_formed": false
+          }
+        ],
+        "findings": [
+          {
+            "kind": "malformed",
+            "line": 2
+          }
+        ],
+        "conformance": {
+          "result": "not_assessed",
+          "header_type": null,
+          "reason": "unsupported-header-type"
+        }
+      }
+    },
+    {
+      "id": "edge-conflicting-accessions",
+      "file": "edge/conflicting-accessions.gff3",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-I3-04M": "partially_evidenced",
+          "RDA-I3-02M": "partially_evidenced"
+        },
+        "links": [
+          {
+            "kind": "accession",
+            "value": "NCBI_Assembly:GCF_000002985.6"
+          },
+          {
+            "kind": "accession",
+            "value": "NCBI_Assembly:GCA_000002985.3"
+          }
+        ],
+        "findings": [
+          {
+            "kind": "conflicting-values",
+            "line": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-non-utf8",
+      "file": "edge/non-utf8.gff3",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-I1-01D": "evidenced"
+        },
+        "findings": [
+          {
+            "kind": "undecodable-line",
+            "line": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-fhr-valid-fasta",
+      "file": "edge/fhr-valid.fhr.fasta",
+      "format": "fasta",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "not_evidenced",
+          "RDA-F1-02D": "evidenced",
+          "RDA-F3-01M": "evidenced",
+          "RDA-I1-01D": "evidenced",
+          "RDA-I2-01M": "evidenced",
+          "RDA-R1.3-01M": "evidenced",
+          "RDA-R1.3-02M": "evidenced",
+          "RDA-R1.3-02D": "evidenced"
+        },
+        "conformance": {
+          "result": "valid",
+          "header_type": "FHR"
+        }
+      }
+    },
+    {
+      "id": "edge-fht-stub",
+      "file": "edge/fht-stub.fa",
+      "format": "fasta",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "statuses": {
+          "RDA-A1-03D": "not_assessed/online-check-not-requested",
+          "RDA-A2-01M": "not_applicable/repository-level",
+          "RDA-I3-01D": "not_assessed/deferred-data-body",
+          "RDA-R1.1-01M": "evidenced",
+          "RDA-R1.1-02M": "evidenced",
+          "RDA-R1.3-01M": "not_assessed/unsupported-header-type",
+          "RDA-R1.3-02M": "not_assessed/unsupported-header-type"
+        },
+        "conformance": {
+          "result": "not_assessed",
+          "header_type": "FHT",
+          "reason": "unsupported-header-type"
+        }
+      }
+    },
+    {
+      "id": "pair-recorded-match",
+      "file": "pairs/annotation-correct.gff3",
+      "related": "pairs/genome-fhr.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "checksum",
+            "verdict": "match"
+          }
+        ],
+        "circumstantial": {
+          "verdict": "consistent",
+          "source": "sequence-region",
+          "missing_from_related": []
+        },
+        "pair_classification": "recorded-match",
+        "statuses": {
+          "RDA-I3-04M": "evidenced"
+        }
+      }
+    },
+    {
+      "id": "pair-version-mismatch",
+      "file": "pairs/annotation-version-mismatch.gff3",
+      "related": "pairs/genome-fhr-v2.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "checksum",
+            "verdict": "mismatch"
+          }
+        ],
+        "circumstantial": {
+          "verdict": "consistent"
+        },
+        "pair_classification": "recorded-mismatch"
+      }
+    },
+    {
+      "id": "pair-accession-only",
+      "file": "pairs/annotation-accession-only.gff3",
+      "related": "pairs/genome-plain.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "accession",
+            "value": "NCBI_Assembly:GCF_000002985.6",
+            "verdict": "unverifiable",
+            "reason": "related-file-states-no-identity"
+          }
+        ],
+        "circumstantial": {
+          "verdict": "consistent",
+          "lengths_compared": 7
+        },
+        "pair_classification": "consistent-unverified"
+      }
+    },
+    {
+      "id": "pair-no-link",
+      "file": "pairs/annotation-no-link.gff3",
+      "related": "pairs/genome-plain.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [],
+        "circumstantial": {
+          "verdict": "consistent",
+          "source": "sequence-region",
+          "missing_from_related": [],
+          "length_mismatches": []
+        },
+        "pair_classification": "consistent-unverified",
+        "statuses": {
+          "RDA-I3-04M": "not_evidenced"
+        }
+      }
+    },
+    {
+      "id": "pair-genbank-vs-refseq-names",
+      "file": "pairs/annotation-genbank-names.gff3",
+      "related": "pairs/genome-refseq-names.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "accession",
+            "verdict": "unverifiable",
+            "reason": "related-file-states-no-identity"
+          },
+          {
+            "kind": "name",
+            "value": "WBcel235",
+            "verdict": "unverifiable"
+          }
+        ],
+        "circumstantial": {
+          "verdict": "inconsistent",
+          "missing_from_related": [
+            "BX284601.5",
+            "BX284602.5",
+            "BX284603.4",
+            "BX284604.4",
+            "BX284605.5",
+            "BX284606.5",
+            "X54252.1"
+          ]
+        },
+        "pair_classification": "inconsistent"
+      }
+    },
+    {
+      "id": "pair-partial",
+      "file": "pairs/annotation-partial.gff3",
+      "related": "pairs/genome-plain.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [],
+        "circumstantial": {
+          "verdict": "partially_consistent",
+          "missing_from_related": [
+            "Y"
+          ],
+          "length_mismatches": [
+            {
+              "name": "II",
+              "declared": 154,
+              "actual": 153
+            }
+          ],
+          "lengths_compared": 6
+        },
+        "pair_classification": "partial"
+      }
+    },
+    {
+      "id": "pair-vcf-contig-md5",
+      "file": "pairs/variants-contig-md5.vcf",
+      "related": "pairs/genome-plain.fa",
+      "format": "vcf",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "sequence-digests",
+            "verdict": "mismatch"
+          }
+        ],
+        "circumstantial": {
+          "verdict": "consistent",
+          "source": "vcf-contig"
+        },
+        "pair_classification": "recorded-mismatch",
+        "statuses": {
+          "RDA-I3-04M": "evidenced"
+        }
+      }
+    },
+    {
+      "id": "pair-malformed-checksum",
+      "file": "pairs/annotation-malformed-checksum.gff3",
+      "related": "pairs/genome-fhr.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "checksum",
+            "well_formed": false,
+            "verdict": "unverifiable",
+            "reason": "malformed"
+          }
+        ],
+        "pair_classification": "consistent-unverified",
+        "findings": [
+          {
+            "kind": "malformed",
+            "line": 2
+          }
+        ]
+      }
+    }
+  ]
+}

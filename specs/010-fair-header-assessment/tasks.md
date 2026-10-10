@@ -43,9 +43,9 @@ boundaries").
 
 **Purpose**: Create the package skeleton, the fixture directory and the test harness.
 
-- [ ] T001 Create the `FAIR-bioHeaders-Tools/bioheaders/assess/` package. Add an empty `__init__.py` (MPL-2.0 header) and the directories `data/` and `data/reference/`. Add `include = ["bioheaders/fhr_schema.json", "bioheaders/assess/data/**/*.json"]` to `FAIR-bioHeaders-Tools/pyproject.toml`. Add **no** new dependency
-- [ ] T002 [P] Create `FAIR-bioHeaders-Tools/tests/conftest.py` with an autouse fixture that makes `socket.socket.connect` raise for every test module named `assess_*_test.py`, except tests marked `@pytest.mark.online_local`. Create `FAIR-bioHeaders-Tools/tests/fixtures/assess/README.md`, which states the fixture origin (copied from FHR-Specification `assessment/`)
-- [ ] T003 [P] Create `FHR-Specification/assessment/` with `README.md` (purpose, layout `headers/`, `pairs/`, `edge/`, `review/`, and the MPL-2.0 notice), `headers/.gitkeep`, `pairs/.gitkeep`, `edge/.gitkeep` and `review/.gitkeep`. Append `assessment/** -text` and `assessment/**/*.gz binary` to `FHR-Specification/.gitattributes`
+- [X] T001 Create the `FAIR-bioHeaders-Tools/bioheaders/assess/` package. Add an empty `__init__.py` (MPL-2.0 header) and the directories `data/` and `data/reference/`. Add `include = ["bioheaders/fhr_schema.json", "bioheaders/assess/data/**/*.json"]` to `FAIR-bioHeaders-Tools/pyproject.toml`. Add **no** new dependency
+- [X] T002 [P] Create `FAIR-bioHeaders-Tools/tests/conftest.py` with an autouse fixture that makes `socket.socket.connect` raise for every test module named `assess_*_test.py`, except tests marked `@pytest.mark.online_local`. Create `FAIR-bioHeaders-Tools/tests/fixtures/assess/README.md`, which states the fixture origin (copied from FHR-Specification `assessment/`)
+- [X] T003 [P] Create `FHR-Specification/assessment/` with `README.md` (purpose, layout `headers/`, `pairs/`, `edge/`, `review/`, and the MPL-2.0 notice), `headers/.gitkeep`, `pairs/.gitkeep`, `edge/.gitkeep` and `review/.gitkeep`. Append `assessment/** -text` and `assessment/**/*.gz binary` to `FHR-Specification/.gitattributes`
 
 ---
 
@@ -58,15 +58,15 @@ and runner. Every story needs these.
 
 ### Tests for the foundation (write first, must fail)
 
-- [ ] T004 [P] Write `FAIR-bioHeaders-Tools/tests/assess_data_test.py`. It asserts that:
+- [X] T004 [P] Write `FAIR-bioHeaders-Tools/tests/assess_data_test.py`. It asserts that:
   - `rubric.json`, `synonyms.json` and the three reference tables validate against their schemas;
   - the rubric has "exactly 41 indicators, with unique ids equal to the RDA Table 1 set", of which "25 are `offline`, 4 `online`, 10 `not_applicable` and 2 `deferred`";
   - every `concept` and `form` referenced in the rubric exists in `synonyms.json`;
   - no suggestion template contains a literal accession, SPDX id, ORCID or date outside `<…>`;
   - `rubric.attribution` matches `10\.15497/rda00050`;
   - `bioheaders/assess/data/assessment-report.schema.json` is byte-identical to `../FHR-Specification/specs/010-fair-header-assessment/contracts/assessment-report.schema.json`. This check is skipped when that checkout is absent
-- [ ] T005 [P] Write `FHR-Specification/tests/test_assessment_fixtures.py` (unittest). It asserts that `assessment/manifest.json` validates against `assessment/manifest.schema.json`, and that "every file under `assessment/headers`, `pairs` and `edge` is listed once". It also asserts that real captures carry `source_url` and `fetched`, that synthetic files carry `generator`, and that `scripts/make_assessment_fixtures.py --output DIR` run twice gives byte-identical trees
-- [ ] T006 [P] Write `FAIR-bioHeaders-Tools/tests/assess_sniff_test.py`. It covers:
+- [X] T005 [P] Write `FHR-Specification/tests/test_assessment_fixtures.py` (unittest). It asserts that `assessment/manifest.json` validates against `assessment/manifest.schema.json`, and that "every file under `assessment/headers`, `pairs` and `edge` is listed once". It also asserts that real captures carry `source_url` and `fetched`, that synthetic files carry `generator`, and that `scripts/make_assessment_fixtures.py --output DIR` run twice gives byte-identical trees
+- [X] T006 [P] Write `FAIR-bioHeaders-Tools/tests/assess_sniff_test.py`. It covers:
   - gzip and BGZF detected by magic bytes, whatever the extension (dbSNP has no `.vcf`);
   - a tar archive inside gzip gives `format: archive`;
   - the BAM, CRAM, BigWig and BigBed magic numbers give `binary`;
@@ -75,20 +75,20 @@ and runner. Every story needs these.
 
 ### Implementation for the foundation
 
-- [ ] T007 [P] Copy `contracts/assessment-report.schema.json`, `contracts/rubric.schema.json` and `contracts/synonyms.schema.json` byte-for-byte to `FAIR-bioHeaders-Tools/bioheaders/assess/data/`
-- [ ] T008 [P] Create the pinned reference tables in `FAIR-bioHeaders-Tools/bioheaders/assess/data/reference/`. Each has the shape `{table, version, source, retrieved, entries}` ([contracts/data-files.md §3](contracts/data-files.md)):
+- [X] T007 [P] Copy `contracts/assessment-report.schema.json`, `contracts/rubric.schema.json` and `contracts/synonyms.schema.json` byte-for-byte to `FAIR-bioHeaders-Tools/bioheaders/assess/data/`
+- [X] T008 [P] Create the pinned reference tables in `FAIR-bioHeaders-Tools/bioheaders/assess/data/reference/`. Each has the shape `{table, version, source, retrieved, entries}` ([contracts/data-files.md §3](contracts/data-files.md)):
   - `spdx-licenses.json`: the full SPDX list at one tagged release, with entries `{id, url, deprecated}`;
   - `id-schemes.json`: the prefixes taxonomy, orcid, ror, doi, so, go, eco, insdc.gca, refseq.gcf, ena.embl, bioproject and biosample, with entries `{prefix, pattern, persistent, resolver}`;
   - `formats.json`: fasta, gff3, gaf, vcf and gfa, with entries `{format, fairsharing, version_directive, versions}`.
 
   Record the real versions and retrieval dates. Do not copy the illustrative ones in the contract
-- [ ] T009 Create `FAIR-bioHeaders-Tools/bioheaders/assess/data/synonyms.json` (`synonyms_version` 1.0.0). Include:
+- [X] T009 Create `FAIR-bioHeaders-Tools/bioheaders/assess/data/synonyms.json` (`synonyms_version` 1.0.0). Include:
   - the normalisation `{casefold, fold_separators ["-","_"," "], split_camel_case, strip_trailing_colon}`;
   - the forms (`insdc-assembly-accession`, `spdx-id`, `taxonomy-iri`, `orcid`, `doi`, `iso-date`, `vcf-date`, `md5`, `fhr-checksum`, `seqcol-digest`, `url`, `directory-url`);
   - concepts covering **every key in [research/survey.md §4](research/survey.md)**.
 
   Each concept has `keys`, `forms`, `scope`, `core_field` (slot names from `FHR-Specification/schemas/core.yaml`), `link_kind`, `relationship` and `emit`. Mark `INFO`, `FORMAT`, `FILTER`, `ALT`, `ID` and `phasing` as structural
-- [ ] T010 Create `FAIR-bioHeaders-Tools/bioheaders/assess/data/rubric.json` (`rubric_version` 1.0.0) with all 41 indicators, in RDA Table 1 order. For each:
+- [X] T010 Create `FAIR-bioHeaders-Tools/bioheaders/assess/data/rubric.json` (`rubric_version` 1.0.0) with all 41 indicators, in RDA Table 1 order. For each:
   - the verbatim RDA short `title`;
   - `principle`, `priority` and `target`;
   - `assessability` and `reason`, following research R-03. RDA-I3-01D and RDA-I3-02D are `deferred`/`deferred-data-body`;
@@ -100,16 +100,16 @@ and runner. Every story needs these.
   - suggestion templates for `fair-bioheaders`, `gff3-pragma`, `vcf-meta` and `gaf`, using only `{value}`, `{related.*}` or `<placeholder>`.
 
   Add the `source` and `attribution` blocks from research R-19
-- [ ] T011 Implement `FAIR-bioHeaders-Tools/bioheaders/assess/data.py`. It loads the five data files with `importlib.resources`, validates them against the bundled schemas with `jsonschema` (failing loudly), exposes `rubric_version`, `synonyms_version` and `reference_versions`, and caches the result per process (depends on T007–T010)
-- [ ] T012 [P] Implement the dataclasses in `FAIR-bioHeaders-Tools/bioheaders/assess/model.py` following [data-model.md](data-model.md) §1–§14. Use Python 3.9-compatible syntax (no `slots=`, no `match`). The classes are `InputFile`, `HeaderEvidence`, `IndicatorResult`, `Finding`, `Suggestion`, `RelatedFileLink`, `LinkVerification`, `CircumstantialCheck`, `ConformanceResult`, `OnlineCheck` and `AssessmentReport`, each with `to_json()`. Enforce in `__post_init__`:
+- [X] T011 Implement `FAIR-bioHeaders-Tools/bioheaders/assess/data.py`. It loads the five data files with `importlib.resources`, validates them against the bundled schemas with `jsonschema` (failing loudly), exposes `rubric_version`, `synonyms_version` and `reference_versions`, and caches the result per process (depends on T007–T010)
+- [X] T012 [P] Implement the dataclasses in `FAIR-bioHeaders-Tools/bioheaders/assess/model.py` following [data-model.md](data-model.md) §1–§14. Use Python 3.9-compatible syntax (no `slots=`, no `match`). The classes are `InputFile`, `HeaderEvidence`, `IndicatorResult`, `Finding`, `Suggestion`, `RelatedFileLink`, `LinkVerification`, `CircumstantialCheck`, `ConformanceResult`, `OnlineCheck` and `AssessmentReport`, each with `to_json()`. Enforce in `__post_init__`:
   - "`reason` required iff the status is `not_applicable` or `not_assessed`";
   - "`suggestion` required iff the status is `partially_evidenced` or `not_evidenced`";
   - "evidence non-empty iff the status is `evidenced` or `partially_evidenced`"
-- [ ] T013 [P] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/sniff.py`. It reuses `bioheaders.cli.open_input` for gzip/BGZF streaming, distinguishes gzip from BGZF by the `BC` extra subfield, and returns `(compression, format, format_source, scope)`. It detects tar (`ustar` at offset 257) and binary magic numbers, and never reads past 64 KiB for sniffing (makes T006 pass)
-- [ ] T014 [P] Implement the JSON serialisation in `FAIR-bioHeaders-Tools/bioheaders/assess/render.py`: `to_json(report)` gives sorted keys, `ensure_ascii=False`, UTF-8, LF line endings, a trailing newline and no floats. It validates against `assessment-report.schema.json` before returning, and raises if the report does not conform
-- [ ] T015 [P] Write `FHR-Specification/assessment/manifest.schema.json` following [contracts/data-files.md §4](contracts/data-files.md). It defines `manifest_version`, `rubric_version`, and `fixtures[]` with `id`, `file`, `related`, `format`, `source_url`/`fetched` or `generator`, and `expected`. `expected` holds `statuses`, `links`, `findings`, `conformance`, `circumstantial`, `pair_classification` and `scope`
-- [ ] T016 Copy the 17 corpus files of [research/survey.md §R3](research/survey.md) from `specs/010-fair-header-assessment/research/headers/` to `FHR-Specification/assessment/headers/`, giving each its original extension (for example `ncbi-refseq_gff3_GCF_000002985.6_WBcel235_genomic.gff`). Remove the survey's `# SOURCE-URL`, `# FETCHED` and `# ----- captured header lines -----` lines and the `[ELIDED …]` notes, which must not stand in for real lines. Create `FHR-Specification/assessment/manifest.json` with one entry per file, giving `source_url`, `fetched` and `format`, and leave `expected` empty for now
-- [ ] T017 Implement `FHR-Specification/scripts/check_assessment.py`, modelled on `scripts/check_conformance.py`. It takes `--tool PATH` (a virtual environment, a checkout or commands on PATH). It runs `bioheaders assess --format json [--related R] FILE` for every manifest entry, validates the output against the tool's bundled report schema, and compares only the listed `expected` fields. It prints `ok: <id>` or a diff, and exits 1 on any difference
+- [X] T013 [P] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/sniff.py`. It reuses `bioheaders.cli.open_input` for gzip/BGZF streaming, distinguishes gzip from BGZF by the `BC` extra subfield, and returns `(compression, format, format_source, scope)`. It detects tar (`ustar` at offset 257) and binary magic numbers, and never reads past 64 KiB for sniffing (makes T006 pass)
+- [X] T014 [P] Implement the JSON serialisation in `FAIR-bioHeaders-Tools/bioheaders/assess/render.py`: `to_json(report)` gives sorted keys, `ensure_ascii=False`, UTF-8, LF line endings, a trailing newline and no floats. It validates against `assessment-report.schema.json` before returning, and raises if the report does not conform
+- [X] T015 [P] Write `FHR-Specification/assessment/manifest.schema.json` following [contracts/data-files.md §4](contracts/data-files.md). It defines `manifest_version`, `rubric_version`, and `fixtures[]` with `id`, `file`, `related`, `format`, `source_url`/`fetched` or `generator`, and `expected`. `expected` holds `statuses`, `links`, `findings`, `conformance`, `circumstantial`, `pair_classification` and `scope`
+- [X] T016 Copy the 17 corpus files of [research/survey.md §R3](research/survey.md) from `specs/010-fair-header-assessment/research/headers/` to `FHR-Specification/assessment/headers/`, giving each its original extension (for example `ncbi-refseq_gff3_GCF_000002985.6_WBcel235_genomic.gff`). Remove the survey's `# SOURCE-URL`, `# FETCHED` and `# ----- captured header lines -----` lines and the `[ELIDED …]` notes, which must not stand in for real lines. Create `FHR-Specification/assessment/manifest.json` with one entry per file, giving `source_url`, `fetched` and `format`, and leave `expected` empty for now
+- [X] T017 Implement `FHR-Specification/scripts/check_assessment.py`, modelled on `scripts/check_conformance.py`. It takes `--tool PATH` (a virtual environment, a checkout or commands on PATH). It runs `bioheaders assess --format json [--related R] FILE` for every manifest entry, validates the output against the tool's bundled report schema, and compares only the listed `expected` fields. It prints `ok: <id>` or a diff, and exits 1 on any difference
 
 **Checkpoint**: Foundation ready. The data files load and validate, input sniffing works, the
 JSON output conforms to the schema, and the fixture runner and manifest exist.
@@ -129,8 +129,8 @@ V1–V4).
 
 ### Tests for User Story 1 (write first, must fail) ⚠️
 
-- [ ] T018 [P] [US1] Fill `expected` in `FHR-Specification/assessment/manifest.json` for the 17 header fixtures, covering at least RDA-F1-01D, RDA-F2-01M, RDA-I1-01D, RDA-I2-01M, RDA-I3-02M, RDA-I3-04M, RDA-R1.1-01M, RDA-R1.2-01M, RDA-R1.3-01M, RDA-A1-03D (`not_assessed`/`online-check-not-requested`), RDA-A2-01M (`not_applicable`/`repository-level`) and RDA-I3-01D (`not_assessed`/`deferred-data-body`). Also list the expected `links` and `findings`, for example `format-irregularity` for Alliance WB line 1 and MGI `date-produced`, and the FlyBase `.gff.gz` as `scope: out_of_scope`/`archive-not-supported`
-- [ ] T019 [P] [US1] Extend `FHR-Specification/scripts/make_assessment_fixtures.py` to generate `FHR-Specification/assessment/edge/` deterministically (gzip `mtime=0`), and add the manifest entries. The fixtures are:
+- [X] T018 [P] [US1] Fill `expected` in `FHR-Specification/assessment/manifest.json` for the 17 header fixtures, covering at least RDA-F1-01D, RDA-F2-01M, RDA-I1-01D, RDA-I2-01M, RDA-I3-02M, RDA-I3-04M, RDA-R1.1-01M, RDA-R1.2-01M, RDA-R1.3-01M, RDA-A1-03D (`not_assessed`/`online-check-not-requested`), RDA-A2-01M (`not_applicable`/`repository-level`) and RDA-I3-01D (`not_assessed`/`deferred-data-body`). Also list the expected `links` and `findings`, for example `format-irregularity` for Alliance WB line 1 and MGI `date-produced`, and the FlyBase `.gff.gz` as `scope: out_of_scope`/`archive-not-supported`
+- [X] T019 [P] [US1] Extend `FHR-Specification/scripts/make_assessment_fixtures.py` to generate `FHR-Specification/assessment/edge/` deterministically (gzip `mtime=0`), and add the manifest entries. The fixtures are:
   - a FASTA with no header;
   - gzip and BGZF copies of one GFF3 fixture;
   - a GFF3 inside tar.gz;
@@ -145,7 +145,7 @@ V1–V4).
   - an FHT stub with no published schema.
 
   The expected outcomes follow [data-model.md §5](data-model.md). The FASTA with no header expects every `offline` indicator `not_evidenced`. The case of a header longer than 16 MiB is not committed. T020 generates it at test time in a temporary directory
-- [ ] T020 [P] [US1] Write `FAIR-bioHeaders-Tools/tests/assess_conventions_test.py`, with one test per parsing rule in research R-02/R-15:
+- [X] T020 [P] [US1] Write `FAIR-bioHeaders-Tools/tests/assess_conventions_test.py`, with one test per parsing rule in research R-02/R-15:
   - GFF3 `##`, and `#!` with `key value` and `key: value` (`#!assembly:`);
   - a comment before `##gff-version`, kept as `unrecognised` with a `format-irregularity` finding;
   - the header ends at the first feature line or `##FASTA`;
@@ -157,7 +157,7 @@ V1–V4).
   - `line-too-long` (over 1 MiB), `header-truncated` (over 16 MiB, generated in `tmp_path` and never committed) and `undecodable-line`.
 
   Use fixtures copied into `FAIR-bioHeaders-Tools/tests/fixtures/assess/`
-- [ ] T021 [P] [US1] Write `FAIR-bioHeaders-Tools/tests/assess_rubric_test.py`. It covers:
+- [X] T021 [P] [US1] Write `FAIR-bioHeaders-Tools/tests/assess_rubric_test.py`. It covers:
   - the status derivation order 1–9 of data-model §5;
   - the first-record cap and the conflicting-values cap;
   - "a malformed value satisfies nothing";
@@ -167,20 +167,20 @@ V1–V4).
   - a FASTA with no header gives every offline indicator `not_evidenced`, each with a suggestion, and no exception (US1 scenario 2);
   - "each of the 41 ids appears exactly once, in rubric order";
   - the `not_applicable` reasons are only `embedded-metadata`, `repository-level` or `object-in-hand`
-- [ ] T022 [P] [US1] Write `FAIR-bioHeaders-Tools/tests/assess_conformance_test.py`. It covers:
+- [X] T022 [P] [US1] Write `FAIR-bioHeaders-Tools/tests/assess_conformance_test.py`. It covers:
   - a valid FHR FASTA gives `conformance.result: valid`, `schema_used.canonical_url` equal to `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json`, and `bundled_sha256` equal to the SHA-256 of `bioheaders/fhr_schema.json`, kept separate from `results` (US1 scenario 3, FR-008);
   - a duplicate-key FHR header gives `invalid`, and its values are not used as FAIR evidence;
   - an FHT stub gives `not_assessed`/`unsupported-header-type`;
   - a cited schema version that is not bundled gives `not_assessed`/`unsupported-schema-version`, with no network access
-- [ ] T023 [P] [US1] Write `FAIR-bioHeaders-Tools/tests/assess_report_test.py`. It covers:
+- [X] T023 [P] [US1] Write `FAIR-bioHeaders-Tools/tests/assess_report_test.py`. It covers:
   - every report validates against the bundled schema;
   - two runs give byte-identical JSON and Markdown (FR-009);
   - the text and Markdown output never contains "score", "is FAIR" or "certified" (FR-004);
   - the attribution is present in the JSON and Markdown;
   - `online_checks == "not_requested"`, and no socket was opened (FR-010, FR-011);
   - the Markdown escapes the cited lines that contain `|`, `<` and backticks
-- [ ] T024 [P] [US1] Write `FAIR-bioHeaders-Tools/tests/assess_suggestions_test.py` as the SC-002 proxy. For each fixture and each `partially_evidenced`/`not_evidenced` result, it inserts `suggestion.line` (with placeholders filled from a test table) into a copy of the header and re-assesses. The indicator's status must not fall, and must rise for single-condition indicators. Every `value_source` is `file`, `related-file`, `placeholder` or `file-name`, and `file-name` suggestions contain "confirm before use"
-- [ ] T025 [P] [US1] Write the single-file tests in `FAIR-bioHeaders-Tools/tests/assess_cli_test.py`:
+- [X] T024 [P] [US1] Write `FAIR-bioHeaders-Tools/tests/assess_suggestions_test.py` as the SC-002 proxy. For each fixture and each `partially_evidenced`/`not_evidenced` result, it inserts `suggestion.line` (with placeholders filled from a test table) into a copy of the header and re-assesses. The indicator's status must not fall, and must rise for single-condition indicators. Every `value_source` is `file`, `related-file`, `placeholder` or `file-name`, and `file-name` suggestions contain "confirm before use"
+- [X] T025 [P] [US1] Write the single-file tests in `FAIR-bioHeaders-Tools/tests/assess_cli_test.py`:
   - `--format text|markdown|json`;
   - `--output DIR` writes `<name>.assessment.json` and `.md` atomically;
   - `-` with `--type vcf` works, and `-` without `--type` exits 2;
@@ -194,16 +194,16 @@ V1–V4).
 
 ### Implementation for User Story 1
 
-- [ ] T026 [US1] Implement the header-region readers in `FAIR-bioHeaders-Tools/bioheaders/assess/conventions.py`: FAIR-bioHeaders (through `bioheaders.sequence_parts`/`header_lines`, the same functions as `validate`/`verify`), GFF3 `##`/`#!`, GAF (first block and `upstream-provenance`), VCF meta and `##contig`, FASTA first defline, and generic comments. Each yields `HeaderEvidence`. Enforce "16 MiB header" and "1 MiB per line", and sample up to `--record-limit` records for seqids and RDA-R1.3-01D (depends on T012, T013; makes T020 pass)
-- [ ] T027 [US1] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/synonyms.py`. It does the key normalisation (casefold, fold `-`, `_` and space, split camelCase, strip a trailing `:`), maps keys to concepts per convention, and matches value forms with `re.fullmatch` and reference-table lookups. It resolves one key to several concepts by form (VCF `reference` gives an accession, a URL or a name), and emits `identifier-in-free-text` findings (depends on T011)
-- [ ] T028 [US1] Implement the recorded-link extraction and ranking in `FAIR-bioHeaders-Tools/bioheaders/assess/links.py`, following research R-06. Kinds: `checksum`, `seqcol` and `sequence-digests` are rank 1, `accession` rank 2, `url` rank 3 and `name` rank 4. Set `relationship` from `derivedFrom.relationship` or the concept's documented `relationship`. Flag `well_formed: false` with a `malformed` finding, `conflicting-values` for same-kind conflicts, and `url-names-directory` for directory URLs. There is no verification yet (depends on T027)
-- [ ] T029 [US1] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/conformance.py`. It detects the header type from `schema` against an allow-list (not a URL substring guess, per spec#44) and validates FHR with the existing `bioheaders.fhr` validator. It records `{canonical_url, bundled_sha256, version}`, and returns `not_assessed` with `unsupported-header-type` or `unsupported-schema-version`. It never fetches the URL (depends on T012; makes T022 pass)
-- [ ] T030 [US1] Implement the status derivation in `FAIR-bioHeaders-Tools/bioheaders/assess/rubric.py`, exactly following data-model §5 steps 1–9 ("Online results never lower a status reached in step 7 or 8"), with the named checks `format-declared`, `record-sample-parse`, `fhr-conformance` and `derived-link` (presence and rank only). Fill in `conditions_met` and `conditions_total` (depends on T026–T029; makes T021 pass)
-- [ ] T031 [US1] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/suggestions.py`. It renders the rubric templates in the file's own convention: GFF3 uses `#!` with the native `emit` key, otherwise the core field name. VCF uses `##`, and GAF uses `!`. FASTA and other files without a header convention get a FAIR-bioHeaders `;~`/`#~` line, with a note that FHT and FHP are drafts. Every suggestion sets `value_source`, `file-name` values carry "from the file name; confirm before use", and values are never invented (depends on T030; makes T024 pass)
-- [ ] T032 [US1] Implement the text and Markdown renderers in `FAIR-bioHeaders-Tools/bioheaders/assess/render.py`. The sections, in order, are: input, online-checks line, conformance, checklist grouped F/A/I/R, recorded links, findings and attribution (contracts/cli.md "Outputs"). Escape Markdown, and never use the words in FR-004 (makes T023 pass)
-- [ ] T033 [US1] Implement `assess_file(path, related=None, online=False, record_limit=1000, hash_inputs=False)` in `FAIR-bioHeaders-Tools/bioheaders/assess/__init__.py`. It returns a plain dict that conforms to the report schema; out-of-scope and error inputs give every indicator `not_assessed` with the matching reason. Document the API as provisional
-- [ ] T034 [US1] Register `Subcommand("assess", …)` in `SUBCOMMANDS` in `FAIR-bioHeaders-Tools/bioheaders/cli.py`, with the options `--type`, `--format`, `--output`, `--record-limit` and `--hash-inputs`. Use the exit codes 0, 1 and 2 of [contracts/cli.md](contracts/cli.md) and atomic output (temporary file, then `os.replace`, like `write_output`), and put the RDA attribution in the help epilogue. Add no `fhr-*` entry point (makes T025 pass)
-- [ ] T035 [US1] Run `python scripts/check_assessment.py --tool ../FHR-File-Converter` from `FHR-Specification/`. Fix the tool, not the manifest, unless a reviewer agrees that the expectation was wrong, and record any expectation change with its reason in the commit message
+- [X] T026 [US1] Implement the header-region readers in `FAIR-bioHeaders-Tools/bioheaders/assess/conventions.py`: FAIR-bioHeaders (through `bioheaders.sequence_parts`/`header_lines`, the same functions as `validate`/`verify`), GFF3 `##`/`#!`, GAF (first block and `upstream-provenance`), VCF meta and `##contig`, FASTA first defline, and generic comments. Each yields `HeaderEvidence`. Enforce "16 MiB header" and "1 MiB per line", and sample up to `--record-limit` records for seqids and RDA-R1.3-01D (depends on T012, T013; makes T020 pass)
+- [X] T027 [US1] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/synonyms.py`. It does the key normalisation (casefold, fold `-`, `_` and space, split camelCase, strip a trailing `:`), maps keys to concepts per convention, and matches value forms with `re.fullmatch` and reference-table lookups. It resolves one key to several concepts by form (VCF `reference` gives an accession, a URL or a name), and emits `identifier-in-free-text` findings (depends on T011)
+- [X] T028 [US1] Implement the recorded-link extraction and ranking in `FAIR-bioHeaders-Tools/bioheaders/assess/links.py`, following research R-06. Kinds: `checksum`, `seqcol` and `sequence-digests` are rank 1, `accession` rank 2, `url` rank 3 and `name` rank 4. Set `relationship` from `derivedFrom.relationship` or the concept's documented `relationship`. Flag `well_formed: false` with a `malformed` finding, `conflicting-values` for same-kind conflicts, and `url-names-directory` for directory URLs. There is no verification yet (depends on T027)
+- [X] T029 [US1] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/conformance.py`. It detects the header type from `schema` against an allow-list (not a URL substring guess, per spec#44) and validates FHR with the existing `bioheaders.fhr` validator. It records `{canonical_url, bundled_sha256, version}`, and returns `not_assessed` with `unsupported-header-type` or `unsupported-schema-version`. It never fetches the URL (depends on T012; makes T022 pass)
+- [X] T030 [US1] Implement the status derivation in `FAIR-bioHeaders-Tools/bioheaders/assess/rubric.py`, exactly following data-model §5 steps 1–9 ("Online results never lower a status reached in step 7 or 8"), with the named checks `format-declared`, `record-sample-parse`, `fhr-conformance` and `derived-link` (presence and rank only). Fill in `conditions_met` and `conditions_total` (depends on T026–T029; makes T021 pass)
+- [X] T031 [US1] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/suggestions.py`. It renders the rubric templates in the file's own convention: GFF3 uses `#!` with the native `emit` key, otherwise the core field name. VCF uses `##`, and GAF uses `!`. FASTA and other files without a header convention get a FAIR-bioHeaders `;~`/`#~` line, with a note that FHT and FHP are drafts. Every suggestion sets `value_source`, `file-name` values carry "from the file name; confirm before use", and values are never invented (depends on T030; makes T024 pass)
+- [X] T032 [US1] Implement the text and Markdown renderers in `FAIR-bioHeaders-Tools/bioheaders/assess/render.py`. The sections, in order, are: input, online-checks line, conformance, checklist grouped F/A/I/R, recorded links, findings and attribution (contracts/cli.md "Outputs"). Escape Markdown, and never use the words in FR-004 (makes T023 pass)
+- [X] T033 [US1] Implement `assess_file(path, related=None, online=False, record_limit=1000, hash_inputs=False)` in `FAIR-bioHeaders-Tools/bioheaders/assess/__init__.py`. It returns a plain dict that conforms to the report schema; out-of-scope and error inputs give every indicator `not_assessed` with the matching reason. Document the API as provisional
+- [X] T034 [US1] Register `Subcommand("assess", …)` in `SUBCOMMANDS` in `FAIR-bioHeaders-Tools/bioheaders/cli.py`, with the options `--type`, `--format`, `--output`, `--record-limit` and `--hash-inputs`. Use the exit codes 0, 1 and 2 of [contracts/cli.md](contracts/cli.md) and atomic output (temporary file, then `os.replace`, like `write_output`), and put the RDA attribution in the help epilogue. Add no `fhr-*` entry point (makes T025 pass)
+- [X] T035 [US1] Run `python scripts/check_assessment.py --tool ../FHR-File-Converter` from `FHR-Specification/`. Fix the tool, not the manifest, unless a reviewer agrees that the expectation was wrong, and record any expectation change with its reason in the commit message
 
 **Checkpoint**: User Story 1 is fully functional. Any text file can be assessed offline into a
 41-indicator checklist with evidence and suggestions. This is MVP part 1.
@@ -222,7 +222,7 @@ accession-only, no-link and VCF-MD5 pairs (SC-003, quickstart V5).
 
 ### Tests for User Story 2 (write first, must fail) ⚠️
 
-- [ ] T036 [P] [US2] Extend `FHR-Specification/scripts/make_assessment_fixtures.py` to generate `FHR-Specification/assessment/pairs/`. The sequences are synthetic, and the names and lengths are scaled-down WBcel235-style. Write `FHR-Specification/assessment/pairs.tsv`, and add the manifest entries with `related` and the expected `links[].verification.verdict`, `circumstantial` and `pair_classification`:
+- [X] T036 [P] [US2] Extend `FHR-Specification/scripts/make_assessment_fixtures.py` to generate `FHR-Specification/assessment/pairs/`. The sequences are synthetic, and the names and lengths are scaled-down WBcel235-style. Write `FHR-Specification/assessment/pairs.tsv`, and add the manifest entries with `related` and the expected `links[].verification.verdict`, `circumstantial` and `pair_classification`:
   - an FHR genome with an annotation whose `derivedFrom.checksum` is correct, expecting `recorded-match`;
   - the same annotation against a genome with one base changed (a different version), expecting `recorded-mismatch`;
   - an accession-only annotation against a FASTA with no header, expecting `unverifiable`/`related-file-states-no-identity` and `consistent-unverified`;
@@ -231,7 +231,7 @@ accession-only, no-link and VCF-MD5 pairs (SC-003, quickstart V5).
   - an annotation with one name missing and one length differing, expecting `partial`;
   - a VCF `##contig md5=` set with one wrong MD5, expecting `recorded-mismatch` with the differing names listed;
   - a malformed checksum, expecting `unverifiable`/`malformed`
-- [ ] T037 [P] [US2] Write `FAIR-bioHeaders-Tools/tests/assess_links_test.py`. It covers:
+- [X] T037 [P] [US2] Write `FAIR-bioHeaders-Tools/tests/assess_links_test.py`. It covers:
   - every verification method in research R-07: `computed-fhr-checksum`, `stated-fhr-checksum`, `stated-seqcol`, `computed-md5` (upper-cased, no whitespace) and `stated-identity`;
   - "`match` requires that the related file *states* or *computes to* the recorded value";
   - a file-name match gives only a `hints[]` entry and never `match`;
@@ -243,11 +243,11 @@ accession-only, no-link and VCF-MD5 pairs (SC-003, quickstart V5).
 
 ### Implementation for User Story 2
 
-- [ ] T038 [US2] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/related.py`. It streams the related FASTA, FHR FASTA or GFA once through `open_input` and `read_chunks`, and collects the sequence names, lengths and per-sequence MD5. It computes the FHR checksum with the existing `bioheaders.cli.checksum`, and collects the stated FHR `checksum`, `seqcol_id` and `accessionID`. It uses constant memory apart from the name table, and caches by `(path, size)` per process
-- [ ] T039 [US2] Add verification to `FAIR-bioHeaders-Tools/bioheaders/assess/links.py`. It gives `LinkVerification` objects with `verdict`, `reason` (required iff `unverifiable`: `malformed`, `related-file-states-no-identity`, `related-file-states-no-seqcol`, `related-file-unreadable` or `sequence-absent`), `expected`, `actual`, `method` and `hints` (depends on T038)
-- [ ] T040 [US2] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/circumstantial.py`. It compares `##sequence-region`, VCF `##contig`, or else the sampled seqids, with the related names and lengths. It fills `missing_from_related` (complete and sorted), `length_mismatches`, `lengths_compared`, `not_declared_count` and `verdict`, and sets the label "circumstantial evidence, not a recorded link". It also computes `pair_classification` with the precedence `recorded-mismatch` > `recorded-match` > `inconsistent` > `partial` > `consistent-unverified` > `unknown` (makes T037 pass)
-- [ ] T041 [US2] Add the `--related FILE` and `--fail-on-mismatch` options (exit 3, which takes precedence over 0 but not over 1) to the `assess` subcommand in `FAIR-bioHeaders-Tools/bioheaders/cli.py`. Add the "Recorded links" verdicts and the "Circumstantial evidence (not a recorded link)" section to `FAIR-bioHeaders-Tools/bioheaders/assess/render.py`. Extend `FAIR-bioHeaders-Tools/tests/assess_cli_test.py` with exit-code-3 cases
-- [ ] T042 [US2] Extend `FHR-Specification/scripts/check_assessment.py` to pass `--related` for manifest entries that have `related` and to compare the `links`, `circumstantial` and `pair_classification` expectations. Run it over `assessment/pairs/` and fix the tool until every pair passes (SC-003)
+- [X] T038 [US2] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/related.py`. It streams the related FASTA, FHR FASTA or GFA once through `open_input` and `read_chunks`, and collects the sequence names, lengths and per-sequence MD5. It computes the FHR checksum with the existing `bioheaders.cli.checksum`, and collects the stated FHR `checksum`, `seqcol_id` and `accessionID`. It uses constant memory apart from the name table, and caches by `(path, size)` per process
+- [X] T039 [US2] Add verification to `FAIR-bioHeaders-Tools/bioheaders/assess/links.py`. It gives `LinkVerification` objects with `verdict`, `reason` (required iff `unverifiable`: `malformed`, `related-file-states-no-identity`, `related-file-states-no-seqcol`, `related-file-unreadable` or `sequence-absent`), `expected`, `actual`, `method` and `hints` (depends on T038)
+- [X] T040 [US2] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/circumstantial.py`. It compares `##sequence-region`, VCF `##contig`, or else the sampled seqids, with the related names and lengths. It fills `missing_from_related` (complete and sorted), `length_mismatches`, `lengths_compared`, `not_declared_count` and `verdict`, and sets the label "circumstantial evidence, not a recorded link". It also computes `pair_classification` with the precedence `recorded-mismatch` > `recorded-match` > `inconsistent` > `partial` > `consistent-unverified` > `unknown` (makes T037 pass)
+- [X] T041 [US2] Add the `--related FILE` and `--fail-on-mismatch` options (exit 3, which takes precedence over 0 but not over 1) to the `assess` subcommand in `FAIR-bioHeaders-Tools/bioheaders/cli.py`. Add the "Recorded links" verdicts and the "Circumstantial evidence (not a recorded link)" section to `FAIR-bioHeaders-Tools/bioheaders/assess/render.py`. Extend `FAIR-bioHeaders-Tools/tests/assess_cli_test.py` with exit-code-3 cases
+- [X] T042 [US2] Extend `FHR-Specification/scripts/check_assessment.py` to pass `--related` for manifest entries that have `related` and to compare the `links`, `circumstantial` and `pair_classification` expectations. Run it over `assessment/pairs/` and fix the tool until every pair passes (SC-003)
 
 **Checkpoint**: User Stories 1 and 2 both work on their own. **This is the MVP.** Providers can
 assess files and check annotation-genome pairs.

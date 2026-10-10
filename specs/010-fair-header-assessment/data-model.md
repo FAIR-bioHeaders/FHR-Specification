@@ -97,7 +97,7 @@ and suggestion text".
 | `reason` | reason code | Required iff `assessability` ∈ {`not_applicable`, `deferred`} |
 | `interpretation` | string | The file-header interpretation, marked as an adaptation |
 | `conditions` | list of Condition | Required iff `assessability` ∈ {`offline`, `online`} |
-| `evidenced_when` / `partial_when` | rule | `all`, `any`, or `{"min": n}` over the conditions |
+| `evidenced_when` / `partial_when` | rule | `all`, `any`, `never`, `{"min": n}`, or `{"any_of": [ids]}` / `{"all_of": [ids]}` naming conditions (added in implementation: a count cannot say "this condition is required") |
 | `check` | named check or null | `derived-link`, `fhr-conformance`, `format-declared`, `record-sample-parse`, `resolve` |
 | `online_upgrade` | boolean | True for RDA-F1-01D, RDA-I2-01M and RDA-R1.1-03M (online adds a note only) |
 | `guideline_item` | `G1`–`G8` or `out-of-scope` | |
@@ -241,7 +241,7 @@ disagree.
 
 | Field | Type | Rules |
 |---|---|---|
-| `header_type` | `FHR` \| `FHT` \| `FHP` \| `FHGFF3` | Determined from the `schema` value against an allow-list, not by matching substrings of the URL (spec#44) |
+| `header_type` | `FHR` \| `FHT` \| `FHP` \| `FHGFF3` \| null | Determined from the `schema` value against an allow-list, not by matching substrings of the URL (spec#44). Null when the `schema` value is missing or not on the list; the result is then `not_assessed` (`unsupported-header-type`) and the core fields are still read as evidence. The allow-list holds the raw-main URLs of `fhr.json` (FHR) and `fht.json` (FHT, unpublished fork); FHP and FHGFF3 have no schema URL yet |
 | `cited_schema` | string or null | The `schema` value in the file |
 | `cited_schema_version` | string or null | |
 | `schema_used` | `{canonical_url, bundled_sha256, version}` or null | The canonical URL is the raw-main URL (website#15) |

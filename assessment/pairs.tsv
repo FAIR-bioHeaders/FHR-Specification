@@ -1,0 +1,9 @@
+# derived<TAB>related, relative to assessment/ (contracts/data-files.md §5)
+pairs/annotation-correct.gff3	pairs/genome-fhr.fa
+pairs/annotation-version-mismatch.gff3	pairs/genome-fhr-v2.fa
+pairs/annotation-accession-only.gff3	pairs/genome-plain.fa
+pairs/annotation-no-link.gff3	pairs/genome-plain.fa
+pairs/annotation-genbank-names.gff3	pairs/genome-refseq-names.fa
+pairs/annotation-partial.gff3	pairs/genome-plain.fa
+pairs/variants-contig-md5.vcf	pairs/genome-plain.fa
+pairs/annotation-malformed-checksum.gff3	pairs/genome-fhr.fa
