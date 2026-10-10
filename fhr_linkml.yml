@@ -5,9 +5,12 @@ description: >-
   FAIR-bioHeaders shared core (schemas/core.yaml) and adds FHR-only slots.
 prefixes:
   linkml: https://w3id.org/linkml/
-  ex: https://example.org/
   MIXS: https://w3id.org/mixs/
-default_prefix: ex
+  # JSON-LD term IRIs (specs/011-jsonld-mapping research R-05, R-08); slots
+  # without a slot_uri get an fhr: term.
+  sdo: http://schema.org/
+  fhr: https://w3id.org/fair-bioheaders/terms#
+default_prefix: fhr
 default_range: string
 imports:
 - linkml:types
@@ -15,12 +18,15 @@ imports:
 slots:
   genome:
     description: Name of the genome
+    slot_uri: sdo:name
     required: true
   genomeSynonym:
     description: Other common names of the genome
+    slot_uri: sdo:alternateName
     multivalued: true
   assemblyAuthor:
     description: Assemblers of the genome
+    slot_uri: sdo:creator
     range: Author
     multivalued: true
     inlined_as_list: true
@@ -54,6 +60,7 @@ slots:
 classes:
   FHR:
     description: Metadata for reference genome assemblies.
+    class_uri: sdo:Dataset
     tree_root: true
     # Order follows the published fhr.json. derivedFrom is deliberately not
     # listed: FHR schemaVersion 1 does not include it.
@@ -105,6 +112,9 @@ classes:
         description: Reuse conditions or license for the genome
   VitalStats:
     description: General statistics about the genome assembly
+    class_uri: fhr:VitalStats
+    annotations:
+      vocabulary_subclass_of: sdo:StructuredValue
     attributes:
       L50:
         description: L50 of the genome assembly
@@ -129,21 +139,33 @@ classes:
       readTechnology:
         description: Read technology of the genome assembly
       N90:
+        description: Contig length in base pairs at 90 percent of the assembly length.
         range: integer
         minimum_value: 0
       gcContent:
+        description: GC content as a percentage (0 to 100), not a fraction.
         range: float
         minimum_value: 0
         maximum_value: 100
   AssemblySoftware:
+    description: Software used to assemble the genome, with its version and options.
+    class_uri: sdo:SoftwareApplication
     attributes:
       name:
+        description: Name of the assembly software
+        slot_uri: sdo:name
         required: true
       uri:
+        description: URI of the assembly software
+        slot_uri: sdo:url
         range: uri
-      version: {}
+      version:
+        description: Version of the assembly software
+        slot_uri: sdo:softwareVersion
       commandLineOption:
+        description: Command-line options given to the assembly software, in order
         multivalued: true
+        list_elements_ordered: true
   MIGSProjection:
     description: Partial MIxS/MIGS projection; not a complete checklist record.
     attributes:

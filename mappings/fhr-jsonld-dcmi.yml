@@ -1,0 +1,792 @@
+# FHR property paths mapped to JSON-LD terms and DCMI Metadata Terms
+# (specs/011-jsonld-mapping, research R-02, R-03, R-15; format:
+# mappings/mapping-table.schema.json). Curated by hand; tests/test_jsonld_mappings.py
+# checks it against fhr.json, jsonld/fhr.context.jsonld and the pinned vocabularies.
+# Kinds give the target term relative to the FHR field (SKOS direction).
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain
+# one at https://mozilla.org/MPL/2.0/.
+id: https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/mappings/fhr-jsonld-dcmi.yml
+table_version: 1.0.0
+source_schema: https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json
+source_schema_version: 1.0
+targets:
+  jsonld:
+    name: schema.org and the FAIR-bioHeaders vocabulary
+    version: '30.1'
+    reference: https://schema.org/docs/releases.html#v30.1
+    namespaces:
+    - http://schema.org/
+    - https://w3id.org/fair-bioheaders/terms#
+  dcmi:
+    name: DCMI Metadata Terms
+    version: '2020-01-20'
+    reference: https://www.dublincore.org/specifications/dublin-core/dcmi-terms/
+    namespaces:
+    - http://purl.org/dc/terms/
+kinds:
+  exact: 'skos:exactMatch (LinkML exact_mappings): same meaning and subject'
+  broader: 'skos:broadMatch (LinkML broad_mappings): the target term is broader'
+  narrower: 'skos:narrowMatch (LinkML narrow_mappings): the target term is narrower'
+  related: 'skos:relatedMatch (LinkML related_mappings): associated, not used to carry the value'
+  conditional: 'no SKOS equivalent: correct only when the stated condition holds'
+  lossy: 'no SKOS equivalent: the value is carried, but the stated information is lost'
+  unsupported: 'sssom:NoTermFound: the target vocabulary has no term'
+entries:
+- path: schema
+  jsonld:
+    term: http://schema.org/schemaVersion
+    status: core
+    kind: conditional
+    condition: 'the statement applies to the metadata record: the cited FHR schema URL, raw-main or versioned,
+      is the schema the record follows'
+    subject: record
+    coercion: iri
+  dcmi:
+  - term: http://purl.org/dc/terms/conformsTo
+    status: dcmi
+    kind: conditional
+    subject: record
+    condition: the statement is about the FHR metadata record, not the assembly
+  notes: 'schema.org: "a particular version of a schema used in some CreativeWork". The URL is copied
+    unchanged (research R-16).'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/schemaVersion
+- path: schemaVersion
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#schemaVersion
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: sdo:schemaVersion already carries schema, and two keys may not share an IRI (research
+    R-06).
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI has no term for the version of the metadata contract.
+  notes: The version of the FHR contract, not of the assembly (#56).
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: genome
+  jsonld:
+    term: http://schema.org/name
+    status: core
+    kind: exact
+    coercion: literal
+  dcmi:
+  - term: http://purl.org/dc/terms/title
+    status: dcmi
+    kind: conditional
+    condition: used as the resource name; not necessarily a submitter's assembly name, so not a citation
+      title (#56)
+  notes: schema.org declares name equivalent to dct:title.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/name
+  - https://bioschemas.org/profiles/Dataset/1.0-RELEASE
+- path: genomeSynonym[]
+  jsonld:
+    term: http://schema.org/alternateName
+    status: core
+    kind: exact
+    coercion: set
+    rdf_loss: order of @set items
+  dcmi:
+  - term: http://purl.org/dc/terms/alternative
+    status: dcmi
+    kind: exact
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/alternateName
+- path: taxon
+  jsonld:
+    term: http://schema.org/about
+    status: core
+    kind: conditional
+    condition: the assembly is about the organism named by the taxon
+    coercion: node
+    type:
+    - http://schema.org/Taxon
+  dcmi:
+  - term: http://purl.org/dc/terms/subject
+    status: dcmi
+    kind: conditional
+    condition: the taxon is the subject of the assembly
+  notes: 'schema.org declares about equivalent to dct:subject. sdo:Taxon is pending. sdo:taxonomicRange
+    is not used: it is pending and its domain is BioChemEntity only.'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/about
+  - https://schema.org/Taxon
+  - https://schema.org/taxonomicRange
+  - https://bioschemas.org/profiles/Taxon/1.0-RELEASE
+- path: taxon.name
+  jsonld:
+    term: http://schema.org/name
+    status: core
+    kind: exact
+    coercion: literal
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: In DCMI the name is the label of the related resource, which has no property of its own.
+  notes: The Bioschemas Taxon profile uses name for the accepted name.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/name
+  - https://bioschemas.org/profiles/Taxon/1.0-RELEASE
+- path: taxon.uri
+  jsonld:
+    term: '@id'
+    status: keyword
+    kind: exact
+    coercion: node-id
+  dcmi:
+  - term: http://purl.org/dc/terms/subject
+    status: dcmi
+    kind: conditional
+    condition: the identifiers.org taxonomy IRI is the object of dcterms:subject
+  notes: The identifiers.org IRI identifies the taxon, so records about the same species share the node.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://bioschemas.org/profiles/Taxon/1.0-RELEASE
+- path: version
+  jsonld:
+    term: http://schema.org/version
+    status: core
+    kind: exact
+    coercion: literal
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI has no version element; dcterms:hasVersion relates two resources.
+  notes: Keep apart from schemaVersion (#56).
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/version
+- path: metadataAuthor[]
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#metadataAuthor
+    status: fhr
+    kind: exact
+    subject: record
+    coercion: set-of-nodes
+    type:
+    - http://schema.org/Person
+    - http://schema.org/Organization
+    - https://w3id.org/fair-bioheaders/terms#Agent
+    rdf_loss: order of @set items
+  schemaorg_gap: sdo:sdPublisher (related) means the party that publishes the structured data markup,
+    not the author of the FHR record.
+  dcmi:
+  - term: http://purl.org/dc/terms/creator
+    status: dcmi
+    kind: conditional
+    subject: record
+    condition: the statement is about the FHR metadata record, not the assembly
+  notes: Never turn metadata authors into assembly authors (#56). Items are typed Person (ORCID), Organization
+    (ROR) or Agent (research R-04, R-18).
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/sdPublisher
+  - https://bioschemas.org/profiles/Person/0.3-DRAFT
+- path: metadataAuthor[].name
+  jsonld:
+    term: http://schema.org/name
+    status: core
+    kind: exact
+    subject: record
+    coercion: literal
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: In DCMI the name is the label of the related resource, which has no property of its own.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/name
+  - https://bioschemas.org/profiles/Person/0.3-DRAFT
+- path: metadataAuthor[].uri
+  jsonld:
+    term: '@id'
+    status: keyword
+    kind: exact
+    subject: record
+    coercion: node-id
+  dcmi:
+  - term: http://purl.org/dc/terms/creator
+    status: dcmi
+    kind: conditional
+    subject: record
+    condition: the statement is about the FHR metadata record, not the assembly; the ORCID IRI is the
+      object of dcterms:creator
+  notes: An ORCID IRI; it makes the agent a Person (research R-04).
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://bioschemas.org/profiles/Person/0.3-DRAFT
+- path: assemblyAuthor[]
+  jsonld:
+    term: http://schema.org/creator
+    status: core
+    kind: exact
+    coercion: set-of-nodes
+    type:
+    - http://schema.org/Person
+    - http://schema.org/Organization
+    - https://w3id.org/fair-bioheaders/terms#Agent
+    rdf_loss: order of @set items
+  dcmi:
+  - term: http://purl.org/dc/terms/creator
+    status: dcmi
+    kind: exact
+  notes: schema.org declares creator equivalent to dct:creator; the Bioschemas Dataset profile recommends
+    creator.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/creator
+  - https://bioschemas.org/profiles/Dataset/1.0-RELEASE
+- path: assemblyAuthor[].name
+  jsonld:
+    term: http://schema.org/name
+    status: core
+    kind: exact
+    coercion: literal
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: In DCMI the name is the label of the related resource, which has no property of its own.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/name
+  - https://bioschemas.org/profiles/Person/0.3-DRAFT
+- path: assemblyAuthor[].uri
+  jsonld:
+    term: '@id'
+    status: keyword
+    kind: exact
+    coercion: node-id
+  dcmi:
+  - term: http://purl.org/dc/terms/creator
+    status: dcmi
+    kind: exact
+  notes: The ORCID IRI is the object of dcterms:creator.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://bioschemas.org/profiles/Person/0.3-DRAFT
+- path: dateCreated
+  jsonld:
+    term: http://schema.org/dateCreated
+    status: core
+    kind: exact
+    coercion: xsd:date
+  dcmi:
+  - term: http://purl.org/dc/terms/created
+    status: dcmi
+    kind: exact
+  notes: The date the assembly was created; not a collection, deposit or publication date (#56, MAPPINGS.md).
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/dateCreated
+- path: voucherSpecimen
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#voucherSpecimen
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: The Bioschemas Sample and BioSample profiles describe a sample node, which FHR does not
+    have.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: A free-text description; dcterms:source would apply only if the value identified the specimen.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: accessionID
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#accessionID
+    status: fhr
+    kind: exact
+    coercion: node
+    type:
+    - http://schema.org/PropertyValue
+  schemaorg_gap: sdo:identifier already carries identifier[], and two keys may not share an IRI (research
+    R-06).
+  dcmi:
+  - term: http://purl.org/dc/terms/identifier
+    status: dcmi
+    kind: conditional
+    condition: the name or url identifies the assembly
+  notes: 'fhr:accessionID rdfs:subPropertyOf schema:identifier (jsonld/terms.ttl). MAPPINGS.md: accessionID.name
+    can name a repository.'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/identifier
+  - https://schema.org/PropertyValue
+- path: accessionID.name
+  jsonld:
+    term: http://schema.org/name
+    status: core
+    kind: conditional
+    condition: the value is an accession only when it is one; never manufacture one (#56)
+    coercion: literal
+  dcmi:
+  - term: http://purl.org/dc/terms/identifier
+    status: dcmi
+    kind: conditional
+    condition: the value is an accession of the assembly
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/name
+- path: accessionID.url
+  jsonld:
+    term: http://schema.org/url
+    status: core
+    kind: conditional
+    condition: the URL identifies the accession; it may instead be a repository or institution page
+    coercion: iri
+  dcmi:
+  - term: http://purl.org/dc/terms/identifier
+    status: dcmi
+    kind: conditional
+    condition: the URL identifies the assembly
+  notes: 'Not used as the node @id: in the example it is an institution home page.'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/url
+- path: instrument[]
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#instrument
+    status: fhr
+    kind: exact
+    coercion: set
+    rdf_loss: order of @set items
+  schemaorg_gap: sdo:instrument has the domain Action, and sdo:measurementTechnique is a technique, not
+    a device.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI has no term for instruments.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/instrument
+  - https://schema.org/measurementTechnique
+- path: scholarlyArticle
+  jsonld:
+    term: http://schema.org/citation
+    status: core
+    kind: exact
+    coercion: literal
+  dcmi:
+  - term: http://purl.org/dc/terms/isReferencedBy
+    status: dcmi
+    kind: conditional
+    condition: the DOI identifies an article that describes the assembly, not the assembly
+  notes: A bare DOI (^10.), not an IRI, so it stays a literal (research R-06).
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/citation
+  - https://bioschemas.org/profiles/Dataset/1.0-RELEASE
+- path: documentation
+  jsonld:
+    term: http://schema.org/description
+    status: core
+    kind: conditional
+    condition: the value is descriptive text; an absolute URL value is written as sdo:subjectOf (an IRI)
+      instead
+    coercion: literal
+  dcmi:
+  - term: http://purl.org/dc/terms/description
+    status: dcmi
+    kind: conditional
+    condition: the value is descriptive text
+  notes: 'Maintainer decision 3 (plan.md): a URL value maps to sdo:subjectOf, written under the JSON-LD
+    key subjectOf and read back as documentation (research R-18).'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/description
+  - https://schema.org/subjectOf
+  - https://bioschemas.org/profiles/Dataset/1.0-RELEASE
+- path: identifier[]
+  jsonld:
+    term: http://schema.org/identifier
+    status: core
+    kind: exact
+    coercion: set
+    rdf_loss: order of @set items
+  dcmi:
+  - term: http://purl.org/dc/terms/identifier
+    status: dcmi
+    kind: exact
+  notes: 'Compact identifiers (prefix:accession) stay literals. Bioschemas Dataset: CURIEs that resolve
+    through identifiers.org should be used.'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/identifier
+  - https://bioschemas.org/profiles/Dataset/1.0-RELEASE
+- path: relatedLink[]
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#relatedLink
+    status: fhr
+    kind: exact
+    coercion: set-of-iri
+    rdf_loss: order of @set items
+  schemaorg_gap: sdo:relatedLink has the domain WebPage only, and validators reject it on Dataset.
+  dcmi:
+  - term: http://purl.org/dc/terms/relation
+    status: dcmi
+    kind: exact
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/relatedLink
+- path: funding
+  jsonld:
+    term: http://schema.org/funding
+    status: core
+    kind: conditional
+    condition: schema.org expects a Grant node; FHR has a free-text grant line
+    coercion: literal
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI has no funding term; a free-text grant line does not establish a funder identifier (#56).
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/funding
+- path: reuseConditions
+  jsonld:
+    term: http://schema.org/license
+    status: core
+    kind: conditional
+    condition: the value identifies a licence (SPDX id or licence URL)
+    coercion: literal
+  dcmi:
+  - term: http://purl.org/dc/terms/rights
+    status: dcmi
+    kind: broader
+  - term: http://purl.org/dc/terms/license
+    status: dcmi
+    kind: conditional
+    condition: the value identifies a licence
+  notes: Preserve text; do not infer a standard licence from prose (#56).
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/license
+  - https://bioschemas.org/profiles/Dataset/1.0-RELEASE
+- path: masking
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#masking
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for sequence masking; the value stays a literal, not an enumeration
+    IRI (research R-06).
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI has no term for sequence masking.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#vitalStats
+    status: fhr
+    kind: exact
+    coercion: node
+    type:
+    - https://w3id.org/fair-bioheaders/terms#VitalStats
+  schemaorg_gap: schema.org has no property or class for assembly statistics.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.L50
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#L50
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for L50 of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  notes: A native JSON integer becomes xsd:integer in RDF.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.N50
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#N50
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for N50 of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.L90
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#L90
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for L90 of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.totalBasePairs
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#totalBasePairs
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for total base pairs of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.numberContigs
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#numberContigs
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for the number of contigs of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  notes: MIxS number_contig stays an exact match in LinkML.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.numberScaffolds
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#numberScaffolds
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for the number of scaffolds of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.readTechnology
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#readTechnology
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for the read technology of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.N90
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#N90
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for N90 of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.gcContent
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#gcContent
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for GC content of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  notes: A percentage from 0 to 100; xsd:double in RDF.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: checksum
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#checksum
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: 'sdo:sha256 is SHA-256 of a MediaObject: a different algorithm and subject. The FHR checksum
+    is SHA-512/256 over the exact file bytes (docs/FORMAT.md).'
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI has no checksum term.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/FORMAT.md
+  - https://schema.org/sha256
+- path: assemblySoftware
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#assemblySoftware
+    status: fhr
+    kind: exact
+    coercion: set-of-nodes
+    type:
+    - http://schema.org/SoftwareApplication
+    rdf_loss: order of @set items
+  schemaorg_gap: schema.org has no "software used to create" property for a CreativeWork.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for software provenance.
+  notes: A legacy string value stays a literal, not a node.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://bioschemas.org/profiles/ComputationalTool/1.0-RELEASE
+- path: assemblySoftware[].name
+  jsonld:
+    term: http://schema.org/name
+    status: core
+    kind: exact
+    coercion: literal
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for software provenance.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/name
+  - https://bioschemas.org/profiles/ComputationalTool/1.0-RELEASE
+- path: assemblySoftware[].uri
+  jsonld:
+    term: http://schema.org/url
+    status: core
+    kind: conditional
+    condition: the URI is the software's home or repository page
+    coercion: iri
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for software provenance.
+  notes: 'Not the node @id: an @id would merge every record''s node for the same tool, mixing versions
+    and options.'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/url
+  - https://bioschemas.org/profiles/ComputationalTool/1.0-RELEASE
+- path: assemblySoftware[].version
+  jsonld:
+    term: http://schema.org/softwareVersion
+    status: core
+    kind: exact
+    coercion: literal
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for software provenance.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/softwareVersion
+  - https://bioschemas.org/profiles/ComputationalTool/1.0-RELEASE
+- path: assemblySoftware[].commandLineOption[]
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#commandLineOption
+    status: fhr
+    kind: exact
+    coercion: list
+  schemaorg_gap: schema.org has no property for command-line options.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for software provenance.
+  notes: Order matters (-t 2), so this is an RDF list.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+- path: assemblyProtocol
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#assemblyProtocol
+    status: fhr
+    kind: exact
+    coercion: iri
+  schemaorg_gap: sdo:measurementTechnique is related but means a measurement technique.
+  dcmi:
+  - term: http://purl.org/dc/terms/relation
+    status: dcmi
+    kind: broader
+  notes: 'MIxS sop is broader (existing broad_mappings in fhr_linkml.yml; fhr_mappings.yml words the same
+    pair as relationship: narrow, in the opposite direction).'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://schema.org/measurementTechnique
+- path: seqcol_id
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#seqcol_id
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for a sequence collection digest; it is not an FHR checksum and
+    not a citation identifier.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: A supplied GA4GH identifier, not a citation identifier (#56).
+  sources:
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/MAPPINGS.md
+  - https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/FORMAT.md

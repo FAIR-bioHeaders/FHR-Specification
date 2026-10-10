@@ -58,8 +58,8 @@ All design decisions, with their alternatives, are in [research.md](research.md)
 - Toolkit:
   - **no new runtime dependency**;
   - an optional extra `jsonld = ["pyld>=3.3,<4"]` (marker `python_version >= "3.10"`), used
-    only by the general reader;
-  - PyLD in the dev group.
+    only by the general reader, and PyLD in the dev group. Both arrive with US3: the MVP
+    (writer and canonical reader) needs no JSON-LD processor in the toolkit.
 
 **Storage**: Files only.
 - FHR-Specification: the generated context and vocabulary, the curated mapping table, examples
@@ -296,6 +296,12 @@ implement them.
    - Add an optional author `type` field with DataCite's `nameType` values (`Personal`,
      `Organizational`) as an additive v0.4 schema change on `release-v0.4` (T047), so #56's
      DataCite export gets `nameType` too.
+
+**As implemented in the MVP** (research R-18): decisions 2, 3 and 4 are in (T046, T048), with
+two corrections found while implementing. The Bioschemas Dataset minimum list includes `@id`,
+so the export context also takes the dataset `id`; and Dataset 1.1 is still a draft, so
+`conformsTo` names `Dataset/1.0-RELEASE`. The author `type` field (T047) and the Pages and w3id
+publication of decision 1 (T044, T045) are not done.
 
 Maintainer actions, which are not tasks:
 - submit the w3id `terms` rule (text in [contracts/vocabulary.md](contracts/vocabulary.md));

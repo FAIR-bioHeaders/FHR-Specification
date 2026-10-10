@@ -39,7 +39,10 @@ Metadata conversion and validation do not require that hash implementation.
 YAML is embedded in FASTA comments with `;~` and GFA comments with `#~`; the prefix
 is removed to recover YAML. JSON/YAML and HTML microdata can store the same
 metadata separately. See [the HTML example](examples/example.microdata.fhr.html)
-and [microdata guidance](docs/MICRODATA.md).
+and [microdata guidance](docs/MICRODATA.md). The [JSON-LD form](docs/JSONLD.md)
+([example](examples/example.fhr.jsonld)) is the FHR record plus a JSON-LD context
+that maps every field to schema.org or a [FAIR-bioHeaders term](docs/TERMS.md), so
+the same document is linked data.
 
 The v0.3 checksum policy is base64 SHA-512/256 over the exact file bytes except
 the scalar FHR checksum line (including that line's newline). Metadata, ordinary
@@ -84,6 +87,9 @@ resolves local references and compares validation keywords, ignoring descriptive
 annotations and ordering of required fields. Generated output does not overwrite
 the published `fhr.json`. [MIxS/MIGS mapping limits](docs/MAPPINGS.md) include
 partial/lossy terms and omissions; the output is not a complete MIGS submission.
+The [JSON-LD and DCMI mapping table](mappings/fhr-jsonld-dcmi.yml) gives every FHR
+field's JSON-LD term and its Dublin Core (DCMI Terms) equivalents, with mapping kinds,
+conditions and losses ([summary](docs/MAPPINGS.md#json-ld-and-dublin-core-dcmi-terms)).
 
 ### Schema files
 

@@ -7,7 +7,7 @@ JSON-LD becomes one more metadata format beside `json`, `yaml`, `fasta`, `gfa` a
 - No new `fhr-*` entry point.
 - The existing command behaviour does not change (toolkit constitution V).
 - The writer and the canonical reader add **no runtime dependency**. Only the general reader
-  needs the optional extra `fair-bioheaders[jsonld]`.
+  (US3, not in the MVP) will need the optional extra `fair-bioheaders[jsonld]`.
 
 ## Format dispatch
 
@@ -33,11 +33,12 @@ bioheaders convert --from jsonld --to json - - < page-record.jsonld
 bioheaders combine /tmp/example.fhr.jsonld genome.fa -o genome.fhr.fa   # metadata format from the extension
 ```
 
-New option, on `convert` and `validate` only:
+New options:
 
 | Option | Default | Meaning |
 |---|---|---|
-| `--ignore-unknown-terms` | off | General-path JSON-LD input only (rule J4). Terms that do not map to an FHR field are reported on stderr as warnings, and conversion continues. Without the option they are an error. It has no effect on other formats or on canonical JSON-LD |
+| `--export-context FILE` (`convert`; MVP, maintainer decision 2) | none | JSON-LD output only (any other output format is an error). A YAML or JSON mapping with the optional keys `id` (the dataset IRI, an absolute URL), `url` (its landing page, an absolute URL) and `keywords` (a non-empty list of non-empty strings); any other key is an error. Provisional until #56 defines the shared export context. See "Writing" step 5 |
+| `--ignore-unknown-terms` (`convert`, `validate`; US3, not in the MVP) | off | General-path JSON-LD input only (rule J4). Terms that do not map to an FHR field are reported on stderr as warnings, and conversion continues. Without the option they are an error. It has no effect on other formats or on canonical JSON-LD |
 
 ## Writing (rule J7): byte layout
 
@@ -55,14 +56,31 @@ json.dumps(document, ensure_ascii=False, indent=2) + "\n"
 3. Every record key, in record order, with its value unchanged except that nested objects gain a
    first key `"@type"`:
    - `taxon`: `"Taxon"`;
-   - each item of `metadataAuthor` and `assemblyAuthor`: `"Person"` if the item has the key
-     `uri`, else `"Agent"`;
+   - each item of `metadataAuthor` and `assemblyAuthor` (maintainer decision 4): `"Person"` if
+     its `uri` matches the `fhr.json` ORCID pattern (`https://orcid.org/NNNN-NNNN-NNNN-NNNX`, a
+     prefix match), `"Organization"` if its `uri` is a ROR ID
+     (`https://ror.org/0` + six lowercase letters or digits + two digits), else `"Agent"`;
    - `accessionID`: `"PropertyValue"`;
    - each **object** item of the `assemblySoftware` array: `"SoftwareApplication"` (a legacy
      string is unchanged);
    - `vitalStats`: `"VitalStats"`.
+
+   A `documentation` value that is an absolute URL (`[A-Za-z][A-Za-z0-9+.-]*://` followed by
+   one or more non-whitespace characters, the whole value) is written under the key
+   `"subjectOf"` in the same position (maintainer decision 3). Text stays under
+   `"documentation"`.
 4. Nothing else is added. Absent optional fields stay absent, and no `null` and no empty node is
-   emitted (spec edge case).
+   emitted (spec edge case). A record with a key starting with `@` at any depth, or with a root
+   key `subjectOf`, `keywords`, `url` or `conformsTo`, cannot be written (`ValueError`).
+5. **Export context** (optional, maintainer decision 2): its `id` becomes `"@id"`, right after
+   `"@type"`; its `keywords` and `url` follow the record keys, in that order. Then, only if every
+   minimum property of the Bioschemas Dataset profile 1.0-RELEASE is present in the document
+   (`@id`; `description` = `documentation` as text; `identifier` non-empty; `keywords`;
+   `license` = `reuseConditions`; `name` = `genome`; `url`), `"conformsTo":
+   "https://bioschemas.org/profiles/Dataset/1.0-RELEASE"` is added last. Dataset 1.1 was a
+   draft on 2026-10-10, so 1.0-RELEASE is the release checked (research R-04). Otherwise
+   `convert` prints `FHR: JSON-LD: not claiming Bioschemas Dataset conformance; missing: <names>`
+   and writes the document without `conformsTo`.
 
 **Warnings.** For each key inside `taxon`, an author item, `accessionID` or `vitalStats` that the
 context does not define, `convert` prints one line to stderr and still writes the output:
@@ -86,24 +104,33 @@ duplicate-key rejection (J2). It then chooses a path.
 The document takes this path when all of these hold:
 - the root is an object with `"@context"`;
 - its value is either
-  - an object equal, as parsed JSON, to the `"@context"` value of a **bundled released
-    context**; or
+  - an object equal, as parsed JSON, to the `"@context"` value of a **bundled context**; or
   - a string in `KNOWN_CONTEXT_URLS`:
     - `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/jsonld/fhr.context.jsonld`;
     - `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/vX.Y.Z/jsonld/fhr.context.jsonld`;
     - `https://w3id.org/fair-bioheaders/fhr/vX.Y.Z/jsonld/fhr.context.jsonld`.
 
-    These are recognised for each bundled release `vX.Y.Z`. The raw-main URL means the newest
-    bundled context, and nothing is fetched;
-- the only keys starting with `@` anywhere are the root `@context` and `@type` on objects;
+    The release URLs are recognised for each bundled release `vX.Y.Z`. No FHR-Specification
+    release contains the context yet, so the MVP bundles only the context of `main` and
+    recognises only the raw-main URL. Nothing is fetched;
+- the only keys starting with `@` anywhere are the root `@context`, an optional root `@id` (a
+  string) and `@type` on objects;
 - every `@type` value is a string or an array of strings.
 
-The toolkit then removes the root `@context` and every `@type` (FR-009). The remaining object is
-loaded exactly as `input_json` would load it. `fhr_validate()` (and so `convert` and `validate`)
+The toolkit then removes the root `@context` and every `@type` (FR-009). A root `subjectOf`
+string becomes `documentation` (both together are an error: `JSON-LD gives both documentation
+and subjectOf`). The export terms `@id`, `keywords`, `url` and `conformsTo` are removed, each
+with the warning `FHR: JSON-LD: <key> is export metadata, not an FHR field; it was not kept`.
+The remaining object is loaded exactly as `input_json` would load it. `fhr_validate()` (and so `convert` and `validate`)
 validates it against the bundled `fhr_schema.json`, following the toolkit's schema-version
 policy.
 
 ### General path (J3 to J6): needs `fair-bioheaders[jsonld]` and Python 3.10 or later
+
+**Not in the MVP (US3).** Until it exists, every non-canonical document fails with
+`FHR: this JSON-LD is not in the canonical FAIR-bioHeaders form (rule J1 of FHR-Specification
+docs/JSONLD.md); reading other JSON-LD forms is not supported yet`, whether or not PyLD is
+installed; the "needs the jsonld extra" message below arrives with the extra.
 
 Every other JSON object document takes this path. Input that is not an object or an array is
 invalid.
@@ -178,15 +205,25 @@ from bioheaders import jsonld          # new module
 record = fhr()
 record.input_json(open("examples/example.fhr.json", "rb"))
 text = record.output_jsonld()          # str, the byte layout above
-record.input_jsonld(open("x.jsonld", "rb"))           # canonical or general path
-record.input_jsonld(stream, ignore_unknown_terms=True)
+text = record.output_jsonld(export={"id": "...", "url": "...", "keywords": ["..."]})
+record.input_jsonld(open("x.jsonld", "rb"))           # canonical path (MVP)
+record.input_jsonld(stream, warn=messages.append)     # collect the export-term warnings
+record.input_jsonld(stream, ignore_unknown_terms=True)  # general path, US3
 
 jsonld.CONTEXT                          # dict: the bundled context document
+jsonld.BUNDLED_CONTEXTS                 # tuple of (version, context); MVP: (("main", CONTEXT),)
 jsonld.KNOWN_CONTEXT_URLS               # tuple of str
-jsonld.to_jsonld(data: dict) -> dict    # writer, steps 1 to 4
+jsonld.to_jsonld(data: dict, export=None) -> dict    # writer, steps 1 to 5
 jsonld.from_jsonld(doc, *, ignore_unknown_terms=False, warn=print_to_stderr) -> dict
+jsonld.is_canonical(doc) -> bool        # rule J1
 jsonld.unmapped_keys(data: dict) -> list[str]   # paths for the writer warnings
+jsonld.check_export(export) -> dict     # validates an export context
+jsonld.bioschemas_missing(doc) -> list[str]     # missing Bioschemas Dataset minimum properties
 ```
+
+`warn` receives messages without the `FHR: ` prefix; the default prints them to stderr with it.
+FHR-Specification's `scripts/make_jsonld.py` has the same reference writer and canonical reader
+(`to_jsonld`, `canonical_record`), which the specification tests and vectors use.
 
 `from_jsonld` raises `ValueError` with the messages above. It never performs I/O except calling
 `warn`.
@@ -196,7 +233,7 @@ jsonld.unmapped_keys(data: dict) -> list[str]   # paths for the writer warnings
 | File | Change |
 |---|---|
 | `bioheaders/fhr.context.jsonld` | New. Byte-identical to FHR-Specification `jsonld/fhr.context.jsonld` |
-| `pyproject.toml` | `include` gains `bioheaders/fhr.context.jsonld`. A new extra: `[tool.poetry.extras] jsonld = ["pyld"]`, with `pyld = {version = "^3.3", optional = true, python = ">=3.10"}`. The dev group gains `pyld` with the same marker. Runtime `dependencies` are unchanged |
+| `pyproject.toml` | `include` gains `bioheaders/fhr.context.jsonld`. With US3: a new extra `[tool.poetry.extras] jsonld = ["pyld"]`, with `pyld = {version = "^3.3", optional = true, python = ">=3.10"}`, and `pyld` in the dev group with the same marker (the MVP adds neither). Runtime `dependencies` are unchanged |
 | `fhr/` and root compatibility copies | None. The context is not a schema copy and is not needed by the checkout-only `fhr/` scripts |
 | `compat/fhr` | No change. The `fhr` distribution requires `fair-bioheaders` without extras |
 

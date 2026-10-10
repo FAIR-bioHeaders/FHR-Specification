@@ -36,9 +36,9 @@ alphabetically by local name), and the file ends with a trailing newline. Every 
 | `rdfs:comment` (`@en`) | yes | The LinkML description (equal in meaning to the `fhr.json` description) |
 | `rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms>` | yes | constant |
 | `sdo:domainIncludes` | properties | The `class_uri` of every class that uses the slot (FHR → `sdo:Dataset`) |
-| `sdo:rangeIncludes` | properties | `sdo:Text`, `sdo:Number`, `sdo:Integer` or `sdo:URL`, or the range class's `class_uri` |
+| `sdo:rangeIncludes` | properties | `sdo:Text`, `sdo:Number`, `sdo:Integer` or `sdo:URL`, or the type IRIs the writer emits for the range class (for authors `sdo:Person`, `sdo:Organization` and `fhr:Agent`) |
 | `rdfs:subPropertyOf` | when stated | From a LinkML `broad_mappings` entry that points at an `sdo:` property. In release 1 that is `fhr:accessionID rdfs:subPropertyOf sdo:identifier`. The mapping table must agree (test) |
-| `rdfs:subClassOf` | classes | `sdo:Thing` for `fhr:Agent`; `sdo:StructuredValue` for `fhr:VitalStats` |
+| `rdfs:subClassOf` | classes | `sdo:Thing` for `fhr:Agent`; `sdo:StructuredValue` for `fhr:VitalStats`. LinkML source: the class annotation `vocabulary_subclass_of` (and `vocabulary_comment` for the `fhr:Agent` comment, since the `Author` class description describes authors) |
 | `skos:closeMatch` | when stated | From LinkML `close_mappings`. In release 1 that is `fhr:Agent skos:closeMatch dcterms:Agent` |
 | `owl:deprecated`, `dcterms:isReplacedBy` | when deprecated | |
 
@@ -65,7 +65,7 @@ Example term blocks (illustrative; the generated file is authoritative):
 ```turtle
 fhr:Agent a rdfs:Class ;
     rdfs:label "Agent"@en ;
-    rdfs:comment "A person or organization that the FHR record does not classify; FHR records the kind of agent only through an ORCID."@en ;
+    rdfs:comment "A person or organization that the FHR record does not classify; FHR records the kind of agent only through an ORCID or ROR identifier."@en ;
     rdfs:subClassOf sdo:Thing ;
     skos:closeMatch dcterms:Agent ;
     rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
@@ -106,7 +106,7 @@ The page is generated. It has a short introduction (namespace, licence, how to c
 
 Unprefixed GA4GH refget sequence collection top-level digest (sha512t24u); supplied by the user, not calculated by FHR.
 
-- Used on: Dataset (`fhr:FHR` record)
+- Used on: Dataset (the FHR record)
 - Value: Text
 - DCMI: none (see the [mapping table](../mappings/fhr-jsonld-dcmi.yml))
 ```

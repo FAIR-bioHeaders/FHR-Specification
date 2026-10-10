@@ -72,10 +72,22 @@ _:b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://schema.org/Softwa
 _:b2 <http://schema.org/softwareVersion> "0.19.8" .
 ```
 
-**What it is not.** The record follows the Bioschemas Dataset, Taxon, Person and
-ComputationalTool profiles' property choices, but it does not claim conformance. It has no
-`dct:conformsTo`, `keywords` or `url` (research R-04). A portal that needs Bioschemas conformance
-adds those itself, in its own node.
+**What it is not, by default.** The record follows the Bioschemas Dataset, Taxon, Person and
+ComputationalTool profiles' property choices, but it does not claim conformance: it has no
+`@id`, `keywords` or `url` (research R-04). An export context supplies them (research R-18):
+
+```bash
+cat > export.yaml <<'EOF'
+id: https://example.org/datasets/hs-synthetic
+url: https://example.org/genomes/hs-synthetic
+keywords: [genome assembly, Homo sapiens]
+EOF
+bioheaders convert --export-context export.yaml examples/example.fhr.json page.jsonld
+```
+
+The output then ends with `"conformsTo": "https://bioschemas.org/profiles/Dataset/1.0-RELEASE"`,
+because every Dataset minimum property is present. With an incomplete export context the toolkit
+names the missing properties and makes no claim.
 
 ## 2. Reuse the mapping table (User Story 2)
 

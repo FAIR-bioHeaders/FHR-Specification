@@ -8,20 +8,31 @@ description: >-
   persistent schema URL decision (specs/004-shared-core-schema FR-004).
 prefixes:
   linkml: https://w3id.org/linkml/
-  ex: https://example.org/
-default_prefix: ex
+  # Term IRIs for the JSON-LD context and vocabulary (specs/011-jsonld-mapping
+  # research R-05, R-08). Slots without a slot_uri get an fhr: term.
+  sdo: http://schema.org/
+  fhr: https://w3id.org/fair-bioheaders/terms#
+  xsd: http://www.w3.org/2001/XMLSchema#
+  dcterms: http://purl.org/dc/terms/
+default_prefix: fhr
 default_range: string
 imports:
 - linkml:types
 types:
   sha2:
     base: str
+    uri: xsd:string
     pattern: ^[A-Za-z0-9/+=]{44}$
     description: Base64 SHA-512/256 digest (44 characters), as defined for FHR checksums.
 slots:
   # Required core slots (FR-001).
   schema:
     description: Centralized schema file
+    slot_uri: sdo:schemaVersion
+    annotations:
+      # fhr.json types schema as a plain string; JSON-LD coerces it to an IRI
+      # (specs/011-jsonld-mapping research R-06 rule 4, R-16).
+      jsonld_iri: true
     required: true
   schemaVersion:
     description: Version of the header schema
@@ -29,11 +40,13 @@ slots:
     required: true
   taxon:
     description: Species name and URL of the species information at identifiers.org
+    slot_uri: sdo:about
     range: Taxon
     inlined: true
     required: true
   version:
     description: Version number of the described data
+    slot_uri: sdo:version
     required: true
   metadataAuthor:
     description: Authors of the header instance
@@ -43,6 +56,7 @@ slots:
     required: true
   dateCreated:
     description: Date the described data was created
+    slot_uri: sdo:dateCreated
     range: date
     required: true
   checksum:
@@ -52,25 +66,36 @@ slots:
   # Optional core slots (FR-001).
   identifier:
     description: Identifiers of the described data
+    slot_uri: sdo:identifier
     multivalued: true
     pattern: '[a-z0-9]*:.*'
   accessionID:
     description: Accession of the described data
+    broad_mappings:
+    - sdo:identifier
     range: AccessionID
     inlined: true
   scholarlyArticle:
     description: Scholarly article where the data was published
+    slot_uri: sdo:citation
     pattern: ^10.
   documentation:
     description: Documentation about the described data
+    slot_uri: sdo:description
+    annotations:
+      # Maintainer decision 3 (specs/011-jsonld-mapping plan.md): an absolute
+      # URL value is written as this term instead.
+      jsonld_slot_uri_if_url: sdo:subjectOf
   relatedLink:
     description: Related URLs
     range: uri
     multivalued: true
   funding:
     description: Grant line item
+    slot_uri: sdo:funding
   reuseConditions:
     description: Reuse conditions or license
+    slot_uri: sdo:license
   voucherSpecimen:
     description: Description of the physical sample
   # Shared definitions used by header types and by DerivedFrom.
@@ -99,30 +124,52 @@ slots:
 classes:
   Taxon:
     description: Species name and taxonomy URI
+    class_uri: sdo:Taxon
     attributes:
       name:
         description: Name of the species
+        slot_uri: sdo:name
       uri:
         description: Taxonomy URI
         range: uri
+        annotations:
+          jsonld_node_id: true
         pattern: https://identifiers.org/taxonomy:[0-9]+
   Author:
     description: Person or organization; uri is an ORCID URI
+    class_uri: fhr:Agent
+    close_mappings:
+    - dcterms:Agent
+    annotations:
+      # Writer typing (maintainer decision 4): an ORCID uri gives a Person and
+      # a ROR uri an Organization; anything else stays the class_uri, fhr:Agent.
+      jsonld_type_if_orcid: sdo:Person
+      jsonld_type_if_ror: sdo:Organization
+      vocabulary_comment: >-
+        A person or organization that the FHR record does not classify; FHR
+        records the kind of agent only through an ORCID or ROR identifier.
+      vocabulary_subclass_of: sdo:Thing
     attributes:
       name:
         description: Name of the person or organization
+        slot_uri: sdo:name
       uri:
         description: ORCID URI
         range: uri
+        annotations:
+          jsonld_node_id: true
         pattern: ^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]
   AccessionID:
     description: Accession identifier
+    class_uri: sdo:PropertyValue
     attributes:
       name:
         description: Accession name
+        slot_uri: sdo:name
       url:
         description: Accession URL
         range: uri
+        slot_uri: sdo:url
   DerivedFrom:
     description: >-
       Link to a parent file by its FHR-family checksum (specs/004-shared-core-schema
