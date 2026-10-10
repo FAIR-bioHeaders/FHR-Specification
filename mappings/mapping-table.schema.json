@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/mappings/mapping-table.schema.json",
+  "title": "FAIR-bioHeaders semantic mapping table",
+  "description": "Format of mappings/fhr-jsonld-dcmi.yml (feature 011, research R-02, R-15). One entry per FHR property path gives its JSON-LD term and its DCMI Terms equivalents, each with a mapping kind. Kinds describe the target term relative to the FHR field (SKOS direction). Reused by FHR-Specification#56.",
+  "type": "object",
+  "required": ["id", "table_version", "source_schema", "source_schema_version", "targets", "kinds", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "description": "Identifier of this table.",
+      "type": "string",
+      "format": "uri"
+    },
+    "table_version": {
+      "description": "Semantic version of the table. A changed term or kind is a minor bump at least; a removed entry is a major bump.",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "source_schema": {
+      "description": "The FHR JSON schema the paths refer to (raw-main URL, as in fhr_mappings.yml).",
+      "type": "string",
+      "format": "uri"
+    },
+    "source_schema_version": {
+      "description": "FHR schemaVersion the paths were derived from.",
+      "type": "number"
+    },
+    "targets": {
+      "description": "Pinned target vocabularies.",
+      "type": "object",
+      "required": ["jsonld", "dcmi"],
+      "additionalProperties": {"$ref": "#/$defs/target"},
+      "properties": {
+        "jsonld": {"$ref": "#/$defs/target"},
+        "dcmi": {"$ref": "#/$defs/target"}
+      }
+    },
+    "kinds": {
+      "description": "The kind vocabulary with its SKOS equivalent, restated in the file so that readers need no other document. Must equal the enum in $defs/kind.",
+      "type": "object",
+      "propertyNames": {"$ref": "#/$defs/kind"},
+      "additionalProperties": {"type": "string"}
+    },
+    "entries": {
+      "description": "Exactly one entry per FHR property path, in fhr.json property order (nested paths follow their parent).",
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/entry"}
+    }
+  },
+  "$defs": {
+    "target": {
+      "type": "object",
+      "required": ["name", "version", "reference"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string"},
+        "version": {"description": "Release or date of the target vocabulary, for example schema.org 30.1 or DCMI 2020-01-20.", "type": "string"},
+        "reference": {"type": "string", "format": "uri"},
+        "namespaces": {
+          "description": "Namespace IRIs that terms of this target may use.",
+          "type": "array",
+          "items": {"type": "string", "format": "uri"}
+        }
+      }
+    },
+    "kind": {
+      "enum": ["exact", "broader", "narrower", "related", "conditional", "lossy", "unsupported"]
+    },
+    "path": {
+      "description": "FHR property path: a key, or keys joined by '.', with '[]' after an array-valued key whose items are described, for example assemblySoftware[].commandLineOption[].",
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\[\\])?(\\.[A-Za-z_][A-Za-z0-9_]*(\\[\\])?)*$"
+    },
+    "mapping": {
+      "type": "object",
+      "required": ["term", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "term": {
+          "description": "Full IRI of the target term, '@id' when the value is the node identifier, or 'none'.",
+          "type": "string",
+          "anyOf": [{"format": "uri"}, {"enum": ["@id", "none"]}]
+        },
+        "status": {
+          "description": "Release status of the target term. Required for schema.org terms (core or pending); 'fhr' for FAIR-bioHeaders terms.",
+          "enum": ["core", "pending", "fhr", "keyword", "dcmi"]
+        },
+        "kind": {"$ref": "#/$defs/kind"},
+        "condition": {"description": "When the mapping holds. Required for kind conditional.", "type": "string", "minLength": 1},
+        "loss": {"description": "What is lost. Required for kind lossy.", "type": "string", "minLength": 1},
+        "reason": {"description": "Why there is no term. Required when term is none.", "type": "string", "minLength": 1},
+        "subject": {
+          "description": "The resource the statement is about. Default: the assembly. 'record' marks statements about the FHR metadata record (#56 resource model).",
+          "enum": ["assembly", "record", "nested"]
+        },
+        "coercion": {
+          "description": "JSON-LD value handling, for jsonld mappings only.",
+          "enum": ["literal", "iri", "node-id", "xsd:date", "node", "set", "list", "set-of-iri", "set-of-nodes"]
+        },
+        "type": {"description": "For node-valued mappings, the @type IRI(s) the writer emits (research R-04).", "type": "array", "items": {"type": "string", "format": "uri"}},
+        "rdf_loss": {"description": "What converting to RDF loses (research R-12), for example order of @set arrays.", "type": "string"}
+      },
+      "allOf": [
+        {"if": {"properties": {"kind": {"const": "conditional"}}}, "then": {"required": ["condition"]}},
+        {"if": {"properties": {"kind": {"const": "lossy"}}}, "then": {"required": ["loss"]}},
+        {"if": {"properties": {"term": {"const": "none"}}}, "then": {"required": ["reason"], "properties": {"kind": {"const": "unsupported"}}}},
+        {"if": {"properties": {"kind": {"const": "unsupported"}}}, "then": {"properties": {"term": {"const": "none"}}}}
+      ]
+    },
+    "entry": {
+      "type": "object",
+      "required": ["path", "jsonld", "dcmi"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "jsonld": {
+          "description": "The JSON-LD term. Never 'none' (FR-001): FHR-specific paths use an fhr: term with kind exact.",
+          "allOf": [
+            {"$ref": "#/$defs/mapping"},
+            {"properties": {"term": {"not": {"const": "none"}}}, "required": ["status", "coercion"]}
+          ]
+        },
+        "schemaorg_gap": {
+          "description": "For fhr: terms, why no schema.org term was used (closest candidate and why it was rejected).",
+          "type": "string"
+        },
+        "dcmi": {
+          "description": "DCMI Terms equivalents, most specific first; a single {term: none} item when there is none.",
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/mapping"}
+        },
+        "notes": {"type": "string"},
+        "sources": {"description": "URLs supporting the decision (issue comments, vocabulary pages).", "type": "array", "items": {"type": "string", "format": "uri"}}
+      }
+    }
+  }
+}

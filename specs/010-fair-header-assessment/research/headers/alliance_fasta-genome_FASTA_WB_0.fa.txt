@@ -1,0 +1,4 @@
+# SOURCE-URL: https://download.alliancegenome.org/3.1.1/FASTA/WB/FASTA_WB_0.fa
+# FETCHED: 2026-10-10T12:35Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+>I

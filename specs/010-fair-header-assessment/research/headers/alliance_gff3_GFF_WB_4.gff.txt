@@ -1,0 +1,15 @@
+# SOURCE-URL: https://download.alliancegenome.org/8.3.0/GFF/WB/GFF_WB_4.gff.gz
+# FETCHED: 2026-10-10T12:35Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+# WormBase release WS298
+##gff-version 3
+#!date-produced 2025-11-13T16:37:34+00:00
+#!data-source WormBase
+#!assembly WBcel235
+##sequence-region I 1 15072434
+##sequence-region II 1 15279421
+##sequence-region III 1 13783801
+##sequence-region IV 1 17493829
+##sequence-region V 1 20924180
+##sequence-region X 1 17718942
+##sequence-region MtDNA 1 13794

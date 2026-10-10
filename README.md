@@ -40,7 +40,10 @@ Metadata conversion and validation do not require that hash implementation.
 YAML is embedded in FASTA comments with `;~` and GFA comments with `#~`; the prefix
 is removed to recover YAML. JSON/YAML and HTML microdata can store the same
 metadata separately. See [the HTML example](examples/example.microdata.fhr.html)
-and [microdata guidance](docs/MICRODATA.md).
+and [microdata guidance](docs/MICRODATA.md). The [JSON-LD form](docs/JSONLD.md)
+([example](examples/example.fhr.jsonld)) is the FHR record plus a JSON-LD context
+that maps every field to schema.org or a [FAIR-bioHeaders term](docs/TERMS.md), so
+the same document is linked data.
 
 The v0.3 checksum policy is base64 SHA-512/256 over the exact file bytes except
 the scalar FHR checksum line (including that line's newline). Metadata, ordinary
@@ -54,6 +57,14 @@ them to test other FHR implementations.
 [Tool compatibility](docs/TOOL_COMPATIBILITY.md) records how common FASTA, GFA
 and GFF3 tools handle files with FHR headers, and gives workarounds. Most
 FASTA indexers, including samtools faidx, need a stripped copy.
+
+The [FAIR header guideline](docs/FAIR_HEADER_GUIDELINE.md) is guidance for the
+headers of any data file (FASTA, GFF3, VCF, GAF, GFA and others), organised as 8
+items mapped to the RDA FAIR Data Maturity Model indicators, with examples in
+each format's own convention. It changes no schema. `bioheaders assess` in
+FAIR-bioHeaders-Tools reports a checklist against it, and the
+[assessment fixtures](assessment/README.md) let other implementations test the
+same expected outcomes.
 
 JSON/YAML/HTML examples contain synthetic checksum and SeqCol placeholders.
 The FASTA/GFA examples have verified FHR file checksums but retain a synthetic
@@ -86,6 +97,9 @@ resolves local references and compares validation keywords, ignoring descriptive
 annotations and ordering of required fields. Generated output does not overwrite
 the published `fhr.json`. [MIxS/MIGS mapping limits](docs/MAPPINGS.md) include
 partial/lossy terms and omissions; the output is not a complete MIGS submission.
+The [JSON-LD and DCMI mapping table](mappings/fhr-jsonld-dcmi.yml) gives every FHR
+field's JSON-LD term and its Dublin Core (DCMI Terms) equivalents, with mapping kinds,
+conditions and losses ([summary](docs/MAPPINGS.md#json-ld-and-dublin-core-dcmi-terms)).
 
 ### Schema files
 
@@ -143,3 +157,9 @@ Molik, David, and Adam Wright. *FHR File Converter*. Computer software. 2026. ht
 
 Machine-readable entries are maintained in
 [FHR-Citation](https://github.com/FAIR-bioHeaders/FHR-Citation/blob/main/citation.bib).
+
+## Licensing
+
+[![License: MPL-2.0](https://img.shields.io/badge/License-MPL--2.0-blue.svg)](LICENSE)
+
+New project contributions from March 2025 onward use [MPL-2.0](LICENSE). David Molik left USDA in February 2025. Historical USDA public-domain material remains public domain within the United States; its original notice is preserved in LICENSE. Previously granted permissions and third-party terms remain intact. The project includes both historical material and subsequent MPL-2.0 contributions; file notices and history identify provenance.

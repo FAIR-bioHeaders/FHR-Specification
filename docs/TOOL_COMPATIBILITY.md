@@ -270,6 +270,13 @@ Then add a new header to the result with `fhr-fasta-combine` if needed.
 Native support in htslib would remove most FASTA stripping. The draft proposal
 is [proposals/htslib-fasta-comments.md](proposals/htslib-fasta-comments.md).
 
+Stripping a header removes its metadata from the working copy. For files that
+cannot carry an FHR header, or tools that need a stripped copy, the
+[FAIR header guideline](FAIR_HEADER_GUIDELINE.md) shows how to keep the same
+metadata in each format's native header lines (GFF3 `##`/`#!`, VCF `##`,
+GAF `!`). `bioheaders assess` reports what a header already provides; its shared
+fixtures are in [assessment/](../assessment/README.md).
+
 ## Not tested
 
 - **Bandage**: GUI only.

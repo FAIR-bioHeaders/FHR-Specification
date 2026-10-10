@@ -1,0 +1,357 @@
+{
+  "_source": "Derived from schema.org v30.1 (https://schema.org/docs/releases.html#v30.1), CC BY-SA 3.0, https://schema.org/docs/terms.html",
+  "_sha256": "0a4b8c4c910fc831ec8695196510973390906a5ee34dc6b862dfec4d21a12f74",
+  "_retrieved": "https://schema.org/version/latest/schemaorg-current-https.jsonld (2026-10-10, release v30.1)",
+  "terms": {
+    "CreativeWork": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "Thing"
+      ],
+      "pending": false
+    },
+    "Dataset": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "CreativeWork"
+      ],
+      "pending": false
+    },
+    "Date": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [],
+      "pending": false
+    },
+    "DateTime": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [],
+      "pending": false
+    },
+    "Intangible": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "Thing"
+      ],
+      "pending": false
+    },
+    "Integer": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "Number"
+      ],
+      "pending": false
+    },
+    "Number": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [],
+      "pending": false
+    },
+    "Organization": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "Thing"
+      ],
+      "pending": false
+    },
+    "Person": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "Thing"
+      ],
+      "pending": false
+    },
+    "PropertyValue": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "StructuredValue"
+      ],
+      "pending": false
+    },
+    "SoftwareApplication": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "CreativeWork"
+      ],
+      "pending": false
+    },
+    "StructuredValue": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "Intangible"
+      ],
+      "pending": false
+    },
+    "Taxon": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "Thing"
+      ],
+      "pending": true
+    },
+    "Text": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [],
+      "pending": false
+    },
+    "Thing": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [],
+      "pending": false
+    },
+    "URL": {
+      "type": "Class",
+      "domainIncludes": [],
+      "rangeIncludes": [],
+      "subClassOf": [
+        "Text"
+      ],
+      "pending": false
+    },
+    "about": {
+      "type": "Property",
+      "domainIncludes": [
+        "Certification",
+        "CommunicateAction",
+        "CreativeWork",
+        "DefinedTerm",
+        "DefinedTermSet",
+        "Event"
+      ],
+      "rangeIncludes": [
+        "Thing"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "alternateName": {
+      "type": "Property",
+      "domainIncludes": [
+        "Thing"
+      ],
+      "rangeIncludes": [
+        "Text"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "citation": {
+      "type": "Property",
+      "domainIncludes": [
+        "CreativeWork"
+      ],
+      "rangeIncludes": [
+        "CreativeWork",
+        "Text"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "creator": {
+      "type": "Property",
+      "domainIncludes": [
+        "CreativeWork",
+        "UserComments"
+      ],
+      "rangeIncludes": [
+        "Organization",
+        "Person"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "dateCreated": {
+      "type": "Property",
+      "domainIncludes": [
+        "CreativeWork",
+        "DataFeedItem"
+      ],
+      "rangeIncludes": [
+        "Date",
+        "DateTime"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "description": {
+      "type": "Property",
+      "domainIncludes": [
+        "Thing"
+      ],
+      "rangeIncludes": [
+        "Text",
+        "TextObject"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "funding": {
+      "type": "Property",
+      "domainIncludes": [
+        "BioChemEntity",
+        "CreativeWork",
+        "Event",
+        "MedicalEntity",
+        "Organization",
+        "Person",
+        "Product"
+      ],
+      "rangeIncludes": [
+        "Grant"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "identifier": {
+      "type": "Property",
+      "domainIncludes": [
+        "Thing"
+      ],
+      "rangeIncludes": [
+        "PropertyValue",
+        "Text",
+        "URL"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "keywords": {
+      "type": "Property",
+      "domainIncludes": [
+        "CreativeWork",
+        "Event",
+        "Organization",
+        "Place",
+        "Product"
+      ],
+      "rangeIncludes": [
+        "DefinedTerm",
+        "Text",
+        "URL"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "license": {
+      "type": "Property",
+      "domainIncludes": [
+        "CreativeWork"
+      ],
+      "rangeIncludes": [
+        "CreativeWork",
+        "URL"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "name": {
+      "type": "Property",
+      "domainIncludes": [
+        "Thing"
+      ],
+      "rangeIncludes": [
+        "Text"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "relatedLink": {
+      "type": "Property",
+      "domainIncludes": [
+        "WebPage"
+      ],
+      "rangeIncludes": [
+        "URL"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "schemaVersion": {
+      "type": "Property",
+      "domainIncludes": [
+        "CreativeWork"
+      ],
+      "rangeIncludes": [
+        "Text",
+        "URL"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "softwareVersion": {
+      "type": "Property",
+      "domainIncludes": [
+        "SoftwareApplication"
+      ],
+      "rangeIncludes": [
+        "Text"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "subjectOf": {
+      "type": "Property",
+      "domainIncludes": [
+        "Thing"
+      ],
+      "rangeIncludes": [
+        "CreativeWork",
+        "Event"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "url": {
+      "type": "Property",
+      "domainIncludes": [
+        "Thing"
+      ],
+      "rangeIncludes": [
+        "URL"
+      ],
+      "subClassOf": [],
+      "pending": false
+    },
+    "version": {
+      "type": "Property",
+      "domainIncludes": [
+        "CreativeWork"
+      ],
+      "rangeIncludes": [
+        "Number",
+        "Text"
+      ],
+      "subClassOf": [],
+      "pending": false
+    }
+  }
+}

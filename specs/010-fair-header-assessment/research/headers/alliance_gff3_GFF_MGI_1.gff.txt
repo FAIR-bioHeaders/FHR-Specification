@@ -1,0 +1,9 @@
+# SOURCE-URL: https://download.alliancegenome.org/9.1.0/GFF/MGI/GFF_MGI_1.gff.gz
+# FETCHED: 2026-10-10T12:35Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+##gff-version 3
+#!data-source MGI
+#!date-produced Mon Sep 21 09:32:10 2026
+#!assembly GRCm39
+#!annotationSource RefSeq GCF_000001635.27-RS_2024_02
+#!annotationSource ENSEMBL 114

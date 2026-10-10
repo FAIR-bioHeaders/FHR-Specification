@@ -1,0 +1,4 @@
+# SOURCE-URL: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/002/985/GCF_000002985.6_WBcel235/GCF_000002985.6_WBcel235_genomic.fna.gz
+# FETCHED: 2026-10-10T12:31Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+>NC_003279.8 Caenorhabditis elegans chromosome I

@@ -1,0 +1,12 @@
+# SOURCE-URL: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.40_GRCh38.p14/GCF_000001405.40_GRCh38.p14_genomic.gff.gz
+# FETCHED: 2026-10-10T12:35Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build GRCh38.p14
+#!genome-build-accession NCBI_Assembly:GCF_000001405.40
+#!annotation-date 08/01/2025
+#!annotation-source NCBI RefSeq GCF_000001405.40-RS_2025_08
+##sequence-region NC_000001.11 1 248956422
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=9606

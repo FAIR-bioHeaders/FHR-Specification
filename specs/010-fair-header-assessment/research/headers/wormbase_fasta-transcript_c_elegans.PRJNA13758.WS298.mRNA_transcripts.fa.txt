@@ -1,0 +1,4 @@
+# SOURCE-URL: https://ftp.ebi.ac.uk/pub/databases/wormbase/releases/WS298/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.WS298.mRNA_transcripts.fa.gz
+# FETCHED: 2026-10-10T12:34Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+>2L52.1a.1 gene=WBGene00007063

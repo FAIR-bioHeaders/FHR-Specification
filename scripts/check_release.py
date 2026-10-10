@@ -1,4 +1,4 @@
-"""Check schema copies and example identity across local companion checkouts."""
+"""Check schema and JSON-LD context copies and example identity across local companion checkouts."""
 
 import argparse
 import json
@@ -18,6 +18,12 @@ def main():
         if json.loads(path.read_text()) != schema:
             print(f"Schema copy differs: {path}", file=sys.stderr)
             return 1
+    context = args.converter / "bioheaders" / "fhr.context.jsonld"
+    if not context.is_file() or context.read_bytes() != (
+        ROOT / "jsonld" / "fhr.context.jsonld"
+    ).read_bytes():
+        print(f"JSON-LD context copy differs or is missing: {context}", file=sys.stderr)
+        return 1
     for example in (ROOT / "examples").iterdir():
         if (
             example.is_file()
@@ -26,7 +32,8 @@ def main():
         ):
             print(f"Companion example differs: {example.name}", file=sys.stderr)
             return 1
-    print("Both converter schema copies and all example files match the specification.")
+    print("Both converter schema copies, the JSON-LD context and all example files match "
+          "the specification.")
     return 0
 
 

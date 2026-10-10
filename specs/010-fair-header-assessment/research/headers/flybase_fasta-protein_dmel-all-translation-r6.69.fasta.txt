@@ -1,0 +1,4 @@
+# SOURCE-URL: https://s3ftp.flybase.org/genomes/Drosophila_melanogaster/current/fasta/dmel-all-translation-r6.69.fasta.gz
+# FETCHED: 2026-10-10T12:34Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+>FBpp0070000 type=polypeptide; loc=X:join(19963955..19964071,19964782..19964944,19965006..19965126,19965197..19965511,19965577..19966071,19966183..19967012,19967081..19967223,19967284..19967460); ID=FBpp0070000; name=Nep3-PA; parent=FBgn0031081,FBtr0070000; dbxref=FlyBase:FBpp0070000,FlyBase_Annotation_IDs:CG9565-PA,GB_protein:AAF45370.2,REFSEQ:NP_523417,GB_protein:AAF45370,UniProt/Swiss-Prot:Q9W5Y0; MD5=19dfee3c4d8ec74f121a5b5f7f7682e1; length=786; release=r6.69; species=Dmel; 
