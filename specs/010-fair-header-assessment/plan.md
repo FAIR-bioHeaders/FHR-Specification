@@ -218,10 +218,14 @@ FAIR-bioHeaders-Tools/                      (local checkout ../FHR-File-Converte
 │           └── reference/{spdx-licenses,id-schemes,formats}.json
 ├── tests/
 │   ├── fixtures/assess/                    # small tool-local fixtures (copied subset + unit cases)
+│   ├── conftest.py                         # blocks sockets for assess_*_test.py (except online_local)
 │   ├── assess_data_test.py                 # data files valid, 41 indicators, concepts/forms resolve
+│   ├── assess_sniff_test.py                # compression/format/binary/archive detection
 │   ├── assess_conventions_test.py          # US1 parsing per convention
 │   ├── assess_rubric_test.py               # status rules, caps, reasons
+│   ├── assess_conformance_test.py          # FR-008 conformance section, schema provenance
 │   ├── assess_report_test.py               # schema validity, determinism, no-score wording
+│   ├── assess_suggestions_test.py          # SC-002 proxy: applying a suggestion raises the status
 │   ├── assess_links_test.py                # US2 links, verification, circumstantial, classification
 │   ├── assess_cli_test.py                  # options, exit codes, stdin, output files
 │   ├── assess_batch_test.py                # US4 summary, ordering, re-run identity
