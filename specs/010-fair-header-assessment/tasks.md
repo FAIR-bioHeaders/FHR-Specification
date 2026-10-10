@@ -43,9 +43,9 @@ boundaries").
 
 **Purpose**: Create the package skeleton, the fixture directory and the test harness.
 
-- [ ] T001 Create the `FAIR-bioHeaders-Tools/bioheaders/assess/` package. Add an empty `__init__.py` (MPL-2.0 header) and the directories `data/` and `data/reference/`. Add `include = ["bioheaders/fhr_schema.json", "bioheaders/assess/data/**/*.json"]` to `FAIR-bioHeaders-Tools/pyproject.toml`. Add **no** new dependency
-- [ ] T002 [P] Create `FAIR-bioHeaders-Tools/tests/conftest.py` with an autouse fixture that makes `socket.socket.connect` raise for every test module named `assess_*_test.py`, except tests marked `@pytest.mark.online_local`. Create `FAIR-bioHeaders-Tools/tests/fixtures/assess/README.md`, which states the fixture origin (copied from FHR-Specification `assessment/`)
-- [ ] T003 [P] Create `FHR-Specification/assessment/` with `README.md` (purpose, layout `headers/`, `pairs/`, `edge/`, `review/`, and the MPL-2.0 notice), `headers/.gitkeep`, `pairs/.gitkeep`, `edge/.gitkeep` and `review/.gitkeep`. Append `assessment/** -text` and `assessment/**/*.gz binary` to `FHR-Specification/.gitattributes`
+- [X] T001 Create the `FAIR-bioHeaders-Tools/bioheaders/assess/` package. Add an empty `__init__.py` (MPL-2.0 header) and the directories `data/` and `data/reference/`. Add `include = ["bioheaders/fhr_schema.json", "bioheaders/assess/data/**/*.json"]` to `FAIR-bioHeaders-Tools/pyproject.toml`. Add **no** new dependency
+- [X] T002 [P] Create `FAIR-bioHeaders-Tools/tests/conftest.py` with an autouse fixture that makes `socket.socket.connect` raise for every test module named `assess_*_test.py`, except tests marked `@pytest.mark.online_local`. Create `FAIR-bioHeaders-Tools/tests/fixtures/assess/README.md`, which states the fixture origin (copied from FHR-Specification `assessment/`)
+- [X] T003 [P] Create `FHR-Specification/assessment/` with `README.md` (purpose, layout `headers/`, `pairs/`, `edge/`, `review/`, and the MPL-2.0 notice), `headers/.gitkeep`, `pairs/.gitkeep`, `edge/.gitkeep` and `review/.gitkeep`. Append `assessment/** -text` and `assessment/**/*.gz binary` to `FHR-Specification/.gitattributes`
 
 ---
 
