@@ -33,9 +33,10 @@ This is a spec key entity: the published JSON-LD context document.
 |---|---|---|
 | `@version` | `1.1` | Required. Property-scoped contexts and `@protected` need 1.1 |
 | `@protected` | `true` | Top-level terms cannot be redefined by a later context |
-| prefixes | `sdo`, `fhr`, `xsd` | `sdo` = `http://schema.org/`, `fhr` = `https://w3id.org/fair-bioheaders/terms#`. **No `schema` prefix**, because `schema` is an FHR key (R-05). **No `@vocab`** |
-| type terms | `Dataset`, `Taxon`, `Person`, `Agent`, `PropertyValue`, `SoftwareApplication`, `VitalStats` | `Dataset` is declared at the root. The others are declared in the scope where they are used |
+| prefixes | `sdo`, `fhr`, `xsd`, `dct` | `sdo` = `http://schema.org/`, `fhr` = `https://w3id.org/fair-bioheaders/terms#`, `dct` = `http://purl.org/dc/terms/` (root only, for `conformsTo`). **No `schema` prefix**, because `schema` is an FHR key (R-05). **No `@vocab`** |
+| type terms | `Dataset`, `Taxon`, `Person`, `Organization`, `Agent`, `PropertyValue`, `SoftwareApplication`, `VitalStats` | `Dataset` is declared at the root. The others are declared in the scope where they are used |
 | term definitions | one per FHR key, in `fhr.json` property order | See TermDefinition (§2) |
+| output-only terms (root, after the FHR keys) | `subjectOf` (`sdo:subjectOf`, `@id`), `keywords` (`sdo:keywords`, `@set`), `url` (`sdo:url`, `@id`), `conformsTo` (`dct:conformsTo`, `@id`) | Not FHR keys. `subjectOf` carries a `documentation` URL (maintainer decision 3; LinkML annotation `jsonld_slot_uri_if_url`); the others come only from an export context (maintainer decision 2; a constant in `make_jsonld.py`) |
 
 **Identity and version**:
 - The file is `jsonld/fhr.context.jsonld`, at the canonical URL raw-main.
@@ -57,7 +58,7 @@ A scope is the active context for one kind of node. There are six scopes:
 |---|---|---|---|
 | `record` | the document root | `Dataset` | the 24 top-level FHR keys |
 | `taxon` | `taxon` | `Taxon` | `name`, `uri` |
-| `author` | `metadataAuthor`, `assemblyAuthor` | `Person`, `Agent` | `name`, `uri` |
+| `author` | `metadataAuthor`, `assemblyAuthor` | `Person`, `Organization`, `Agent` | `name`, `uri` |
 | `accession` | `accessionID` | `PropertyValue` | `name`, `url` |
 | `vitalStats` | `vitalStats` | `VitalStats` | the 9 statistics |
 | `software` | `assemblySoftware` | `SoftwareApplication` | `name`, `uri`, `version`, `commandLineOption` |
@@ -71,7 +72,7 @@ from `record` (R-06).
 |---|---|---|
 | key | the FHR key | slot or attribute name |
 | `@id` | a full IRI via `sdo:` or `fhr:`, or the keyword `@id` | `slot_uri`, else `default_prefix` (`fhr`) + name. The keyword `@id` comes from the annotation `jsonld_node_id: true` |
-| `@type` | `@id` or `xsd:date`, or absent | range `uri` gives `@id`; range `date` gives `xsd:date` |
+| `@type` | `@id` or `xsd:date`, or absent | range `uri`, or the annotation `jsonld_iri: true` (on `schema`, which `fhr.json` types as a plain string), gives `@id`; range `date` gives `xsd:date` |
 | `@container` | `@set`, `@list`, or absent | `multivalued` gives `@set`. `multivalued` plus `list_elements_ordered` gives `@list`. `assemblySoftware` (any_of string or a multivalued class) gives `@set` |
 | `@context` | the nested scope | a class range (inlined) |
 
@@ -129,21 +130,28 @@ so that the toolkit does not need the table. For each scope it maps an IRI to
 |---|---|---|
 | record | always | `Dataset` |
 | `taxon` | always | `Taxon` |
-| author item | `uri` key present | `Person` |
-| author item | no `uri` key | `Agent` |
+| author item | `uri` is an ORCID iD (the `fhr.json` pattern) | `Person` |
+| author item | `uri` is a ROR ID | `Organization` |
+| author item | no `uri`, or any other `uri` | `Agent` |
 | `accessionID` | always | `PropertyValue` |
 | `assemblySoftware` item | the item is an object | `SoftwareApplication` |
 | `vitalStats` | always | `VitalStats` |
 
 `@type` is the first key of the node, after `@context` at the root. LinkML source:
 - `class_uri` of each class;
-- `jsonld_type_if_uri: sdo:Person` on `Author`, whose `class_uri` is `fhr:Agent`.
+- `jsonld_type_if_orcid: sdo:Person` and `jsonld_type_if_ror: sdo:Organization` on `Author`,
+  whose `class_uri` is `fhr:Agent` (maintainer decision 4).
+
+A `documentation` value that is an absolute URL is written under `subjectOf` (maintainer
+decision 3). With an export context, the record node also gets `@id`, `keywords`, `url` and,
+only when the Bioschemas Dataset 1.0-RELEASE minimum properties are all present, `conformsTo`
+(contracts/cli.md "Writing" step 5).
 
 ## 6. JSON-LD document
 
 | Form | Definition | Read by |
 |---|---|---|
-| **Canonical** | The writer output (cli.md "Writing"). Generally: an FHR record plus a root `@context` (an embedded bundled context, or a known URL), plus `@type` on any objects, and no other keyword | The canonical path (J1). No dependency |
+| **Canonical** | The writer output (cli.md "Writing"). Generally: an FHR record plus a root `@context` (an embedded bundled context, or a known URL), plus `@type` on any objects and an optional root `@id`, and no other keyword. A root `subjectOf` is read as `documentation`; the export terms are set aside with a warning | The canonical path (J1). No dependency |
 | **General** | Any other JSON-LD 1.1 tree with exactly one top-level node (directly or in a single-item `@graph`): expanded form, compaction against another context, keys reordered | The general path (J3–J6). Needs the `jsonld` extra |
 | **Unsupported** | Flattened (nested nodes by reference), several top-level nodes, non-bundled or remote contexts, a JSON value that is not an object or an array | Error |
 

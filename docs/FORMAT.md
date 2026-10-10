@@ -68,6 +68,8 @@ The bracketed ids R1 to R10 are stable labels for the rules above, used by the
 The vectors give each rule valid and invalid files: FASTA/GFA files with expected
 checksums computed independently of the converter, and for R9 HTML microdata files
 with the expected extracted metadata (see [MICRODATA.md](MICRODATA.md)).
+The JSON-LD form of FHR metadata and its reading rules J1 to J7 are in
+[JSONLD.md](JSONLD.md).
 
 Changing any covered metadata or data bytes invalidates the checksum. The
 checksum does not authenticate an author or protect against malicious rewriting.

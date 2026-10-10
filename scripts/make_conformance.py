@@ -1,9 +1,12 @@
-"""Write the FHR FASTA/GFA/microdata conformance vectors and their manifest (stdlib only).
+"""Write the FHR FASTA/GFA/microdata/JSON-LD conformance vectors and their manifest (stdlib only).
 
 Every vector is built from a small metadata template. Expected checksums are
 computed here with ``hashlib.sha512_256`` and base64 over the bytes the
 docs/FORMAT.md rules cover, never by the FHR File Converter. Expected microdata
 metadata is written out by hand from docs/FORMAT.md and docs/MICRODATA.md.
+JSON-LD vectors are literal documents built with the reference writer of
+scripts/make_jsonld.py (standard library only, no JSON-LD processor) and the
+committed jsonld/fhr.context.jsonld; their expected metadata follows docs/JSONLD.md.
 Output is deterministic: compressed vectors use stored deflate blocks, mtime 0
 and no file name, so rerunning the script reproduces identical bytes.
 """
@@ -55,13 +58,24 @@ RULES = {
           "typed strings are exact; untyped schema numbers and lists are converted.",
     "M4": "Microdata: the extracted metadata must validate against fhr.json; a "
           "repeated property cannot fill a single-valued field.",
+    "J1": "JSON-LD: a canonical document has a published FHR context (embedded or a known "
+          "URL) and no keyword but @type and a root @id; @context and @type are set aside, "
+          "subjectOf is documentation, and export terms are set aside.",
+    "J2": "JSON-LD: duplicate object keys are invalid.",
+    "J6": "JSON-LD: the resulting metadata must validate against fhr.json.",
+    "J7": "JSON-LD: writers emit the record with an embedded context and typed nodes, "
+          "byte for byte as docs/JSONLD.md describes.",
 }
-NOT_APPLICABLE = {}
+NOT_APPLICABLE = {
+    "J7": "J7 constrains writers; a reader has no invalid input for it. The valid vectors "
+          "that cite J7 are writer output.",
+}
 
 PREFIX = {"fasta": b";~", "gfa": b"#~"}
 ITEM_TYPE = "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json"
 COMMENT = {"fasta": b";", "gfa": b"#"}
-SUFFIX = {"fasta": ".fhr.fasta", "gfa": ".fhr.gfa", "microdata": ".fhr.html"}
+SUFFIX = {"fasta": ".fhr.fasta", "gfa": ".fhr.gfa", "microdata": ".fhr.html",
+          "jsonld": ".fhr.jsonld"}
 MARK = b"@CHECKSUM@"
 GENOME = "Synthetic FHR conformance genome"
 VERSION = "1.0.0"
@@ -476,6 +490,7 @@ def build():
             "Compressed copy of a sequence-tampered file (checksum mismatch).", "gzip")
     MICRODATA_CHECKSUM[0] = plain["fasta"][1]
     build_microdata()
+    build_jsonld()
 
 # Microdata vectors. The checksum is an ordinary value here (the fasta-lf
 # checksum), so these vectors pin the extracted metadata instead.
@@ -802,6 +817,109 @@ def build_microdata():
 
 
 
+# JSON-LD vectors (docs/JSONLD.md). The checksum is an ordinary value, as in microdata.
+
+ORCID_EXAMPLE = "https://orcid.org/0000-0002-1825-0097"  # ORCID's documented example iD.
+EXPORT_CONTEXT = {
+    "id": "https://example.org/datasets/synthetic-conformance",
+    "url": "https://example.org/genomes/synthetic-conformance",
+    "keywords": ["synthetic", "conformance vector"],
+}
+
+
+def jsonld_record(**changes):
+    record = md_base()
+    record.update({
+        "genomeSynonym": ["synthetic conformance genome"],
+        "assemblyAuthor": [{"name": "Josiah Carberry (ORCID example iD)", "uri": ORCID_EXAMPLE}],
+        "identifier": ["example:conformance-1"],
+        "relatedLink": ["https://example.org/synthetic"],
+        "reuseConditions": "CC0-1.0",
+        "assemblySoftware": [{"name": "synthetic-assembler", "version": "1.2.3",
+                              "commandLineOption": ["-t", "2"]}],
+        "vitalStats": {"N50": 20, "L50": 1, "totalBasePairs": 20, "gcContent": 45.5},
+    })
+    record.update(changes)
+    return record
+
+
+def jsonld_bytes(document):
+    return (json.dumps(document, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+
+
+def reordered(value):
+    """The same JSON value with every object's keys in reverse order."""
+    if isinstance(value, dict):
+        return {key: reordered(value[key]) for key in reversed(list(value))}
+    if isinstance(value, list):
+        return [reordered(item) for item in value]
+    return value
+
+
+def jsonld_valid(name, document, metadata, rules, description):
+    VALID.append(dict(name=name, kind="jsonld", data=jsonld_bytes(document), metadata=metadata,
+                      rules=rules, description=description, compression=None, status="valid"))
+
+
+def jsonld_invalid(name, data, rule, reason, metadata=None):
+    INVALID.append(dict(name=name, kind="jsonld", data=data, rule=rule, reason=reason,
+                        metadata=metadata, compression=None, status="invalid"))
+
+
+def build_jsonld():
+    import make_jsonld
+
+    write = make_jsonld.to_jsonld
+    record = jsonld_record()
+    jsonld_valid("jsonld-canonical-embedded", write(record), record, ["J1", "J2", "J6", "J7"],
+                 "Writer output: the embedded context, @type on the record and on every "
+                 "nested node, a name-only author typed Agent and an ORCID author typed Person.")
+    by_url = dict(write(record), **{"@context": make_jsonld.RAW_MAIN_CONTEXT_URL})
+    jsonld_valid("jsonld-canonical-url", by_url, record, ["J1", "J6"],
+                 "The context is referenced by its raw-main URL; nothing is fetched.")
+    jsonld_valid("jsonld-keys-reordered", reordered(write(record)), record, ["J1"],
+                 "Every object's keys, the root @context and nested @type included, are in "
+                 "reverse order.")
+    legacy = jsonld_record(assemblySoftware="synthetic-assembler")
+    jsonld_valid("jsonld-legacy-software-string", write(legacy), legacy, ["J1", "J7"],
+                 "A legacy assemblySoftware string stays a string, with no @type.")
+    extra = jsonld_record(taxon={"name": "Homo sapiens",
+                                 "uri": "https://identifiers.org/taxonomy:9606",
+                                 "checksum": "nested property, not the file checksum"})
+    jsonld_valid("jsonld-open-object-extra-key", write(extra), extra, ["J1"],
+                 "taxon.checksum has no JSON-LD term; it stays in the document and is kept.")
+    versioned = jsonld_record(schema="https://w3id.org/fair-bioheaders/fhr/v0.4.0")
+    jsonld_valid("jsonld-schema-versioned-url", write(versioned), versioned, ["J1", "J6"],
+                 "The record cites a versioned schema URL, which is kept unchanged.")
+    linked = jsonld_record(documentation="https://example.org/synthetic/README")
+    jsonld_valid("jsonld-documentation-url", write(linked), linked, ["J1", "J7"],
+                 "documentation is an absolute URL, so it is written as subjectOf and read "
+                 "back as documentation.")
+    jsonld_valid("jsonld-export-terms", write(record, export=EXPORT_CONTEXT), record,
+                 ["J1", "J7"],
+                 "Export-context terms @id, keywords, url and conformsTo (Bioschemas Dataset "
+                 "1.0-RELEASE) are not FHR fields and are set aside.")
+
+    text = jsonld_bytes(write(record)).decode("utf-8")
+    duplicate = text.replace(f'  "genome": "{GENOME}",',
+                             f'  "genome": "{GENOME}",\n  "genome": "Second genome value",', 1)
+    assert duplicate != text
+    jsonld_invalid("jsonld-duplicate-key", duplicate.encode("utf-8"), "J2",
+                   "The root key genome appears twice.")
+    missing = {key: value for key, value in record.items() if key != "checksum"}
+    jsonld_invalid("jsonld-missing-checksum", jsonld_bytes(write(missing)), "J6",
+                   "A canonical document whose metadata has no checksum, which fhr.json "
+                   "requires.", metadata=missing)
+    document = write(record)
+    document["taxon"]["@type"] = {"@id": "http://schema.org/Taxon"}
+    jsonld_invalid("jsonld-type-object", jsonld_bytes(document), "J1",
+                   "A @type value is an object, not a string or an array of strings.")
+    document = write(record)
+    document["subjectOf"] = "https://example.org/synthetic/README"
+    jsonld_invalid("jsonld-documentation-and-subjectof", jsonld_bytes(document), "J1",
+                   "Both documentation and subjectOf give the documentation value.")
+
+
 def path_for(entry):
     suffix = SUFFIX[entry["kind"]] + (".gz" if entry["compression"] else "")
     return f"{entry['status']}/{entry['name']}{suffix}"
@@ -817,17 +935,18 @@ def self_check():
         if entry["kind"] == "microdata":
             text = entry["data"].decode("utf-8")
             assert text.count(ITEM_TYPE) >= 1, entry["name"]
-            if entry["status"] == "valid":
-                assert set(required) <= entry["metadata"].keys(), entry["name"]
-                assert entry["metadata"]["checksum"] == MICRODATA_CHECKSUM[0], entry["name"]
+        if entry["kind"] in {"microdata", "jsonld"} and entry["status"] == "valid":
+            assert set(required) <= entry["metadata"].keys(), entry["name"]
+            assert entry["metadata"]["checksum"] == MICRODATA_CHECKSUM[0], entry["name"]
+    jsonld_self_check()
     for entry in VALID:
-        if entry["kind"] == "microdata":
+        if entry["kind"] in {"microdata", "jsonld"}:
             continue
         data = decompress(entry["data"]) if entry["compression"] else entry["data"]
         stated, computed = reference_checksum(data, entry["kind"])
         assert stated == computed == entry["checksum"], entry["name"]
     for entry in INVALID:
-        if entry["kind"] == "microdata":
+        if entry["kind"] in {"microdata", "jsonld"}:
             continue
         data = decompress(entry["data"]) if entry["compression"] else entry["data"]
         try:
@@ -836,6 +955,16 @@ def self_check():
             continue
         if entry["rule"] in {"R1", "R3", "R4"}:
             assert stated != computed, entry["name"]
+
+
+def jsonld_self_check():
+    """Valid JSON-LD vectors read back (rule J1) to their expected metadata."""
+    import make_jsonld
+
+    for entry in VALID:
+        if entry["kind"] == "jsonld":
+            document = json.loads(entry["data"])
+            assert make_jsonld.canonical_record(document) == entry["metadata"], entry["name"]
 
 
 def manifest():
@@ -852,7 +981,7 @@ def manifest():
             item["compression"] = entry["compression"]
         if entry["status"] == "valid":
             item.update(expected="valid", rules=entry["rules"], description=entry["description"])
-            if entry["kind"] == "microdata":
+            if entry["kind"] in {"microdata", "jsonld"}:
                 item.update(metadata=entry["metadata"])
             else:
                 item.update(checksum=entry["checksum"], metadata=EXPECTED_METADATA)
@@ -871,9 +1000,10 @@ def manifest():
         "manifestVersion": MANIFEST_VERSION,
         "specification": "docs/FORMAT.md",
         "microdataSpecification": "docs/MICRODATA.md",
+        "jsonldSpecification": "docs/JSONLD.md",
         "checksumDefinition": "base64(SHA-512/256) over the (decompressed) file bytes except the "
                     "root-level checksum line and its terminator (FASTA and GFA only; in "
-                    "microdata the checksum is an ordinary metadata value)",
+                    "microdata and JSON-LD the checksum is an ordinary metadata value)",
         "rules": {
             rule: {"summary": text, **({"notApplicable": NOT_APPLICABLE[rule]}
                                        if rule in NOT_APPLICABLE else {})}

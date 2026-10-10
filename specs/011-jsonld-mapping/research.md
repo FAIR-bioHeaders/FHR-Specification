@@ -129,7 +129,7 @@ nested, 45 in all. The prefixes are `sdo:` = `http://schema.org/` (R-05),
 | 19 | `accessionID.url` | `sdo:url` (`@id`) | core | conditional | `dcterms:identifier` | conditional | Not used as the node `@id`: the URL may be a repository or institution page (in the example it is PBARC's home page) |
 | 20 | `instrument[]` | `fhr:instrument` (`@set`) | FHR | exact | none | unsupported | `sdo:instrument` has the domain Action, and `sdo:measurementTechnique` is a technique, not a device |
 | 21 | `scholarlyArticle` | `sdo:citation` (literal) | core | exact | `dcterms:isReferencedBy` | conditional | Bioschemas Dataset: citation is "a citation for a publication that describes the dataset". The value is a bare DOI (`^10.`), not an IRI, so it stays a literal (R-06). The DOI identifies the article, not the assembly (#56) |
-| 22 | `documentation` | `sdo:description` | core | conditional | `dcterms:description` | conditional | Condition: the value is descriptive text, as in both examples. A URL value stays a literal (R-06) |
+| 22 | `documentation` | `sdo:description` | core | conditional | `dcterms:description` | conditional | Condition: the value is descriptive text, as in both examples. An absolute URL value is written as `sdo:subjectOf` (an IRI) instead (maintainer decision 3, R-18) |
 | 23 | `identifier[]` | `sdo:identifier` (`@set`) | core | exact | `dcterms:identifier` | exact | Compact identifiers (`prefix:accession`). Bioschemas Dataset: "CURIEs that can be resolved using Identifiers.org should be used". They stay literals, not IRIs |
 | 24 | `relatedLink[]` | `fhr:relatedLink` (`@id`, `@set`) | FHR | exact | `dcterms:relation` | exact | `sdo:relatedLink` has the domain WebPage only, and validators reject it on Dataset (<https://schema.org/relatedLink>) |
 | 25 | `funding` | `sdo:funding` | core | conditional | none | unsupported | schema.org expects a Grant node, and FHR has text. #56: "a free-text grant line does not establish a funder identifier". DCMI has no funding term |
@@ -199,8 +199,9 @@ nested, 45 in all. The prefixes are `sdo:` = `http://schema.org/` (R-05),
 |---|---|---|
 | Record (root) | `Dataset` → `sdo:Dataset` | Always |
 | `taxon` | `Taxon` → `sdo:Taxon` (pending) | Always |
-| `metadataAuthor[]`, `assemblyAuthor[]` | `Person` → `sdo:Person` | When the item has `uri`. The schema allows only ORCID URIs there, and ORCID is "a unique, persistent identifier for individuals" (<https://info.orcid.org/what-is-orcid/>) |
-| `metadataAuthor[]`, `assemblyAuthor[]` | `Agent` → `fhr:Agent` | When the item has no `uri`. FHR says "Person or Org" and records which only through an ORCID. `fhr:Agent` is defined as "a person or organization that the FHR record does not classify" (`skos:closeMatch dcterms:Agent`) |
+| `metadataAuthor[]`, `assemblyAuthor[]` | `Person` → `sdo:Person` | When the item's `uri` is an ORCID iD. The schema allows only ORCID URIs there, and ORCID is "a unique, persistent identifier for individuals" (<https://info.orcid.org/what-is-orcid/>) |
+| `metadataAuthor[]`, `assemblyAuthor[]` | `Organization` → `sdo:Organization` | When the item's `uri` is a ROR ID (maintainer decision 4, R-18). `fhr.json` does not allow ROR URIs yet (T047) |
+| `metadataAuthor[]`, `assemblyAuthor[]` | `Agent` → `fhr:Agent` | Otherwise. FHR says "Person or Org" and records which only through an identifier. `fhr:Agent` is defined as "a person or organization that the FHR record does not classify" (`skos:closeMatch dcterms:Agent`) |
 | `accessionID` | `PropertyValue` → `sdo:PropertyValue` | Always (schema.org's way to type an identifier) |
 | `assemblySoftware[]` (objects) | `SoftwareApplication` → `sdo:SoftwareApplication` | For each object item. A legacy string is a literal, not a node |
 | `vitalStats` | `VitalStats` → `fhr:VitalStats` | Always |
@@ -215,7 +216,7 @@ conformance**. It emits no `dct:conformsTo`, because FR-007 and FR-009 allow onl
 
 | Profile | Minimum properties FHR lacks |
 |---|---|
-| Dataset 1.0-RELEASE (<https://bioschemas.org/profiles/Dataset/1.0-RELEASE>) | `dct:conformsTo`, `keywords` and `url`, always. `description`, `license` and `identifier` are present only when `documentation`, `reuseConditions` and `identifier` are |
+| Dataset 1.0-RELEASE (<https://bioschemas.org/profiles/Dataset/1.0-RELEASE>) | `@id`, `dct:conformsTo`, `keywords` and `url`, always (`@id` is in the profile's minimum list too; checked on 2026-10-10 against the profile page). `description`, `license` and `identifier` are present only when `documentation` (as text), `reuseConditions` and `identifier` are |
 | Taxon 1.0-RELEASE (<https://bioschemas.org/profiles/Taxon/1.0-RELEASE>) | `dct:conformsTo`, `taxonRank` |
 | ComputationalTool 1.0-RELEASE (<https://bioschemas.org/profiles/ComputationalTool/1.0-RELEASE>) | `dct:conformsTo`, `description` |
 | Person 0.3-DRAFT (<https://bioschemas.org/profiles/Person/0.3-DRAFT>) | `dct:conformsTo`, `description`, `mainEntityOfPage` |
@@ -807,6 +808,31 @@ This feature must not create a third policy.
 **Alternatives considered**:
 - *Rewriting raw-main to a versioned URL in the JSON-LD output.* Rejected: it changes a user
   value (FR-004), and it pre-empts spec#44.
+
+## R-18. Maintainer decisions as implemented (MVP, 2026-10-10)
+
+The plan's maintainer decisions change four earlier choices; tasks T046 and T048 implement them.
+
+- **Author typing** (decision 4). ORCID → `sdo:Person`, ROR → `sdo:Organization`, otherwise
+  `fhr:Agent`. LinkML: `jsonld_type_if_orcid` and `jsonld_type_if_ror` on `Author`. The author
+  scope gains the type term `Organization`.
+- **`documentation`** (decision 3). A context cannot choose a predicate by value, so the writer
+  writes an absolute URL under a different key, `subjectOf` (`sdo:subjectOf`, IRI-coerced, from
+  the LinkML annotation `jsonld_slot_uri_if_url`), and the canonical reader maps it back. This is
+  the one place where the JSON-LD key differs from the FHR key (FR-007), and the round trip stays
+  exact.
+- **Bioschemas** (decision 2). An export context outside the record supplies `id`, `url` and
+  `keywords`; the root scope gains the output-only terms `keywords`, `url` and `conformsTo`
+  (`dct:conformsTo`). `dct:conformsTo` is emitted only when every Dataset minimum property is
+  present. Two corrections to the task text: the minimum list of Dataset 1.0-RELEASE includes
+  `@id`, so the export context also takes the dataset `id` (written as the root `@id`); and
+  Dataset 1.1 is still `1.1-DRAFT` on the profile index (checked 2026-10-10), so the claim is
+  `https://bioschemas.org/profiles/Dataset/1.0-RELEASE`, not 1.1-RELEASE. The canonical reader
+  accepts a root `@id` and sets the export terms aside with a warning, since they are not FHR
+  fields.
+- **Context URLs** (decision 1). Not implemented in the MVP (T044, T045). The toolkit bundles
+  the context of `main` only and recognises only the raw-main URL until a release contains the
+  file.
 
 ## R-17. Licensing and attribution
 

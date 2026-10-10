@@ -74,25 +74,29 @@ class ConformanceTests(unittest.TestCase):
         self.assertIn("invalid/stray.fhr.fasta: not produced by the generator", result.stderr)
 
     def test_every_rule_is_labelled_and_covered(self):
-        labels = [label for document in ("docs/FORMAT.md", "docs/MICRODATA.md")
-                  for label in re.findall(r"\[([RM]\d+)\]", (ROOT / document).read_text())]
+        labels = [label for document in ("docs/FORMAT.md", "docs/MICRODATA.md", "docs/JSONLD.md")
+                  for label in re.findall(r"\[([RMJ]\d+)\]", (ROOT / document).read_text())]
         self.assertEqual(labels, list(self.manifest["rules"]))
         for rule, details in self.manifest["rules"].items():
             outcomes = {
                 vector["expected"] for vector in self.manifest["vectors"]
                 if rule in vector.get("rules", [vector.get("rule")])
             }
-            expected = set() if "notApplicable" in details else {"valid", "invalid"}
-            self.assertEqual(outcomes, expected, rule)
+            if "notApplicable" in details:
+                # No invalid input exists (J7 constrains writers); valid vectors may cite it.
+                self.assertNotIn("invalid", outcomes, rule)
+            else:
+                self.assertEqual(outcomes, {"valid", "invalid"}, rule)
 
     def test_manifest_fields(self):
         required = json.loads((ROOT / "fhr.json").read_text())["required"]
         for vector in self.manifest["vectors"]:
-            self.assertIn(vector["format"], {"fasta", "gfa", "microdata"})
+            self.assertIn(vector["format"], {"fasta", "gfa", "microdata", "jsonld"})
             self.assertTrue((CONFORMANCE / vector["file"]).is_file(), vector["file"])
             self.assertEqual(vector["file"].split("/")[0], vector["expected"])
-            if vector["format"] == "microdata":
-                self.assertTrue(vector["file"].endswith(".html"), vector["file"])
+            if vector["format"] in {"microdata", "jsonld"}:
+                suffix = ".html" if vector["format"] == "microdata" else ".jsonld"
+                self.assertTrue(vector["file"].endswith(suffix), vector["file"])
                 self.assertNotIn("checksum", vector)
                 if vector["expected"] == "valid":
                     self.assertTrue(set(required) <= vector["metadata"].keys(), vector["id"])
@@ -141,7 +145,37 @@ class ConformanceTests(unittest.TestCase):
                       result.stderr)
         self.assertIn("microdata-canonical: converter extracted different metadata for "
                       "assemblyAuthor,", result.stderr)
+        self.assertIn("jsonld-type-object: converter accepted; expected invalid, J1",
+                      result.stderr)
+        self.assertIn("jsonld-canonical-embedded: converter extracted different metadata",
+                      result.stderr)
         self.assertNotIn("fasta-lf:", result.stderr)
+        skipped = self.check("--skip-regeneration", "--skip-format", "jsonld",
+                             "--converter", bin_directory)
+        self.assertEqual(skipped.returncode, 1)
+        self.assertNotIn("jsonld-", skipped.stderr)
+        self.assertIn("microdata-type-mismatch", skipped.stderr)
+        self.assertIn("(12 jsonld vectors skipped by the converter)", skipped.stdout)
+
+    def test_jsonld_vectors(self):
+        vectors = {v["id"]: v for v in self.manifest["vectors"] if v["format"] == "jsonld"}
+        self.assertEqual(self.manifest["jsonldSpecification"], "docs/JSONLD.md")
+        self.assertEqual(len(vectors), 12)
+        self.assertIn("notApplicable", self.manifest["rules"]["J7"])
+        for vector in vectors.values():
+            document = json.loads((CONFORMANCE / vector["file"]).read_text(encoding="utf-8")) \
+                if vector["id"] != "jsonld-duplicate-key" else None
+            if vector["expected"] == "valid":
+                self.assertIn("@context", document)
+                self.assertTrue(set(vector["metadata"]) >= {"genome", "checksum"})
+        exported = json.loads((CONFORMANCE / vectors["jsonld-export-terms"]["file"]).read_text())
+        self.assertEqual(exported["conformsTo"],
+                         "https://bioschemas.org/profiles/Dataset/1.0-RELEASE")
+        self.assertNotIn("conformsTo", vectors["jsonld-export-terms"]["metadata"])
+        linked = json.loads((CONFORMANCE / vectors["jsonld-documentation-url"]["file"]).read_text())
+        self.assertNotIn("documentation", linked)
+        self.assertEqual(linked["subjectOf"],
+                         vectors["jsonld-documentation-url"]["metadata"]["documentation"])
 
     @unittest.skipUnless(os.environ.get("FHR_CONVERTER"), "set FHR_CONVERTER to test a converter")
     def test_converter_agrees_with_manifest(self):
