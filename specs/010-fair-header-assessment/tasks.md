@@ -266,7 +266,7 @@ listed as out of scope (quickstart V6).
 
 ### Tests for User Story 3 (write first, must fail) ⚠️
 
-- [ ] T043 [P] [US3] Write `FHR-Specification/tests/test_assessment_guideline.py` (unittest). It parses the item table and the per-item example tables of `docs/FAIR_HEADER_GUIDELINE.md` and asserts:
+- [X] T043 [P] [US3] Write `FHR-Specification/tests/test_assessment_guideline.py` (unittest). It parses the item table and the per-item example tables of `docs/FAIR_HEADER_GUIDELINE.md` and asserts:
   - there are exactly the 8 items G1–G8;
   - "every offline, online and deferred indicator appears in exactly one item";
   - the 10 not-applicable indicators appear under "Out of scope for headers", each with a repository-level action;
@@ -279,7 +279,7 @@ listed as out of scope (quickstart V6).
 
 ### Implementation for User Story 3
 
-- [ ] T044 [US3] Write `FHR-Specification/docs/FAIR_HEADER_GUIDELINE.md`, following research R-17. It needs:
+- [X] T044 [US3] Write `FHR-Specification/docs/FAIR_HEADER_GUIDELINE.md`, following research R-17. It needs:
   - a status line saying it is guidance and changes no schema;
   - a summary table of items, principles, RDA ids, core fields and checks;
   - the 8 items, each with its rationale and examples. Take examples from real surveyed lines where they exist (for example `#!genome-build-accession NCBI_Assembly:GCF_000002985.6`, `##species …?id=6239`, `!go-version: …`), as FHR `;~`/`#~`, GFF3 `#!`, VCF `##` and GAF `!` lines;
@@ -288,9 +288,9 @@ listed as out of scope (quickstart V6).
   - the RDA CC BY 4.0 attribution (research R-19).
 
   Licensed MPL-2.0 (makes T043 pass)
-- [ ] T045 [US3] Add a cross-check to `FHR-Specification/scripts/check_assessment.py`, the `--guideline` step. It reads the tool's bundled `bioheaders/assess/data/rubric.json` from `--tool` and fails if any rubric `guideline_item` or check id disagrees with the guideline's item table, in either direction
-- [ ] T046 [US3] Align `FAIR-bioHeaders-Tools/bioheaders/assess/data/rubric.json` with the guideline. Every suggestion `text` names its guideline item (for example "see guideline G7"), and `suggestion.guideline_item` is filled. Bump `rubric_version` to the next minor version if any text changes, and update `FHR-Specification/assessment/manifest.json` `rubric_version` to match
-- [ ] T047 [P] [US3] Link the guideline and `assessment/` from `FHR-Specification/README.md` and `FHR-Specification/docs/TOOL_COMPATIBILITY.md`, and add a `CHANGELOG.md` entry in FHR-Specification marked guidance-only, with no schema change
+- [X] T045 [US3] Add a cross-check to `FHR-Specification/scripts/check_assessment.py`, the `--guideline` step. It reads the tool's bundled `bioheaders/assess/data/rubric.json` from `--tool` and fails if any rubric `guideline_item` or check id disagrees with the guideline's item table, in either direction
+- [X] T046 [US3] Align `FAIR-bioHeaders-Tools/bioheaders/assess/data/rubric.json` with the guideline. Every suggestion `text` names its guideline item (for example "see guideline G7"), and `suggestion.guideline_item` is filled. Bump `rubric_version` to the next minor version if any text changes, and update `FHR-Specification/assessment/manifest.json` `rubric_version` to match
+- [X] T047 [P] [US3] Link the guideline and `assessment/` from `FHR-Specification/README.md` and `FHR-Specification/docs/TOOL_COMPATIBILITY.md`, and add a `CHANGELOG.md` entry in FHR-Specification marked guidance-only, with no schema change
 
 **Checkpoint**: The guideline is published in the specification repository, and it agrees with
 the rubric in the tool.
@@ -308,7 +308,7 @@ minutes, and a second run is byte-identical (quickstart V7).
 
 ### Tests for User Story 4 (write first, must fail) ⚠️
 
-- [ ] T048 [P] [US4] Write `FAIR-bioHeaders-Tools/tests/assess_batch_test.py`. It covers:
+- [X] T048 [P] [US4] Write `FAIR-bioHeaders-Tools/tests/assess_batch_test.py`. It covers:
   - `--recursive`, and `--include`/`--exclude` globs against relative paths, with hidden files skipped;
   - the per-file reports mirror the input tree;
   - the `summary.tsv` columns are `path`, `format`, `scope`, `pair_classification`, then one per indicator in rubric order, with the cells `E`, `P`, `N`, `NA` and `NAS` and **no total column**;
@@ -317,13 +317,13 @@ minutes, and a second run is byte-identical (quickstart V7).
   - a re-run gives byte-identical files;
   - one unreadable file gives exit 1, and every other report is still written;
   - `--pairs` with a duplicate derived path, `--pairs` together with `--related`, and batch mode without `--output` each exit 2
-- [ ] T049 [P] [US4] Add a `--batch` mode to `FHR-Specification/scripts/check_assessment.py`. It runs `bioheaders assess --recursive --pairs assessment/pairs.tsv --output TMP assessment/`, checks every per-file report against the manifest, and checks that a second run is byte-identical
+- [X] T049 [P] [US4] Add a `--batch` mode to `FHR-Specification/scripts/check_assessment.py`. It runs `bioheaders assess --recursive --pairs assessment/pairs.tsv --output TMP assessment/`, checks every per-file report against the manifest, and checks that a second run is byte-identical
 
 ### Implementation for User Story 4
 
-- [ ] T050 [US4] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/batch.py`. It walks the directory (sorted, with include/exclude), parses the pairs TSV ([contracts/data-files.md §5](contracts/data-files.md)), and runs a `concurrent.futures.ProcessPoolExecutor` with `--jobs` (default `min(CPU count, 8)`), scanning each related file once. It writes the per-file JSON and Markdown atomically, and builds the summaries in sorted path order: `summary.json`, a `summary.md` table with per-indicator counts, and `summary.tsv`
-- [ ] T051 [US4] Add `assess_release(paths, output_dir, pairs=None, jobs=None, online=False)` to `FAIR-bioHeaders-Tools/bioheaders/assess/__init__.py`. Add the options `--recursive`, `--include`, `--exclude`, `--jobs` and `--pairs` to the `assess` subcommand in `FAIR-bioHeaders-Tools/bioheaders/cli.py`, with the batch-mode exit codes (makes T048 pass)
-- [ ] T052 [US4] Write `FAIR-bioHeaders-Tools/scripts/bench_assess.py`. It generates a synthetic 200-file release in a temporary directory: 120 annotation and variant files of 50–500 MB, gzip and BGZF, 10 genomes of 100 MB, and a pairs TSV. It runs the batch assessment, prints the wall time and the machine (CPU and Python version), and exits 1 if the run takes 600 s or more (SC-004)
+- [X] T050 [US4] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/batch.py`. It walks the directory (sorted, with include/exclude), parses the pairs TSV ([contracts/data-files.md §5](contracts/data-files.md)), and runs a `concurrent.futures.ProcessPoolExecutor` with `--jobs` (default `min(CPU count, 8)`), scanning each related file once. It writes the per-file JSON and Markdown atomically, and builds the summaries in sorted path order: `summary.json`, a `summary.md` table with per-indicator counts, and `summary.tsv`
+- [X] T051 [US4] Add `assess_release(paths, output_dir, pairs=None, jobs=None, online=False)` to `FAIR-bioHeaders-Tools/bioheaders/assess/__init__.py`. Add the options `--recursive`, `--include`, `--exclude`, `--jobs` and `--pairs` to the `assess` subcommand in `FAIR-bioHeaders-Tools/bioheaders/cli.py`, with the batch-mode exit codes (makes T048 pass)
+- [X] T052 [US4] Write `FAIR-bioHeaders-Tools/scripts/bench_assess.py`. It generates a synthetic 200-file release in a temporary directory: 120 annotation and variant files of 50–500 MB, gzip and BGZF, 10 genomes of 100 MB, and a pairs TSV. It runs the batch assessment, prints the wall time and the machine (CPU and Python version), and exits 1 if the run takes 600 s or more (SC-004)
 
 **Checkpoint**: All four user stories work on their own.
 
@@ -336,7 +336,7 @@ success-criteria checks.
 
 ### Opt-in online checks (cross-cutting; FR-010, FR-011)
 
-- [ ] T053 [P] Write `FAIR-bioHeaders-Tools/tests/assess_online_test.py`, marked `online_local`, against a `http.server` on 127.0.0.1 with the private-address refusal disabled for the test. It covers:
+- [X] T053 [P] Write `FAIR-bioHeaders-Tools/tests/assess_online_test.py`, marked `online_local`, against a `http.server` on 127.0.0.1 with the private-address refusal disabled for the test. It covers:
   - without `--online` no request is made, and the four access indicators are `not_assessed`/`online-check-not-requested`;
   - with `--online` only header-derived identifiers and URLs are requested, using HEAD then GET with `Range: bytes=0-0` and never a request body;
   - redirects are capped at 5;
@@ -345,21 +345,21 @@ success-criteria checks.
   - an online result never lowers an offline status;
   - `online_checks: "ran"` and the `online.checks[]` fields `checked_at` and `time_dependent: true` are present;
   - the schema URL in an FHR header is never requested
-- [ ] T054 Implement `FAIR-bioHeaders-Tools/bioheaders/assess/online.py` with `urllib`, following research R-10. It resolves DOIs through `https://doi.org/` and CURIEs and accessions through `https://identifiers.org/`. It applies the per-request timeout, refuses loopback, private and link-local addresses, sends no cookies or credentials, uses the User-Agent `bioheaders-assess/<version>`, de-duplicates requests, and allows 1 request per host at a time. Import it lazily, only when `--online` is given. Add `--online` and `--online-timeout` (default 10; `--online-timeout` without `--online` exits 2) to `FAIR-bioHeaders-Tools/bioheaders/cli.py` (makes T053 pass)
+- [X] T054 Implement `FAIR-bioHeaders-Tools/bioheaders/assess/online.py` with `urllib`, following research R-10. It resolves DOIs through `https://doi.org/` and CURIEs and accessions through `https://identifiers.org/`. It applies the per-request timeout, refuses loopback, private and link-local addresses, sends no cookies or credentials, uses the User-Agent `bioheaders-assess/<version>`, de-duplicates requests, and allows 1 request per host at a time. Import it lazily, only when `--online` is given. Add `--online` and `--online-timeout` (default 10; `--online-timeout` without `--online` exits 2) to `FAIR-bioHeaders-Tools/bioheaders/cli.py` (makes T053 pass)
 
 ### Documentation and packaging
 
-- [ ] T055 [P] Document `bioheaders assess` in `FAIR-bioHeaders-Tools/README.md`: usage taken from [quickstart.md](quickstart.md), the "checklist, not a score" note, offline by default, and the RDA attribution. Add an entry to `FAIR-bioHeaders-Tools/CHANGELOG.md`, and add `bioheaders/assess/` and the data files to the repository map in `FAIR-bioHeaders-Tools/AGENTS.md`
-- [ ] T056 [P] Complete `FHR-Specification/assessment/README.md`. Describe the manifest fields, how other implementations (the 009 GFF3 validator and the website) use the fixtures, `make_assessment_fixtures.py`, `check_assessment.py --tool`, and the provider-trial guide for SC-005. The guide is for maintainers to send; this task does not contact anyone
-- [ ] T057 Build the wheel with `poetry build` in `FAIR-bioHeaders-Tools/`, install it into a fresh virtual environment outside the checkout, and run `bioheaders assess` on one fixture of each format to confirm that the `bioheaders/assess/data/**` files are packaged. Also run `python -m build compat/fhr`
+- [X] T055 [P] Document `bioheaders assess` in `FAIR-bioHeaders-Tools/README.md`: usage taken from [quickstart.md](quickstart.md), the "checklist, not a score" note, offline by default, and the RDA attribution. Add an entry to `FAIR-bioHeaders-Tools/CHANGELOG.md`, and add `bioheaders/assess/` and the data files to the repository map in `FAIR-bioHeaders-Tools/AGENTS.md`
+- [X] T056 [P] Complete `FHR-Specification/assessment/README.md`. Describe the manifest fields, how other implementations (the 009 GFF3 validator and the website) use the fixtures, `make_assessment_fixtures.py`, `check_assessment.py --tool`, and the provider-trial guide for SC-005. The guide is for maintainers to send; this task does not contact anyone
+- [X] T057 Build the wheel with `poetry build` in `FAIR-bioHeaders-Tools/`, install it into a fresh virtual environment outside the checkout, and run `bioheaders assess` on one fixture of each format to confirm that the `bioheaders/assess/data/**` files are packaged. Also run `python -m build compat/fhr`
 
 ### Gates and success criteria
 
-- [ ] T058 Run the FAIR-bioHeaders-Tools gates on Python 3.9 and 3.13: `poetry run pytest`, `ruff check .`, `isort . --check-only` and `black . --check`. Record any environment limitation in the PR description
-- [ ] T059 Run the FHR-Specification gates: `python -m unittest discover -s tests -v`, `scripts/validate_examples.py`, `scripts/check_linkml.py`, `scripts/check_schema_drift.py`, `scripts/check_conformance.py --schema` (it must stay unaffected by `assessment/`), `scripts/check_release.py --converter ../FHR-File-Converter`, and `scripts/check_assessment.py --tool ../FHR-File-Converter --batch --guideline`
-- [ ] T060 Run `python scripts/bench_assess.py --files 200` in `FAIR-bioHeaders-Tools/` on a laptop-class machine. Record the wall time and the machine in the PR (SC-004 requires under 600 s)
-- [ ] T061 Prepare the SC-001 review. Generate `FHR-Specification/assessment/review/sc001-template.tsv`, with columns `fixture`, `indicator`, `status`, `cited_lines`, `reviewer_agrees` and `note`, from the reports for the 17 corpus files. A reviewer other than the implementer fills it in as `sc001-<date>.tsv`, and the result passes at ≥ 90% agreement. Disagreements become rubric issues and are not edited away
-- [ ] T062 Run every scenario in [quickstart.md](quickstart.md) (V1–V9) against the implementation, and correct the quickstart's expected outputs wherever the reviewed implementation legitimately differs, with the reason in the commit message
+- [X] T058 Run the FAIR-bioHeaders-Tools gates on Python 3.9 and 3.13: `poetry run pytest`, `ruff check .`, `isort . --check-only` and `black . --check`. Record any environment limitation in the PR description
+- [X] T059 Run the FHR-Specification gates: `python -m unittest discover -s tests -v`, `scripts/validate_examples.py`, `scripts/check_linkml.py`, `scripts/check_schema_drift.py`, `scripts/check_conformance.py --schema` (it must stay unaffected by `assessment/`), `scripts/check_release.py --converter ../FHR-File-Converter`, and `scripts/check_assessment.py --tool ../FHR-File-Converter --batch --guideline`
+- [X] T060 Run `python scripts/bench_assess.py --files 200` in `FAIR-bioHeaders-Tools/` on a laptop-class machine. Record the wall time and the machine in the PR (SC-004 requires under 600 s)
+- [X] T061 Prepare the SC-001 review. Generate `FHR-Specification/assessment/review/sc001-template.tsv`, with columns `fixture`, `indicator`, `status`, `cited_lines`, `reviewer_agrees` and `note`, from the reports for the 17 corpus files. A reviewer other than the implementer fills it in as `sc001-<date>.tsv`, and the result passes at ≥ 90% agreement. Disagreements become rubric issues and are not edited away
+- [X] T062 Run every scenario in [quickstart.md](quickstart.md) (V1–V9) against the implementation, and correct the quickstart's expected outputs wherever the reviewed implementation legitimately differs, with the reason in the commit message
 
 ---
 

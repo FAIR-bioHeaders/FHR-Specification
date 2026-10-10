@@ -8,22 +8,34 @@ entry of assessment/manifest.json, validates each report against the tool's own
 bundled report schema (needs jsonschema), and compares only the fields listed
 under ``expected``. Prints ``ok: <id>`` or the differences, and exits 1 if any
 fixture differs. Modelled on check_conformance.py.
+
+``--batch`` also runs the batch mode once over the fixture directories
+(``bioheaders assess --recursive --pairs assessment/pairs.tsv --output TMP``),
+compares every per-file report with the manifest, and checks that a second run
+gives byte-identical output. ``--guideline`` also compares the tool's bundled
+rubric.json with the item table of docs/FAIR_HEADER_GUIDELINE.md, in both
+directions. ``--review-packet DIR`` writes the SC-001 review packet for the
+corpus in headers/: sc001-template.tsv and the Markdown reports.
 """
 
 import argparse
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSESSMENT = ROOT / "assessment"
-REPORT_SCHEMA = "bioheaders/assess/data/assessment-report.schema.json"
-SCHEMA_CODE = ("from importlib.resources import files; import sys; "
-               "sys.stdout.write(files('bioheaders.assess').joinpath('data')"
-               ".joinpath('assessment-report.schema.json').read_text(encoding='utf-8'))")
+GUIDELINE = ROOT / "docs" / "FAIR_HEADER_GUIDELINE.md"
+DATA = "bioheaders/assess/data/"
+REPORT_SCHEMA = "assessment-report.schema.json"
+DATA_CODE = ("from importlib.resources import files; import sys; "
+             "sys.stdout.write(files('bioheaders.assess').joinpath('data')"
+             ".joinpath(sys.argv[1]).read_text(encoding='utf-8'))")
 
 
 class Tool:
@@ -55,15 +67,23 @@ class Tool:
                 return
         raise ValueError(f"{location}: no toolkit checkout, environment or bin directory")
 
-    def schema(self):
+    def data(self, name):
+        """A JSON data file bundled with the tool (bioheaders/assess/data/NAME)."""
         if self.checkout is not None:
-            return json.loads((self.checkout / REPORT_SCHEMA).read_text(encoding="utf-8"))
+            return json.loads((self.checkout / DATA / name).read_text(encoding="utf-8"))
         if self.python is None:
-            raise ValueError("cannot find the Python of the tool to read its report schema")
-        result = subprocess.run([self.python, "-c", SCHEMA_CODE], capture_output=True, text=True)
+            raise ValueError(f"cannot find the Python of the tool to read its {name}")
+        result = subprocess.run([self.python, "-c", DATA_CODE, name], capture_output=True, text=True)
         if result.returncode:
-            raise ValueError(f"cannot read the tool's report schema: {result.stderr.strip()}")
+            raise ValueError(f"cannot read the tool's {name}: {result.stderr.strip()}")
         return json.loads(result.stdout)
+
+    def schema(self):
+        return self.data(REPORT_SCHEMA)
+
+    def run(self, arguments):
+        return subprocess.run(self.command + arguments, capture_output=True, text=True,
+                              timeout=300, env={**os.environ, "PYTHONSAFEPATH": "1"})
 
     def assess(self, entry, assessment):
         arguments = ["assess", "--format", "json"]
@@ -72,8 +92,7 @@ class Tool:
         if "related" in entry:
             arguments += ["--related", str(assessment / entry["related"])]
         arguments.append(str(assessment / entry["file"]))
-        return subprocess.run(self.command + arguments, capture_output=True, text=True,
-                              timeout=300, env={**os.environ, "PYTHONSAFEPATH": "1"})
+        return self.run(arguments)
 
 
 def _status(result):
@@ -179,6 +198,193 @@ def check(tool, manifest, assessment, validator):
     return failures
 
 
+FIXTURE_DIRECTORIES = ("headers", "pairs", "edge")
+
+
+def _tree(directory):
+    return {path.relative_to(directory).as_posix(): path.read_bytes()
+            for path in sorted(directory.rglob("*")) if path.is_file()}
+
+
+def read_pairs(path):
+    pairs = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line and not line.startswith("#"):
+            derived, related = line.split("\t")
+            pairs[derived] = related
+    return pairs
+
+
+def check_batch(tool, manifest, assessment, validator):
+    """Run batch mode twice over the fixtures; compare with the manifest and each other."""
+    failures = 0
+    pairs = read_pairs(assessment / "pairs.tsv")
+    for entry in manifest["fixtures"]:
+        if pairs.get(entry["file"]) != entry.get("related"):
+            print(f"FAIL batch {entry['id']}: pairs.tsv gives {pairs.get(entry['file'])}, "
+                  f"the manifest {entry.get('related')}")
+            failures += 1
+        if "type" in entry:
+            print(f"note: batch {entry['id']}: --type {entry['type']} is not used in batch mode")
+    arguments = ["assess", "--recursive", "--pairs", str(assessment / "pairs.tsv")]
+    for name in FIXTURE_DIRECTORIES:
+        arguments += ["--include", f"{name}/*"]
+    with tempfile.TemporaryDirectory() as directory:
+        trees = []
+        for run in ("first", "second"):
+            output = Path(directory) / run
+            result = tool.run(arguments + ["--output", str(output), str(assessment)])
+            if result.returncode not in (0, 3):
+                detail = (result.stderr or result.stdout).strip().splitlines()
+                print(f"FAIL batch: exit {result.returncode}{': ' + detail[-1] if detail else ''}")
+                return failures + 1
+            trees.append(_tree(output))
+        if trees[0] != trees[1]:
+            changed = sorted(name for name in set(trees[0]) | set(trees[1])
+                             if trees[0].get(name) != trees[1].get(name))
+            print(f"FAIL batch: a second run differs in {', '.join(changed[:5])}")
+            failures += 1
+        else:
+            print(f"ok: batch re-run is byte-identical ({len(trees[0])} files)")
+        for name in ("summary.json", "summary.md", "summary.tsv"):
+            if name not in trees[0]:
+                print(f"FAIL batch: no {name}")
+                failures += 1
+        for entry in manifest["fixtures"]:
+            name = f"{entry['file']}.assessment.json"
+            if name not in trees[0]:
+                print(f"FAIL batch {entry['id']}: no report {name}")
+                failures += 1
+                continue
+            if "type" in entry:
+                continue
+            report = json.loads(trees[0][name])
+            problems = [f"report does not conform at {error.json_path}: {error.message}"
+                        for error in validator.iter_errors(report)][:5]
+            problems += compare(entry["expected"], report)
+            if report["input"]["path"] != entry["file"]:
+                problems.append(f"input.path: expected {entry['file']}, got {report['input']['path']}")
+            if problems:
+                failures += 1
+                print(f"FAIL batch {entry['id']}:")
+                for problem in problems:
+                    print(f"  {problem}")
+        if not failures:
+            print(f"ok: batch reports match all {len(manifest['fixtures'])} fixtures")
+    return failures
+
+
+REVIEW_COLUMNS = ("fixture", "indicator", "status", "cited_lines", "reviewer_agrees", "note")
+
+
+def _cell(text):
+    return " ".join(str(text).replace("\t", " ").split())
+
+
+def write_review_packet(tool, manifest, assessment, directory):
+    """SC-001 (research R-21): a review table and the reports for the headers/ corpus."""
+    rubric = tool.data("rubric.json")
+    offline = [i["id"] for i in rubric["indicators"] if i["assessability"] == "offline"]
+    corpus = sorted((e for e in manifest["fixtures"] if e["file"].startswith("headers/")),
+                    key=lambda e: e["id"])
+    reports_dir = directory / "sc001-reports"
+    with tempfile.TemporaryDirectory() as temporary:
+        output = Path(temporary) / "out"
+        result = tool.run(["assess", "--recursive", "--include", "headers/*",
+                           "--output", str(output), str(assessment)])
+        if result.returncode != 0:
+            print(f"FAIL review packet: exit {result.returncode}: {result.stderr.strip()}")
+            return 1
+        if reports_dir.exists():
+            shutil.rmtree(reports_dir)
+        reports_dir.mkdir(parents=True)
+        rows = ["\t".join(REVIEW_COLUMNS)]
+        for entry in corpus:
+            base = output / entry["file"]
+            report = json.loads(Path(f"{base}.assessment.json").read_text(encoding="utf-8"))
+            markdown = Path(f"{base}.assessment.md").read_bytes()
+            (reports_dir / f"{entry['id']}.assessment.md").write_bytes(markdown)
+            lines = {item["id"]: item for item in report["evidence"]}
+            results = {r["indicator"]: r for r in report["results"]}
+            for indicator in offline:
+                found = results[indicator]
+                cited = " | ".join(f"line {lines[e]['line']}: {_cell(lines[e]['raw'])}"
+                                   for e in found["evidence"])
+                rows.append("\t".join([entry["id"], indicator, _status(found), cited, "", ""]))
+        (directory / "sc001-template.tsv").write_text("\n".join(rows) + "\n", encoding="utf-8",
+                                                      newline="\n")
+    print(f"ok: review packet for {len(corpus)} files, {len(rows) - 1} statuses, "
+          f"rubric {rubric['rubric_version']}, in {directory}")
+    return 0
+
+
+def guideline_tables(text):
+    """The summary rows {item: row} and out-of-scope rows {indicator: row} of the guideline."""
+    summary, out_of_scope = {}, {}
+    lines = text.splitlines()
+    for index, line in enumerate(lines[:-1]):
+        if not (line.startswith("|") and re.match(r"^\|[-| :]+\|$", lines[index + 1])):
+            continue
+        header = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        target = {"Item": summary, "Indicator": out_of_scope}.get(header[0])
+        if target is None:
+            continue
+        for row_line in lines[index + 2:]:
+            if not row_line.startswith("|"):
+                break
+            row = dict(zip(header, (c.strip() for c in row_line.strip().strip("|").split("|"))))
+            target[row[header[0]]] = row
+    return summary, out_of_scope
+
+
+def _ids(cell):
+    return {part.strip() for part in cell.split(",") if part.strip()}
+
+
+def check_guideline(rubric, text):
+    """Differences between the rubric and the guideline item table, in both directions."""
+    problems = []
+    summary, out_of_scope = guideline_tables(text)
+    if not summary:
+        return ["guideline: no item table (columns Item | Title | ...)"]
+    indicators = {indicator["id"]: indicator for indicator in rubric["indicators"]}
+    by_item = {}
+    for identifier, indicator in indicators.items():
+        by_item.setdefault(indicator["guideline_item"], set()).add(identifier)
+    for item in sorted(set(summary) | {i for i in by_item if i != "out-of-scope"}):
+        row = summary.get(item)
+        rubric_ids = by_item.get(item, set())
+        if row is None:
+            problems.append(f"{item}: in the rubric ({', '.join(sorted(rubric_ids))}) but not in the guideline")
+            continue
+        listed = _ids(row["Indicators"])
+        checks = _ids(row["Checks"])
+        for missing in sorted(rubric_ids - listed):
+            problems.append(f"{item}: rubric indicator {missing} is not listed under the item")
+        for extra in sorted(listed - rubric_ids):
+            where = indicators[extra]["guideline_item"] if extra in indicators else "not in the rubric"
+            problems.append(f"{item}: guideline lists {extra}, rubric says {where}")
+        assessed = {i for i in rubric_ids if indicators[i]["assessability"] != "deferred"}
+        for missing in sorted(assessed - checks):
+            problems.append(f"{item}: rubric check {missing} is not among the item's checks")
+        for extra in sorted(checks - assessed):
+            problems.append(f"{item}: guideline check {extra} is not an assessed rubric indicator of {item}")
+    rubric_out = by_item.get("out-of-scope", set())
+    for missing in sorted(rubric_out - set(out_of_scope)):
+        problems.append(f"out of scope: rubric indicator {missing} is not in the guideline's table")
+    for extra in sorted(set(out_of_scope) - rubric_out):
+        problems.append(f"out of scope: guideline lists {extra}, rubric does not mark it out of scope")
+    for identifier in sorted(rubric_out & set(out_of_scope)):
+        if out_of_scope[identifier]["Reason"].strip("`") != indicators[identifier]["reason"]:
+            problems.append(f"out of scope: {identifier} reason differs from the rubric")
+    for identifier, indicator in sorted(indicators.items()):
+        for convention, template in sorted((indicator.get("suggestions") or {}).items()):
+            if f"see guideline {indicator['guideline_item']}" not in template["text"]:
+                problems.append(f"{identifier}: the {convention} suggestion text does not name "
+                                f"guideline {indicator['guideline_item']}")
+    return problems
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--tool", default="PATH", metavar="LOCATION",
@@ -186,6 +392,12 @@ def main():
                              "or PATH (the default)")
     parser.add_argument("--assessment", type=Path, default=ASSESSMENT,
                         help="fixture directory (default: assessment/)")
+    parser.add_argument("--batch", action="store_true",
+                        help="also run batch mode over the fixtures, twice, and compare")
+    parser.add_argument("--review-packet", type=Path, metavar="DIR",
+                        help="write the SC-001 review packet (e.g. assessment/review) and stop")
+    parser.add_argument("--guideline", action="store_true",
+                        help="also compare the tool's rubric.json with docs/FAIR_HEADER_GUIDELINE.md")
     args = parser.parse_args()
     try:
         from jsonschema import Draft202012Validator, FormatChecker
@@ -198,9 +410,24 @@ def main():
         print(f"error: {error}", file=sys.stderr)
         return 2
     manifest = json.loads((args.assessment / "manifest.json").read_text(encoding="utf-8"))
+    if args.review_packet:
+        return write_review_packet(tool, manifest, args.assessment, args.review_packet)
     failures = check(tool, manifest, args.assessment, validator)
     total = len(manifest["fixtures"])
     print(f"{total - failures} of {total} fixtures match")
+    if args.batch:
+        failures += check_batch(tool, manifest, args.assessment, validator)
+    if args.guideline:
+        rubric = tool.data("rubric.json")
+        if rubric["rubric_version"] != manifest["rubric_version"]:
+            print(f"note: the tool's rubric is {rubric['rubric_version']}, "
+                  f"the manifest was written for {manifest['rubric_version']}")
+        problems = check_guideline(rubric, GUIDELINE.read_text(encoding="utf-8"))
+        for problem in problems:
+            print(f"FAIL guideline: {problem}")
+        if not problems:
+            print(f"ok: guideline items agree with rubric {rubric['rubric_version']}")
+        failures += bool(problems)
     return 1 if failures else 0
 
 

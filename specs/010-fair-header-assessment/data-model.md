@@ -308,6 +308,7 @@ It has no score field, and `additionalProperties: false` at the top level enforc
 - `files[] {path, format, scope, statuses: {indicator: status}, pair_classification}`;
 - `indicator_counts {indicator: {status: n}}`;
 - `errors[] {path, message}`.
+- `attribution` and `online_checks`, as in a report (added in implementation, contracts/cli.md).
 
 It has no per-file totals. Its order is sorted by `path`.
 
