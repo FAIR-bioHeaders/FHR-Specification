@@ -9,8 +9,12 @@ bundled report schema (needs jsonschema), and compares only the fields listed
 under ``expected``. Prints ``ok: <id>`` or the differences, and exits 1 if any
 fixture differs. Modelled on check_conformance.py.
 
-``--guideline`` also compares the tool's bundled rubric.json with the item table
-of docs/FAIR_HEADER_GUIDELINE.md, in both directions.
+``--batch`` also runs the batch mode once over the fixture directories
+(``bioheaders assess --recursive --pairs assessment/pairs.tsv --output TMP``),
+compares every per-file report with the manifest, and checks that a second run
+gives byte-identical output. ``--guideline`` also compares the tool's bundled
+rubric.json with the item table of docs/FAIR_HEADER_GUIDELINE.md, in both
+directions.
 """
 
 import argparse
@@ -21,6 +25,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSESSMENT = ROOT / "assessment"
@@ -75,6 +80,10 @@ class Tool:
     def schema(self):
         return self.data(REPORT_SCHEMA)
 
+    def run(self, arguments):
+        return subprocess.run(self.command + arguments, capture_output=True, text=True,
+                              timeout=300, env={**os.environ, "PYTHONSAFEPATH": "1"})
+
     def assess(self, entry, assessment):
         arguments = ["assess", "--format", "json"]
         if "type" in entry:
@@ -82,8 +91,7 @@ class Tool:
         if "related" in entry:
             arguments += ["--related", str(assessment / entry["related"])]
         arguments.append(str(assessment / entry["file"]))
-        return subprocess.run(self.command + arguments, capture_output=True, text=True,
-                              timeout=300, env={**os.environ, "PYTHONSAFEPATH": "1"})
+        return self.run(arguments)
 
 
 def _status(result):
@@ -189,6 +197,82 @@ def check(tool, manifest, assessment, validator):
     return failures
 
 
+FIXTURE_DIRECTORIES = ("headers", "pairs", "edge")
+
+
+def _tree(directory):
+    return {path.relative_to(directory).as_posix(): path.read_bytes()
+            for path in sorted(directory.rglob("*")) if path.is_file()}
+
+
+def read_pairs(path):
+    pairs = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line and not line.startswith("#"):
+            derived, related = line.split("\t")
+            pairs[derived] = related
+    return pairs
+
+
+def check_batch(tool, manifest, assessment, validator):
+    """Run batch mode twice over the fixtures; compare with the manifest and each other."""
+    failures = 0
+    pairs = read_pairs(assessment / "pairs.tsv")
+    for entry in manifest["fixtures"]:
+        if pairs.get(entry["file"]) != entry.get("related"):
+            print(f"FAIL batch {entry['id']}: pairs.tsv gives {pairs.get(entry['file'])}, "
+                  f"the manifest {entry.get('related')}")
+            failures += 1
+        if "type" in entry:
+            print(f"note: batch {entry['id']}: --type {entry['type']} is not used in batch mode")
+    arguments = ["assess", "--recursive", "--pairs", str(assessment / "pairs.tsv")]
+    for name in FIXTURE_DIRECTORIES:
+        arguments += ["--include", f"{name}/*"]
+    with tempfile.TemporaryDirectory() as directory:
+        trees = []
+        for run in ("first", "second"):
+            output = Path(directory) / run
+            result = tool.run(arguments + ["--output", str(output), str(assessment)])
+            if result.returncode not in (0, 3):
+                detail = (result.stderr or result.stdout).strip().splitlines()
+                print(f"FAIL batch: exit {result.returncode}{': ' + detail[-1] if detail else ''}")
+                return failures + 1
+            trees.append(_tree(output))
+        if trees[0] != trees[1]:
+            changed = sorted(name for name in set(trees[0]) | set(trees[1])
+                             if trees[0].get(name) != trees[1].get(name))
+            print(f"FAIL batch: a second run differs in {', '.join(changed[:5])}")
+            failures += 1
+        else:
+            print(f"ok: batch re-run is byte-identical ({len(trees[0])} files)")
+        for name in ("summary.json", "summary.md", "summary.tsv"):
+            if name not in trees[0]:
+                print(f"FAIL batch: no {name}")
+                failures += 1
+        for entry in manifest["fixtures"]:
+            name = f"{entry['file']}.assessment.json"
+            if name not in trees[0]:
+                print(f"FAIL batch {entry['id']}: no report {name}")
+                failures += 1
+                continue
+            if "type" in entry:
+                continue
+            report = json.loads(trees[0][name])
+            problems = [f"report does not conform at {error.json_path}: {error.message}"
+                        for error in validator.iter_errors(report)][:5]
+            problems += compare(entry["expected"], report)
+            if report["input"]["path"] != entry["file"]:
+                problems.append(f"input.path: expected {entry['file']}, got {report['input']['path']}")
+            if problems:
+                failures += 1
+                print(f"FAIL batch {entry['id']}:")
+                for problem in problems:
+                    print(f"  {problem}")
+        if not failures:
+            print(f"ok: batch reports match all {len(manifest['fixtures'])} fixtures")
+    return failures
+
+
 def guideline_tables(text):
     """The summary rows {item: row} and out-of-scope rows {indicator: row} of the guideline."""
     summary, out_of_scope = {}, {}
@@ -263,6 +347,8 @@ def main():
                              "or PATH (the default)")
     parser.add_argument("--assessment", type=Path, default=ASSESSMENT,
                         help="fixture directory (default: assessment/)")
+    parser.add_argument("--batch", action="store_true",
+                        help="also run batch mode over the fixtures, twice, and compare")
     parser.add_argument("--guideline", action="store_true",
                         help="also compare the tool's rubric.json with docs/FAIR_HEADER_GUIDELINE.md")
     args = parser.parse_args()
@@ -280,6 +366,8 @@ def main():
     failures = check(tool, manifest, args.assessment, validator)
     total = len(manifest["fixtures"])
     print(f"{total - failures} of {total} fixtures match")
+    if args.batch:
+        failures += check_batch(tool, manifest, args.assessment, validator)
     if args.guideline:
         rubric = tool.data("rubric.json")
         if rubric["rubric_version"] != manifest["rubric_version"]:

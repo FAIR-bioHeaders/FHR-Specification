@@ -69,7 +69,7 @@ directory, the command runs in **batch mode** (US4).
 |---|---|
 | `0` | Every input was assessed or reported as out of scope. Statuses of any kind, including all `not_evidenced`, are not failures (US1 scenario 2) |
 | `1` | At least one input could not be read: a missing path, permission denied, corrupt gzip, or an unreadable `--related` file. Reports for the other inputs are still written. This code also covers an output write failure |
-| `2` | Usage error (argparse): an unknown option, `--related` together with `--pairs`, a duplicate derived path in `--pairs`, `-` without `--type`, batch mode without `--output`, or `--online-timeout` without `--online` |
+| `2` | Usage error (argparse): an unknown option, `--related` together with `--pairs`, a duplicate derived path in `--pairs`, `-` without `--type`, batch mode without `--output`, `--online-timeout` without `--online`, a directory without `--recursive`, `--pairs` without exactly one directory `PATH`, or two inputs with the same report path |
 | `3` | Only with `--fail-on-mismatch`: at least one recorded link verdict is `mismatch`. This takes precedence over 0, but not over 1 |
 
 ## Behavioural guarantees
@@ -116,3 +116,38 @@ summary: dict = assess_release(paths, output_dir, pairs=None, jobs=None, online=
 Both return plain dicts that conform to the JSON Schemas. The API is new and versioned with the
 package. It is documented as provisional until 1.0 of the report format is confirmed by provider
 feedback (SC-005).
+
+## Implementation notes (toolkit, 2026-10-10)
+
+Decisions taken while implementing batch mode and the online checks (tasks T048-T054). They
+refine this contract; none changes an option, an output file or an exit code above.
+
+- **Paths in batch reports.** Per-file reports in batch mode give `input.path` and
+  `verification.related_path` relative to the directory (or the file name, for a file given
+  as `PATH`), so reports do not depend on where the release is stored. `summary.json` `root`
+  is the directory as given, or null for several `PATH`s.
+- **`summary.json`** has the ReleaseSummary fields of data-model §14 plus `attribution` and
+  `online_checks`, like a report. Keys are sorted; there is no per-file total.
+- **Output inside the input tree.** The `--output` directory is never walked, so a re-run
+  into a directory inside the release gives the same result.
+- **Pairs.** `--pairs` needs exactly one directory `PATH`; its paths are relative to it. A
+  related file is scanned once per run and its scan is handed to the worker processes.
+- **`--online` in batch mode** assesses the files in one process (related-file scans stay
+  parallel), so that requests are made one at a time and de-duplicated across the run.
+- **Online requests.** Only the HTTP and HTTPS handlers of `urllib` are installed: proxies
+  from the environment, cookies, credentials, FTP, `file:` and `data:` URLs are not used. A
+  URL with credentials, spaces or control characters, or a scheme other than http(s), is
+  `refused` without a request. Every address a host resolves to must be public; the
+  connection is made to the vetted address. GET with `Range: bytes=0-0` follows only when
+  HEAD returns an HTTP error (status 400 or more). Redirects keep the method and headers and
+  are re-checked; a sixth redirect gives `unavailable`.
+- **Online outcomes.** 2xx is `resolved`; 404 and 410 are `not_found`; other HTTP errors,
+  timeouts and network errors are `unavailable`. An access indicator is `evidenced` if one of
+  its header values resolved, `not_evidenced` if the header has no value for it or every
+  value was `not_found`, and otherwise `not_assessed` (`online-check-unavailable`), which
+  also covers `refused` and values that are not a DOI, CURIE or URL. RDA-F1-01D, RDA-I2-01M
+  and RDA-R1.1-03M get a note per checked value and keep their offline status.
+- **Values resolved.** Header values of the concepts `data-identifier`, `access-url`,
+  `taxon`, `creator` and `licence`, from file-level header lines only. The FAIR-bioHeaders
+  `schema` value is never requested, even if it also appears under another key.
+
