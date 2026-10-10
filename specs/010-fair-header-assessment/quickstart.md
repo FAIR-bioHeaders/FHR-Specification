@@ -8,10 +8,12 @@ feature. The example files are real files from the Phase 0 survey
 ([research/survey.md](research/survey.md)), and their header lines are in
 [research/headers/](research/headers/).
 
-> **Status**: This is a design-phase guide. The command does not exist until the tasks in
-> [tasks.md](tasks.md) are implemented. The outputs shown are the *expected* outputs, derived
-> from the rubric decisions in [research.md](research.md). The implementation's fixture tests
-> (`assessment/manifest.json`) pin them.
+> **Status**: `bioheaders assess` is implemented in FAIR-bioHeaders-Tools (feature 010; not
+> yet in a release). The outputs below were checked against the implementation on 2026-10-10
+> by running each scenario on the shared fixture captures in `assessment/` (the downloads are
+> not needed for that), and are abridged. Suggestion texts end with the guideline item, for
+> example "(see guideline G7)". The fixture tests (`assessment/manifest.json`) pin the
+> statuses.
 
 ## Prerequisites
 
@@ -56,7 +58,8 @@ Interoperable
   RDA-I2-01M   partially evidenced  line 8: ##species https://www.ncbi.nlm.nih.gov/Taxonomy/...?id=6239
                suggestion: use a persistent taxonomy IRI (value from line 8)
                  ##species https://identifiers.org/taxonomy:6239
-  RDA-I3-04M   evidenced            line 5: #!genome-build-accession NCBI_Assembly:GCF_000002985.6
+  RDA-I3-04M   evidenced            line 4: #!genome-build WBcel235
+                                    line 5: #!genome-build-accession NCBI_Assembly:GCF_000002985.6
 Reusable
   RDA-R1.1-01M not evidenced        no licence statement in the header
                suggestion: state the licence of this file
@@ -73,6 +76,7 @@ Accessible
   ...
 Recorded links
   accession  NCBI_Assembly:GCF_000002985.6  (line 5, annotates)  not verified: no related file given
+  name  WBcel235  (line 4, annotates)  not verified: no related file given
 ```
 
 The output is a checklist with evidence, and there is no score (FR-004). Every status names the
@@ -110,13 +114,19 @@ bioheaders assess --related c_elegans.PRJNA13758.WS298.genomic.fa.gz \
 Expected (abridged):
 
 ```text
+Interoperable
+  RDA-I3-04M    not evidenced          Metadata include qualified references to other data
+      suggestion: Record the accession of the assembly this annotation describes, ...
+        #!genome-build-accession NCBI_Assembly:<versioned assembly accession, e.g. GCF_000002985.6>
+
 Recorded links
-  none. The header does not say which genome this file annotates.
-  suggestion: #!genome-build-accession NCBI_Assembly:<versioned assembly accession, e.g. GCF_000002985.6>
+  none recorded in the header
 
 Circumstantial evidence (not a recorded link)
-  source: ##sequence-region (7 names)
-  names compared: 7   missing from genome: none   length differences: none
+  source: sequence-region  related file: c_elegans.PRJNA13758.WS298.genomic.fa.gz
+  names compared: 7  lengths compared: 7  not declared: 0
+  missing from the related file: none
+  length differences: none
   verdict: consistent
 
 Pair: consistent-unverified
@@ -213,10 +223,16 @@ change in a header.
 bioheaders assess --online GCF_000002985.6_WBcel235_genomic.gff.gz
 ```
 
-The tool resolves only the identifiers and URLs found in the header, through `doi.org` or
-`identifiers.org` and over https. It never sends file contents. The report says
-`Online checks: ran` and lists each request with its HTTP status and time. Only the four access
-indicators can change status: they move from `not assessed` to a status.
+The tool resolves only the identifiers and URLs found in the header: DOIs through `doi.org`,
+CURIEs through `identifiers.org`, and http(s) URLs as given. It never sends file contents, never
+requests the schema URL of a FAIR-bioHeaders header, and refuses other schemes and hosts that
+resolve to private or loopback addresses. The report says `Online checks: ran` and lists each
+request with its outcome, HTTP status and time. Only the four access indicators can change
+status: they move from `not assessed` to a status (`not assessed` with
+`online-check-unavailable` when the check could not be made). Other indicators get a note.
+`--online-timeout SECONDS` sets the per-request timeout (default 10). This RefSeq header has no
+identifier or URL of the file itself, so the four indicators become `not evidenced`; the
+taxonomy URL on line 8 is requested and its outcome is a note under RDA-I2-01M.
 
 ## Validation scenarios (end-to-end)
 
@@ -228,7 +244,7 @@ indicators can change status: they move from `not assessed` to a status.
 | V4 | FHR genome | `bioheaders assess conformance/valid/fasta-lf.fhr.fasta` | a conformance section `valid` against `fhr.json` (raw-main URL and bundled SHA-256 recorded), separate from the checklist | US1-3, FR-008 |
 | V5 | Pairs | §3 plus `assessment/pairs/*` | the expected pair classification for correct, version-mismatch, partial and name-mismatch pairs | US2, SC-003 |
 | V6 | Guideline coverage | `python -m unittest tests.test_assessment_guideline -v` (FHR-Specification) | every item has ≥ 2 conventions and check ids; the 41 indicators are covered or out of scope | US3, FR-007 |
-| V7 | Release | §4 with a 200-file synthetic release: `python scripts/bench_assess.py --files 200` (toolkit) | done in < 600 s; a second run is byte-identical | US4, SC-004, FR-009 |
+| V7 | Release | §4 with a 200-file synthetic release: `python scripts/bench_assess.py --files 200` (toolkit) | done in < 600 s; a second run is byte-identical (2026-10-10: 19.7 s on an i7-1165G7 laptop, Python 3.13) | US4, SC-004, FR-009 |
 | V8 | Offline guarantee | toolkit test suite with sockets disabled | passes; `online_checks: not_requested` | FR-010, FR-011 |
-| V9 | Reviewer agreement | the reviewer fills `assessment/review/sc001-<date>.tsv` for the 17-file corpus | ≥ 90% agree | SC-001, SC-002 |
+| V9 | Reviewer agreement | the reviewer copies `assessment/review/sc001-template.tsv` to `sc001-<date>.tsv` and fills it (see `assessment/review/README.md`) | ≥ 90% agree | SC-001, SC-002 |
 | V10 | Provider trial | a maintainer asks the Alliance to run §4 on a release | the provider reports the results useful | SC-005 (maintainer action) |
