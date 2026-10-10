@@ -1,0 +1,4 @@
+# SOURCE-URL: https://s3ftp.flybase.org/genomes/Drosophila_melanogaster/current/fasta/dmel-all-chromosome-r6.69.fasta.gz
+# FETCHED: 2026-10-10T12:34Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+>2L type=golden_path; loc=2L:1..23513712; ID=2L; dbxref=GB:AE014134,GB:AE014134,REFSEQ:NT_033779; MD5=b6a98b7c676bdaa11ec9521ed15aff2b; length=23513712; release=r6.69; species=Dmel;

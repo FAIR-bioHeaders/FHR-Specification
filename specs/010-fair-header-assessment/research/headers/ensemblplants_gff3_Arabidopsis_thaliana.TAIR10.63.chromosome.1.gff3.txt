@@ -1,0 +1,10 @@
+# SOURCE-URL: https://ftp.ensemblgenomes.ebi.ac.uk/pub/plants/current/gff3/arabidopsis_thaliana/Arabidopsis_thaliana.TAIR10.63.chromosome.1.gff3.gz
+# FETCHED: 2026-10-10T12:31Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+##gff-version 3
+##sequence-region   1 1 30427671
+#!genome-build The Arabidopsis Information Resource TAIR10
+#!genome-version TAIR10
+#!genome-date 2008-04
+#!genome-build-accession GCA_000001735.1
+#!genebuild-last-updated 2010-09

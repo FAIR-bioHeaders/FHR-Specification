@@ -1,0 +1,4 @@
+# SOURCE-URL: https://download.alliancegenome.org/9.1.0/FASTA/GRCz12tu/FASTA_GRCz12tu_0.fa.gz
+# FETCHED: 2026-10-10T12:35Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+>NC_133176.1 Danio rerio strain Tuebingen ecotype United States chromosome 1, GRCz12tu, whole genome shotgun sequence

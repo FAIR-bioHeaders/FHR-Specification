@@ -1,0 +1,11 @@
+# SOURCE-URL: https://ftp.ebi.ac.uk/pub/databases/wormbase/releases/WS298/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.WS298.annotations.gff3.gz
+# FETCHED: 2026-10-10T12:34Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+##gff-version 3
+##sequence-region I 1 15072434
+##sequence-region II 1 15279421
+##sequence-region III 1 13783801
+##sequence-region IV 1 17493829
+##sequence-region V 1 20924180
+##sequence-region X 1 17718942
+##sequence-region MtDNA 1 13794
