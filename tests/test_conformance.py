@@ -155,7 +155,39 @@ class ConformanceTests(unittest.TestCase):
         self.assertEqual(skipped.returncode, 1)
         self.assertNotIn("jsonld-", skipped.stderr)
         self.assertIn("microdata-type-mismatch", skipped.stderr)
-        self.assertIn("(12 jsonld vectors skipped by the converter)", skipped.stdout)
+        self.assertIn("(12 vectors left out: jsonld skipped)", skipped.stdout)
+
+    def test_converter_without_a_format_is_skipped_unless_required(self):
+        # An older converter: correct on every format except JSON-LD, which it
+        # rejects as an unsupported file extension (as fhr 0.3.3 does).
+        bin_directory = self.root / "bin"
+        bin_directory.mkdir()
+        manifest = json.dumps({v["file"]: v for v in self.manifest["vectors"]})
+        body = (
+            f"#!{sys.executable}\nimport json, sys\n"
+            f"vectors = {{v.rsplit('/', 1)[-1]: m for v, m in json.loads({manifest!r}).items()}}\n"
+            "vector = vectors[sys.argv[1].rsplit('/', 1)[-1]]\n"
+            "if vector['format'] == 'jsonld':\n"
+            "    print('FHR: Unsupported file extension: ' + sys.argv[1], file=sys.stderr)\n"
+            "    raise SystemExit(1)\n"
+            "if vector['expected'] != 'valid':\n"
+            "    raise SystemExit(1)\n"
+            "if len(sys.argv) > 2:\n"
+            "    json.dump(vector['metadata'], open(sys.argv[2], 'w'))\n"
+        )
+        for name in ("fhr-fasta-validate", "fhr-gfa-validate", "fhr-convert"):
+            script = bin_directory / name
+            script.write_text(body)
+            script.chmod(0o755)
+        lenient = self.check("--skip-regeneration", "--converter", bin_directory)
+        self.assertEqual(lenient.returncode, 0, lenient.stderr)
+        self.assertIn("(12 vectors left out: jsonld not supported by this converter)",
+                      lenient.stdout)
+        strict = self.check("--skip-regeneration", "--require-format", "jsonld",
+                            "--converter", bin_directory)
+        self.assertEqual(strict.returncode, 1)
+        self.assertIn("jsonld-canonical-embedded: converter rejected (FHR: Unsupported file "
+                      "extension", strict.stderr)
 
     def test_jsonld_vectors(self):
         vectors = {v["id"]: v for v in self.manifest["vectors"] if v["format"] == "jsonld"}
