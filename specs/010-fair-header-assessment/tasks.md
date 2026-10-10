@@ -222,7 +222,7 @@ accession-only, no-link and VCF-MD5 pairs (SC-003, quickstart V5).
 
 ### Tests for User Story 2 (write first, must fail) ⚠️
 
-- [ ] T036 [P] [US2] Extend `FHR-Specification/scripts/make_assessment_fixtures.py` to generate `FHR-Specification/assessment/pairs/`. The sequences are synthetic, and the names and lengths are scaled-down WBcel235-style. Write `FHR-Specification/assessment/pairs.tsv`, and add the manifest entries with `related` and the expected `links[].verification.verdict`, `circumstantial` and `pair_classification`:
+- [X] T036 [P] [US2] Extend `FHR-Specification/scripts/make_assessment_fixtures.py` to generate `FHR-Specification/assessment/pairs/`. The sequences are synthetic, and the names and lengths are scaled-down WBcel235-style. Write `FHR-Specification/assessment/pairs.tsv`, and add the manifest entries with `related` and the expected `links[].verification.verdict`, `circumstantial` and `pair_classification`:
   - an FHR genome with an annotation whose `derivedFrom.checksum` is correct, expecting `recorded-match`;
   - the same annotation against a genome with one base changed (a different version), expecting `recorded-mismatch`;
   - an accession-only annotation against a FASTA with no header, expecting `unverifiable`/`related-file-states-no-identity` and `consistent-unverified`;
@@ -231,7 +231,7 @@ accession-only, no-link and VCF-MD5 pairs (SC-003, quickstart V5).
   - an annotation with one name missing and one length differing, expecting `partial`;
   - a VCF `##contig md5=` set with one wrong MD5, expecting `recorded-mismatch` with the differing names listed;
   - a malformed checksum, expecting `unverifiable`/`malformed`
-- [ ] T037 [P] [US2] Write `FAIR-bioHeaders-Tools/tests/assess_links_test.py`. It covers:
+- [X] T037 [P] [US2] Write `FAIR-bioHeaders-Tools/tests/assess_links_test.py`. It covers:
   - every verification method in research R-07: `computed-fhr-checksum`, `stated-fhr-checksum`, `stated-seqcol`, `computed-md5` (upper-cased, no whitespace) and `stated-identity`;
   - "`match` requires that the related file *states* or *computes to* the recorded value";
   - a file-name match gives only a `hints[]` entry and never `match`;
@@ -243,11 +243,11 @@ accession-only, no-link and VCF-MD5 pairs (SC-003, quickstart V5).
 
 ### Implementation for User Story 2
 
-- [ ] T038 [US2] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/related.py`. It streams the related FASTA, FHR FASTA or GFA once through `open_input` and `read_chunks`, and collects the sequence names, lengths and per-sequence MD5. It computes the FHR checksum with the existing `bioheaders.cli.checksum`, and collects the stated FHR `checksum`, `seqcol_id` and `accessionID`. It uses constant memory apart from the name table, and caches by `(path, size)` per process
-- [ ] T039 [US2] Add verification to `FAIR-bioHeaders-Tools/bioheaders/assess/links.py`. It gives `LinkVerification` objects with `verdict`, `reason` (required iff `unverifiable`: `malformed`, `related-file-states-no-identity`, `related-file-states-no-seqcol`, `related-file-unreadable` or `sequence-absent`), `expected`, `actual`, `method` and `hints` (depends on T038)
-- [ ] T040 [US2] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/circumstantial.py`. It compares `##sequence-region`, VCF `##contig`, or else the sampled seqids, with the related names and lengths. It fills `missing_from_related` (complete and sorted), `length_mismatches`, `lengths_compared`, `not_declared_count` and `verdict`, and sets the label "circumstantial evidence, not a recorded link". It also computes `pair_classification` with the precedence `recorded-mismatch` > `recorded-match` > `inconsistent` > `partial` > `consistent-unverified` > `unknown` (makes T037 pass)
-- [ ] T041 [US2] Add the `--related FILE` and `--fail-on-mismatch` options (exit 3, which takes precedence over 0 but not over 1) to the `assess` subcommand in `FAIR-bioHeaders-Tools/bioheaders/cli.py`. Add the "Recorded links" verdicts and the "Circumstantial evidence (not a recorded link)" section to `FAIR-bioHeaders-Tools/bioheaders/assess/render.py`. Extend `FAIR-bioHeaders-Tools/tests/assess_cli_test.py` with exit-code-3 cases
-- [ ] T042 [US2] Extend `FHR-Specification/scripts/check_assessment.py` to pass `--related` for manifest entries that have `related` and to compare the `links`, `circumstantial` and `pair_classification` expectations. Run it over `assessment/pairs/` and fix the tool until every pair passes (SC-003)
+- [X] T038 [US2] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/related.py`. It streams the related FASTA, FHR FASTA or GFA once through `open_input` and `read_chunks`, and collects the sequence names, lengths and per-sequence MD5. It computes the FHR checksum with the existing `bioheaders.cli.checksum`, and collects the stated FHR `checksum`, `seqcol_id` and `accessionID`. It uses constant memory apart from the name table, and caches by `(path, size)` per process
+- [X] T039 [US2] Add verification to `FAIR-bioHeaders-Tools/bioheaders/assess/links.py`. It gives `LinkVerification` objects with `verdict`, `reason` (required iff `unverifiable`: `malformed`, `related-file-states-no-identity`, `related-file-states-no-seqcol`, `related-file-unreadable` or `sequence-absent`), `expected`, `actual`, `method` and `hints` (depends on T038)
+- [X] T040 [US2] Implement `FAIR-bioHeaders-Tools/bioheaders/assess/circumstantial.py`. It compares `##sequence-region`, VCF `##contig`, or else the sampled seqids, with the related names and lengths. It fills `missing_from_related` (complete and sorted), `length_mismatches`, `lengths_compared`, `not_declared_count` and `verdict`, and sets the label "circumstantial evidence, not a recorded link". It also computes `pair_classification` with the precedence `recorded-mismatch` > `recorded-match` > `inconsistent` > `partial` > `consistent-unverified` > `unknown` (makes T037 pass)
+- [X] T041 [US2] Add the `--related FILE` and `--fail-on-mismatch` options (exit 3, which takes precedence over 0 but not over 1) to the `assess` subcommand in `FAIR-bioHeaders-Tools/bioheaders/cli.py`. Add the "Recorded links" verdicts and the "Circumstantial evidence (not a recorded link)" section to `FAIR-bioHeaders-Tools/bioheaders/assess/render.py`. Extend `FAIR-bioHeaders-Tools/tests/assess_cli_test.py` with exit-code-3 cases
+- [X] T042 [US2] Extend `FHR-Specification/scripts/check_assessment.py` to pass `--related` for manifest entries that have `related` and to compare the `links`, `circumstantial` and `pair_classification` expectations. Run it over `assessment/pairs/` and fix the tool until every pair passes (SC-003)
 
 **Checkpoint**: User Stories 1 and 2 both work on their own. **This is the MVP.** Providers can
 assess files and check annotation-genome pairs.

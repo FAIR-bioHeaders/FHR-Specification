@@ -898,6 +898,197 @@
           "reason": "unsupported-header-type"
         }
       }
+    },
+    {
+      "id": "pair-recorded-match",
+      "file": "pairs/annotation-correct.gff3",
+      "related": "pairs/genome-fhr.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "checksum",
+            "verdict": "match"
+          }
+        ],
+        "circumstantial": {
+          "verdict": "consistent",
+          "source": "sequence-region",
+          "missing_from_related": []
+        },
+        "pair_classification": "recorded-match",
+        "statuses": {
+          "RDA-I3-04M": "evidenced"
+        }
+      }
+    },
+    {
+      "id": "pair-version-mismatch",
+      "file": "pairs/annotation-version-mismatch.gff3",
+      "related": "pairs/genome-fhr-v2.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "checksum",
+            "verdict": "mismatch"
+          }
+        ],
+        "circumstantial": {
+          "verdict": "consistent"
+        },
+        "pair_classification": "recorded-mismatch"
+      }
+    },
+    {
+      "id": "pair-accession-only",
+      "file": "pairs/annotation-accession-only.gff3",
+      "related": "pairs/genome-plain.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "accession",
+            "value": "NCBI_Assembly:GCF_000002985.6",
+            "verdict": "unverifiable",
+            "reason": "related-file-states-no-identity"
+          }
+        ],
+        "circumstantial": {
+          "verdict": "consistent",
+          "lengths_compared": 7
+        },
+        "pair_classification": "consistent-unverified"
+      }
+    },
+    {
+      "id": "pair-no-link",
+      "file": "pairs/annotation-no-link.gff3",
+      "related": "pairs/genome-plain.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [],
+        "circumstantial": {
+          "verdict": "consistent",
+          "source": "sequence-region",
+          "missing_from_related": [],
+          "length_mismatches": []
+        },
+        "pair_classification": "consistent-unverified",
+        "statuses": {
+          "RDA-I3-04M": "not_evidenced"
+        }
+      }
+    },
+    {
+      "id": "pair-genbank-vs-refseq-names",
+      "file": "pairs/annotation-genbank-names.gff3",
+      "related": "pairs/genome-refseq-names.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "accession",
+            "verdict": "unverifiable",
+            "reason": "related-file-states-no-identity"
+          },
+          {
+            "kind": "name",
+            "value": "WBcel235",
+            "verdict": "unverifiable"
+          }
+        ],
+        "circumstantial": {
+          "verdict": "inconsistent",
+          "missing_from_related": [
+            "BX284601.5",
+            "BX284602.5",
+            "BX284603.4",
+            "BX284604.4",
+            "BX284605.5",
+            "BX284606.5",
+            "X54252.1"
+          ]
+        },
+        "pair_classification": "inconsistent"
+      }
+    },
+    {
+      "id": "pair-partial",
+      "file": "pairs/annotation-partial.gff3",
+      "related": "pairs/genome-plain.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [],
+        "circumstantial": {
+          "verdict": "partially_consistent",
+          "missing_from_related": [
+            "Y"
+          ],
+          "length_mismatches": [
+            {
+              "name": "II",
+              "declared": 154,
+              "actual": 153
+            }
+          ],
+          "lengths_compared": 6
+        },
+        "pair_classification": "partial"
+      }
+    },
+    {
+      "id": "pair-vcf-contig-md5",
+      "file": "pairs/variants-contig-md5.vcf",
+      "related": "pairs/genome-plain.fa",
+      "format": "vcf",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "sequence-digests",
+            "verdict": "mismatch"
+          }
+        ],
+        "circumstantial": {
+          "verdict": "consistent",
+          "source": "vcf-contig"
+        },
+        "pair_classification": "recorded-mismatch",
+        "statuses": {
+          "RDA-I3-04M": "evidenced"
+        }
+      }
+    },
+    {
+      "id": "pair-malformed-checksum",
+      "file": "pairs/annotation-malformed-checksum.gff3",
+      "related": "pairs/genome-fhr.fa",
+      "format": "gff3",
+      "generator": "scripts/make_assessment_fixtures.py",
+      "expected": {
+        "links": [
+          {
+            "kind": "checksum",
+            "well_formed": false,
+            "verdict": "unverifiable",
+            "reason": "malformed"
+          }
+        ],
+        "pair_classification": "consistent-unverified",
+        "findings": [
+          {
+            "kind": "malformed",
+            "line": 2
+          }
+        ]
+      }
     }
   ]
 }
