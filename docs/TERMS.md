@@ -8,7 +8,8 @@ uses where schema.org has no suitable term. The namespace is `https://w3id.org/f
 IRI never changes and is never reused with another meaning. A deprecated term is kept and marked
 deprecated.
 
-- Machine-readable form: [jsonld/terms.ttl](../jsonld/terms.ttl) (Turtle).
+- Machine-readable forms: [jsonld/terms.ttl](../jsonld/terms.ttl) (Turtle) and
+  [jsonld/terms.jsonld](../jsonld/terms.jsonld) (JSON-LD).
 - How records use the terms: [JSONLD.md](JSONLD.md) and the
   [mapping table](../mappings/fhr-jsonld-dcmi.yml).
 - Licence: MPL-2.0. To cite a term, give its IRI and the FHR-Specification release.

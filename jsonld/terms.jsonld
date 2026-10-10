@@ -1,0 +1,640 @@
+{
+  "@context": {
+    "fhr": "https://w3id.org/fair-bioheaders/terms#",
+    "sdo": "http://schema.org/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "dcterms": "http://purl.org/dc/terms/"
+  },
+  "@graph": [
+    {
+      "@id": "https://w3id.org/fair-bioheaders/terms",
+      "@type": "owl:Ontology",
+      "rdfs:label": {
+        "@value": "FAIR-bioHeaders vocabulary",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Terms for FAIR-bioHeaders metadata that have no schema.org equivalent. Generated from the FHR-Specification LinkML model; do not edit.",
+        "@language": "en"
+      },
+      "dcterms:license": {
+        "@id": "https://www.mozilla.org/en-US/MPL/2.0/"
+      },
+      "rdfs:seeAlso": {
+        "@id": "https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/TERMS.md"
+      }
+    },
+    {
+      "@id": "fhr:Agent",
+      "@type": "rdfs:Class",
+      "rdfs:label": {
+        "@value": "Agent",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "A person or organization that the FHR record does not classify; FHR records the kind of agent only through an ORCID or ROR identifier.",
+        "@language": "en"
+      },
+      "rdfs:subClassOf": [
+        {
+          "@id": "sdo:Thing"
+        }
+      ],
+      "skos:closeMatch": [
+        {
+          "@id": "dcterms:Agent"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:VitalStats",
+      "@type": "rdfs:Class",
+      "rdfs:label": {
+        "@value": "VitalStats",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "General statistics about the genome assembly",
+        "@language": "en"
+      },
+      "rdfs:subClassOf": [
+        {
+          "@id": "sdo:StructuredValue"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:accessionID",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "accessionID",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Genome assembly accession",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:PropertyValue"
+        }
+      ],
+      "rdfs:subPropertyOf": [
+        {
+          "@id": "sdo:identifier"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:assemblyProtocol",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "assemblyProtocol",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Assembly protocol or workflow reference URI.",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:URL"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:assemblySoftware",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "assemblySoftware",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Assembly software provenance or a legacy name.",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Text"
+        },
+        {
+          "@id": "sdo:SoftwareApplication"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:checksum",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "checksum",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "sha2-512/256 checksum value for hashing",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Text"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:commandLineOption",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "commandLineOption",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Command-line options given to the assembly software, in order",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:SoftwareApplication"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Text"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:gcContent",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "gcContent",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "GC content as a percentage (0 to 100), not a fraction.",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Number"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:instrument",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "instrument",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Physical tools and instruments used in the creation of the genome assembly",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Text"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:L50",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "L50",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "L50 of the genome assembly",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:L90",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "L90",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "L90 of the genome assembly",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:masking",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "masking",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Masking applied to the genome assembly",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Text"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:metadataAuthor",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "metadataAuthor",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Authors of the FHR instance",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Person"
+        },
+        {
+          "@id": "sdo:Organization"
+        },
+        {
+          "@id": "fhr:Agent"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:N50",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "N50",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "N50 of the genome assembly",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:N90",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "N90",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Contig length in base pairs at 90 percent of the assembly length.",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:numberContigs",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "numberContigs",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Number of contigs of the genome assembly",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:numberScaffolds",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "numberScaffolds",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Number of scaffolds of the genome assembly",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:readTechnology",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "readTechnology",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Read technology of the genome assembly",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Text"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:relatedLink",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "relatedLink",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Related URLs to the genome",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:URL"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:schemaVersion",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "schemaVersion",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Version of FHR",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Number"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:seqcol_id",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "seqcol_id",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Unprefixed refget sequence collection top-level digest (sha512t24u).",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Text"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:totalBasePairs",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "totalBasePairs",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Total base pairs of the genome assembly",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:vitalStats",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "vitalStats",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "General statistics about the genome assembly",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:voucherSpecimen",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "voucherSpecimen",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Description of the physical sample",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "sdo:Dataset"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Text"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    }
+  ]
+}
