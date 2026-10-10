@@ -1,0 +1,4 @@
+# SOURCE-URL: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/002/985/GCA_000002985.3_WBcel235/GCA_000002985.3_WBcel235_genomic.fna.gz
+# FETCHED: 2026-10-10T12:32Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+>BX284601.5 Caenorhabditis elegans chromosome I

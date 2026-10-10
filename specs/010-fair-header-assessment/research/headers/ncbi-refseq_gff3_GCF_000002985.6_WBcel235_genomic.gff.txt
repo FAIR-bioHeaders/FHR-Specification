@@ -1,0 +1,11 @@
+# SOURCE-URL: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/002/985/GCF_000002985.6_WBcel235/GCF_000002985.6_WBcel235_genomic.gff.gz
+# FETCHED: 2026-10-10T12:31Z (streamed, stopped early; only header lines kept)
+# ----- captured header lines -----
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build WBcel235
+#!genome-build-accession NCBI_Assembly:GCF_000002985.6
+#!annotation-source WormBase WS298
+##sequence-region NC_003279.8 1 15072434
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239

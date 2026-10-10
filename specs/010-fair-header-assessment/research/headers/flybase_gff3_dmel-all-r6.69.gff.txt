@@ -1,0 +1,14 @@
+# SOURCE-URL: https://s3ftp.flybase.org/genomes/Drosophila_melanogaster/current/gff/dmel-all-r6.69.gff.gz
+# FETCHED: 2026-10-10T12:34Z (streamed, stopped early; only header lines kept)
+# NOTE: file is a gzipped TAR archive (member dmel-all-r6.69.gff), not a plain gzipped GFF; extracted with tar -xzO
+# ----- captured header lines -----
+##gff-version 3
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227
+##feature-ontology ftp://ftp.flybase.org/releases/FB2026_03/precomputed_files/ontologies/so.obo.gz
+##genome-build FlyBase r6.69
+##sequence-region 211000022278620 1 1638
+##sequence-region 211000022278199 1 1053
+##sequence-region 211000022280065 1 1088
+##sequence-region 211000022279106 1 1317
+##sequence-region 211000022279667 1 4223
+# [ELIDED: 1865 further ##sequence-region lines; 1870 in total]
