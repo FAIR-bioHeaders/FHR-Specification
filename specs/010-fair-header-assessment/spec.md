@@ -18,6 +18,7 @@ are FAIR."
 
 - Q: Should the assessment contact external services? → A: Offline by default; an explicit opt-in may check that identifiers and URLs resolve (FR-011).
 - Q: What should the criteria be based on? → A: The RDA FAIR Data Maturity Model indicators, with file-header interpretations (FR-012).
+- Q: How is a check that was not run reported? → A: A fifth status, "not assessed", with a reason, so "not applicable" only means the indicator cannot apply to a file header (FR-002; raised in Phase 0 research).
 
 ## Context
 
@@ -134,8 +135,10 @@ reports; re-running on an unchanged release gives identical results.
 - **FR-001**: The assessment MUST accept files in any text format and recognise at
   least the FAIR-bioHeaders header and the native header conventions of FASTA, GFF3,
   GAF and VCF.
-- **FR-002**: For each assessed principle the report MUST state one of: evidenced,
-  partially evidenced, not evidenced, or not applicable, and cite the header lines used
+- **FR-002**: For each indicator the report MUST state one of: evidenced, partially
+  evidenced, not evidenced, not applicable (the indicator cannot apply to a file
+  header, with a reason), or not assessed (the check was not run, for example an
+  online check that was not requested, with a reason), and cite the header lines used
   as evidence.
 - **FR-003**: Every gap MUST come with a concrete suggestion, expressed in the file's
   own convention where one exists and as a FAIR-bioHeaders field otherwise.
