@@ -349,16 +349,16 @@ success-criteria checks.
 
 ### Documentation and packaging
 
-- [ ] T055 [P] Document `bioheaders assess` in `FAIR-bioHeaders-Tools/README.md`: usage taken from [quickstart.md](quickstart.md), the "checklist, not a score" note, offline by default, and the RDA attribution. Add an entry to `FAIR-bioHeaders-Tools/CHANGELOG.md`, and add `bioheaders/assess/` and the data files to the repository map in `FAIR-bioHeaders-Tools/AGENTS.md`
-- [ ] T056 [P] Complete `FHR-Specification/assessment/README.md`. Describe the manifest fields, how other implementations (the 009 GFF3 validator and the website) use the fixtures, `make_assessment_fixtures.py`, `check_assessment.py --tool`, and the provider-trial guide for SC-005. The guide is for maintainers to send; this task does not contact anyone
-- [ ] T057 Build the wheel with `poetry build` in `FAIR-bioHeaders-Tools/`, install it into a fresh virtual environment outside the checkout, and run `bioheaders assess` on one fixture of each format to confirm that the `bioheaders/assess/data/**` files are packaged. Also run `python -m build compat/fhr`
+- [X] T055 [P] Document `bioheaders assess` in `FAIR-bioHeaders-Tools/README.md`: usage taken from [quickstart.md](quickstart.md), the "checklist, not a score" note, offline by default, and the RDA attribution. Add an entry to `FAIR-bioHeaders-Tools/CHANGELOG.md`, and add `bioheaders/assess/` and the data files to the repository map in `FAIR-bioHeaders-Tools/AGENTS.md`
+- [X] T056 [P] Complete `FHR-Specification/assessment/README.md`. Describe the manifest fields, how other implementations (the 009 GFF3 validator and the website) use the fixtures, `make_assessment_fixtures.py`, `check_assessment.py --tool`, and the provider-trial guide for SC-005. The guide is for maintainers to send; this task does not contact anyone
+- [X] T057 Build the wheel with `poetry build` in `FAIR-bioHeaders-Tools/`, install it into a fresh virtual environment outside the checkout, and run `bioheaders assess` on one fixture of each format to confirm that the `bioheaders/assess/data/**` files are packaged. Also run `python -m build compat/fhr`
 
 ### Gates and success criteria
 
-- [ ] T058 Run the FAIR-bioHeaders-Tools gates on Python 3.9 and 3.13: `poetry run pytest`, `ruff check .`, `isort . --check-only` and `black . --check`. Record any environment limitation in the PR description
+- [X] T058 Run the FAIR-bioHeaders-Tools gates on Python 3.9 and 3.13: `poetry run pytest`, `ruff check .`, `isort . --check-only` and `black . --check`. Record any environment limitation in the PR description
 - [ ] T059 Run the FHR-Specification gates: `python -m unittest discover -s tests -v`, `scripts/validate_examples.py`, `scripts/check_linkml.py`, `scripts/check_schema_drift.py`, `scripts/check_conformance.py --schema` (it must stay unaffected by `assessment/`), `scripts/check_release.py --converter ../FHR-File-Converter`, and `scripts/check_assessment.py --tool ../FHR-File-Converter --batch --guideline`
 - [X] T060 Run `python scripts/bench_assess.py --files 200` in `FAIR-bioHeaders-Tools/` on a laptop-class machine. Record the wall time and the machine in the PR (SC-004 requires under 600 s)
-- [ ] T061 Prepare the SC-001 review. Generate `FHR-Specification/assessment/review/sc001-template.tsv`, with columns `fixture`, `indicator`, `status`, `cited_lines`, `reviewer_agrees` and `note`, from the reports for the 17 corpus files. A reviewer other than the implementer fills it in as `sc001-<date>.tsv`, and the result passes at ≥ 90% agreement. Disagreements become rubric issues and are not edited away
+- [X] T061 Prepare the SC-001 review. Generate `FHR-Specification/assessment/review/sc001-template.tsv`, with columns `fixture`, `indicator`, `status`, `cited_lines`, `reviewer_agrees` and `note`, from the reports for the 17 corpus files. A reviewer other than the implementer fills it in as `sc001-<date>.tsv`, and the result passes at ≥ 90% agreement. Disagreements become rubric issues and are not edited away
 - [ ] T062 Run every scenario in [quickstart.md](quickstart.md) (V1–V9) against the implementation, and correct the quickstart's expected outputs wherever the reviewed implementation legitimately differs, with the reason in the commit message
 
 ---

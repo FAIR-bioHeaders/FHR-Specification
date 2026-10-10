@@ -14,7 +14,8 @@ fixture differs. Modelled on check_conformance.py.
 compares every per-file report with the manifest, and checks that a second run
 gives byte-identical output. ``--guideline`` also compares the tool's bundled
 rubric.json with the item table of docs/FAIR_HEADER_GUIDELINE.md, in both
-directions.
+directions. ``--review-packet DIR`` writes the SC-001 review packet for the
+corpus in headers/: sc001-template.tsv and the Markdown reports.
 """
 
 import argparse
@@ -273,6 +274,50 @@ def check_batch(tool, manifest, assessment, validator):
     return failures
 
 
+REVIEW_COLUMNS = ("fixture", "indicator", "status", "cited_lines", "reviewer_agrees", "note")
+
+
+def _cell(text):
+    return " ".join(str(text).replace("\t", " ").split())
+
+
+def write_review_packet(tool, manifest, assessment, directory):
+    """SC-001 (research R-21): a review table and the reports for the headers/ corpus."""
+    rubric = tool.data("rubric.json")
+    offline = [i["id"] for i in rubric["indicators"] if i["assessability"] == "offline"]
+    corpus = sorted((e for e in manifest["fixtures"] if e["file"].startswith("headers/")),
+                    key=lambda e: e["id"])
+    reports_dir = directory / "sc001-reports"
+    with tempfile.TemporaryDirectory() as temporary:
+        output = Path(temporary) / "out"
+        result = tool.run(["assess", "--recursive", "--include", "headers/*",
+                           "--output", str(output), str(assessment)])
+        if result.returncode != 0:
+            print(f"FAIL review packet: exit {result.returncode}: {result.stderr.strip()}")
+            return 1
+        if reports_dir.exists():
+            shutil.rmtree(reports_dir)
+        reports_dir.mkdir(parents=True)
+        rows = ["\t".join(REVIEW_COLUMNS)]
+        for entry in corpus:
+            base = output / entry["file"]
+            report = json.loads(Path(f"{base}.assessment.json").read_text(encoding="utf-8"))
+            markdown = Path(f"{base}.assessment.md").read_bytes()
+            (reports_dir / f"{entry['id']}.assessment.md").write_bytes(markdown)
+            lines = {item["id"]: item for item in report["evidence"]}
+            results = {r["indicator"]: r for r in report["results"]}
+            for indicator in offline:
+                found = results[indicator]
+                cited = " | ".join(f"line {lines[e]['line']}: {_cell(lines[e]['raw'])}"
+                                   for e in found["evidence"])
+                rows.append("\t".join([entry["id"], indicator, _status(found), cited, "", ""]))
+        (directory / "sc001-template.tsv").write_text("\n".join(rows) + "\n", encoding="utf-8",
+                                                      newline="\n")
+    print(f"ok: review packet for {len(corpus)} files, {len(rows) - 1} statuses, "
+          f"rubric {rubric['rubric_version']}, in {directory}")
+    return 0
+
+
 def guideline_tables(text):
     """The summary rows {item: row} and out-of-scope rows {indicator: row} of the guideline."""
     summary, out_of_scope = {}, {}
@@ -349,6 +394,8 @@ def main():
                         help="fixture directory (default: assessment/)")
     parser.add_argument("--batch", action="store_true",
                         help="also run batch mode over the fixtures, twice, and compare")
+    parser.add_argument("--review-packet", type=Path, metavar="DIR",
+                        help="write the SC-001 review packet (e.g. assessment/review) and stop")
     parser.add_argument("--guideline", action="store_true",
                         help="also compare the tool's rubric.json with docs/FAIR_HEADER_GUIDELINE.md")
     args = parser.parse_args()
@@ -363,6 +410,8 @@ def main():
         print(f"error: {error}", file=sys.stderr)
         return 2
     manifest = json.loads((args.assessment / "manifest.json").read_text(encoding="utf-8"))
+    if args.review_packet:
+        return write_review_packet(tool, manifest, args.assessment, args.review_packet)
     failures = check(tool, manifest, args.assessment, validator)
     total = len(manifest["fixtures"])
     print(f"{total - failures} of {total} fixtures match")

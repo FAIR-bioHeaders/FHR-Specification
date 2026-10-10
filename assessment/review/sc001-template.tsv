@@ -1,0 +1,426 @@
+fixture	indicator	status	cited_lines	reviewer_agrees	note
+alliance-fasta-grcz12tu	RDA-F1-01D	not_evidenced			
+alliance-fasta-grcz12tu	RDA-F1-02D	not_evidenced			
+alliance-fasta-grcz12tu	RDA-F2-01M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-F3-01M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-A1-01M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-I1-01M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-I1-01D	not_evidenced			
+alliance-fasta-grcz12tu	RDA-I1-02M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-I1-02D	not_evidenced			
+alliance-fasta-grcz12tu	RDA-I2-01M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-I2-01D	not_evidenced			
+alliance-fasta-grcz12tu	RDA-I3-01M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-I3-02M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-I3-03M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-I3-04M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-R1-01M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-R1.1-01M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-R1.1-02M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-R1.1-03M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-R1.2-01M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-R1.2-02M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-R1.3-01M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-R1.3-01D	not_evidenced			
+alliance-fasta-grcz12tu	RDA-R1.3-02M	not_evidenced			
+alliance-fasta-grcz12tu	RDA-R1.3-02D	not_evidenced			
+alliance-gaf-wb	RDA-F1-01D	not_evidenced			
+alliance-gaf-wb	RDA-F1-02D	not_evidenced			
+alliance-gaf-wb	RDA-F2-01M	not_evidenced			
+alliance-gaf-wb	RDA-F3-01M	not_evidenced			
+alliance-gaf-wb	RDA-A1-01M	not_evidenced			
+alliance-gaf-wb	RDA-I1-01M	evidenced	line 1: !gaf-version: 2.2		
+alliance-gaf-wb	RDA-I1-01D	evidenced	line 1: !gaf-version: 2.2		
+alliance-gaf-wb	RDA-I1-02M	not_evidenced			
+alliance-gaf-wb	RDA-I1-02D	evidenced	line 1: !gaf-version: 2.2 | line 4: !go-version: http://purl.obolibrary.org/obo/go/releases/2026-08-02/extensions/go-plus.ofn		
+alliance-gaf-wb	RDA-I2-01M	not_evidenced			
+alliance-gaf-wb	RDA-I2-01D	evidenced	line 1: !gaf-version: 2.2 | line 4: !go-version: http://purl.obolibrary.org/obo/go/releases/2026-08-02/extensions/go-plus.ofn		
+alliance-gaf-wb	RDA-I3-01M	not_evidenced			
+alliance-gaf-wb	RDA-I3-02M	evidenced	line 4: !go-version: http://purl.obolibrary.org/obo/go/releases/2026-08-02/extensions/go-plus.ofn		
+alliance-gaf-wb	RDA-I3-03M	not_evidenced			
+alliance-gaf-wb	RDA-I3-04M	not_evidenced			
+alliance-gaf-wb	RDA-R1-01M	not_evidenced			
+alliance-gaf-wb	RDA-R1.1-01M	not_evidenced			
+alliance-gaf-wb	RDA-R1.1-02M	not_evidenced			
+alliance-gaf-wb	RDA-R1.1-03M	not_evidenced			
+alliance-gaf-wb	RDA-R1.2-01M	partially_evidenced	line 2: !generated-by: UniProt | line 3: !date-generated: 2026-08-04 15:14		
+alliance-gaf-wb	RDA-R1.2-02M	not_evidenced			
+alliance-gaf-wb	RDA-R1.3-01M	evidenced	line 1: !gaf-version: 2.2		
+alliance-gaf-wb	RDA-R1.3-01D	partially_evidenced	line 1: !gaf-version: 2.2		
+alliance-gaf-wb	RDA-R1.3-02M	partially_evidenced	line 1: !gaf-version: 2.2		
+alliance-gaf-wb	RDA-R1.3-02D	evidenced	line 1: !gaf-version: 2.2		
+alliance-gff3-mgi	RDA-F1-01D	not_evidenced			
+alliance-gff3-mgi	RDA-F1-02D	not_evidenced			
+alliance-gff3-mgi	RDA-F2-01M	not_evidenced			
+alliance-gff3-mgi	RDA-F3-01M	not_evidenced			
+alliance-gff3-mgi	RDA-A1-01M	not_evidenced			
+alliance-gff3-mgi	RDA-I1-01M	evidenced	line 1: ##gff-version 3		
+alliance-gff3-mgi	RDA-I1-01D	evidenced	line 1: ##gff-version 3		
+alliance-gff3-mgi	RDA-I1-02M	not_evidenced			
+alliance-gff3-mgi	RDA-I1-02D	partially_evidenced	line 1: ##gff-version 3		
+alliance-gff3-mgi	RDA-I2-01M	not_evidenced			
+alliance-gff3-mgi	RDA-I2-01D	partially_evidenced	line 1: ##gff-version 3		
+alliance-gff3-mgi	RDA-I3-01M	not_evidenced			
+alliance-gff3-mgi	RDA-I3-02M	evidenced	line 4: #!assembly GRCm39 | line 5: #!annotationSource RefSeq GCF_000001635.27-RS_2024_02		
+alliance-gff3-mgi	RDA-I3-03M	not_evidenced			
+alliance-gff3-mgi	RDA-I3-04M	evidenced	line 4: #!assembly GRCm39 | line 5: #!annotationSource RefSeq GCF_000001635.27-RS_2024_02		
+alliance-gff3-mgi	RDA-R1-01M	partially_evidenced	line 2: #!data-source MGI | line 3: #!date-produced Mon Sep 21 09:32:10 2026 | line 5: #!annotationSource RefSeq GCF_000001635.27-RS_2024_02 | line 6: #!annotationSource ENSEMBL 114		
+alliance-gff3-mgi	RDA-R1.1-01M	not_evidenced			
+alliance-gff3-mgi	RDA-R1.1-02M	not_evidenced			
+alliance-gff3-mgi	RDA-R1.1-03M	not_evidenced			
+alliance-gff3-mgi	RDA-R1.2-01M	evidenced	line 2: #!data-source MGI | line 3: #!date-produced Mon Sep 21 09:32:10 2026 | line 5: #!annotationSource RefSeq GCF_000001635.27-RS_2024_02 | line 6: #!annotationSource ENSEMBL 114		
+alliance-gff3-mgi	RDA-R1.2-02M	not_evidenced			
+alliance-gff3-mgi	RDA-R1.3-01M	evidenced	line 1: ##gff-version 3		
+alliance-gff3-mgi	RDA-R1.3-01D	partially_evidenced	line 1: ##gff-version 3		
+alliance-gff3-mgi	RDA-R1.3-02M	partially_evidenced	line 1: ##gff-version 3		
+alliance-gff3-mgi	RDA-R1.3-02D	evidenced	line 1: ##gff-version 3		
+alliance-gff3-wb	RDA-F1-01D	not_evidenced			
+alliance-gff3-wb	RDA-F1-02D	not_evidenced			
+alliance-gff3-wb	RDA-F2-01M	not_evidenced			
+alliance-gff3-wb	RDA-F3-01M	not_evidenced			
+alliance-gff3-wb	RDA-A1-01M	not_evidenced			
+alliance-gff3-wb	RDA-I1-01M	evidenced	line 2: ##gff-version 3		
+alliance-gff3-wb	RDA-I1-01D	evidenced	line 2: ##gff-version 3		
+alliance-gff3-wb	RDA-I1-02M	not_evidenced			
+alliance-gff3-wb	RDA-I1-02D	partially_evidenced	line 2: ##gff-version 3		
+alliance-gff3-wb	RDA-I2-01M	not_evidenced			
+alliance-gff3-wb	RDA-I2-01D	partially_evidenced	line 2: ##gff-version 3		
+alliance-gff3-wb	RDA-I3-01M	not_evidenced			
+alliance-gff3-wb	RDA-I3-02M	partially_evidenced	line 5: #!assembly WBcel235		
+alliance-gff3-wb	RDA-I3-03M	not_evidenced			
+alliance-gff3-wb	RDA-I3-04M	partially_evidenced	line 5: #!assembly WBcel235		
+alliance-gff3-wb	RDA-R1-01M	not_evidenced			
+alliance-gff3-wb	RDA-R1.1-01M	not_evidenced			
+alliance-gff3-wb	RDA-R1.1-02M	not_evidenced			
+alliance-gff3-wb	RDA-R1.1-03M	not_evidenced			
+alliance-gff3-wb	RDA-R1.2-01M	partially_evidenced	line 3: #!date-produced 2025-11-13T16:37:34+00:00 | line 4: #!data-source WormBase		
+alliance-gff3-wb	RDA-R1.2-02M	not_evidenced			
+alliance-gff3-wb	RDA-R1.3-01M	partially_evidenced	line 2: ##gff-version 3		
+alliance-gff3-wb	RDA-R1.3-01D	partially_evidenced	line 2: ##gff-version 3		
+alliance-gff3-wb	RDA-R1.3-02M	partially_evidenced	line 2: ##gff-version 3		
+alliance-gff3-wb	RDA-R1.3-02D	evidenced	line 2: ##gff-version 3		
+alliance-vcf-wbcel235	RDA-F1-01D	not_evidenced			
+alliance-vcf-wbcel235	RDA-F1-02D	not_evidenced			
+alliance-vcf-wbcel235	RDA-F2-01M	partially_evidenced	line 2: ##fileDate=20201017 | line 28: ##source=AGR VCF File generator | line 29: ##contig=<ID=IV,assembly=WBcel235,species="Caenorhabditis elegans"> | line 30: ##contig=<ID=II,assembly=WBcel235,species="Caenorhabditis elegans"> | line 31: ##contig=<ID=III,assembly=WBcel235,species="Caenorhabditis elegans"> | line 32: ##contig=<ID=I,assembly=WBcel235,species="Caenorhabditis elegans"> | line 33: ##contig=<ID=V,assembly=WBcel235,species="Caenorhabditis elegans"> | line 34: ##contig=<ID=X,assembly=WBcel235,species="Caenorhabditis elegans">		
+alliance-vcf-wbcel235	RDA-F3-01M	not_evidenced			
+alliance-vcf-wbcel235	RDA-A1-01M	not_evidenced			
+alliance-vcf-wbcel235	RDA-I1-01M	evidenced	line 1: ##fileformat=VCFv4.3		
+alliance-vcf-wbcel235	RDA-I1-01D	evidenced	line 1: ##fileformat=VCFv4.3		
+alliance-vcf-wbcel235	RDA-I1-02M	not_evidenced			
+alliance-vcf-wbcel235	RDA-I1-02D	evidenced	line 1: ##fileformat=VCFv4.3 | line 13: ##INFO=<ID=hgvs_nomenclature,Number=1,Type=String,Description="the HGVS name of the allele"> | line 14: ##INFO=<ID=geneLevelConsequence,Number=.,Type=String,Description="VEP consequence of the variant on the Gene"> | line 15: ##INFO=<ID=transcriptLevelConsequence,Number=.,Type=String,Description="VEP consequence of the variant on the Transcript"> | line 16: ##INFO=<ID=geneImpact,Number=.,Type=String,Description="Variant impact scale for Gene"> | line 17: ##INFO=<ID=transcriptImpact,Number=.,Type=String,Description="Variant impact scale for Transcript"> | line 18: ##INFO=<ID=allele_ids,Number=.,Type=String,Description="The ID of the Allele"> | line 19: ##INFO=<ID=allele_symbols,Number=.,Type=String,Description="The human readable name of the Allele"> | line 20: ##INFO=<ID=allele_symbols_text,Number=.,Type=String,Description="Another human readable representation of the allele"> | line 21: ##INFO=<ID=soTerm,Number=1,Type=String,Description="The Sequence Ontology term for the variant"> | line 22: ##INFO=<ID=allele_of_gene_ids,Number=.,Type=String,Description="The gene ids that the Allele is located on"> | line 23: ##INFO=<ID=allele_of_gene_symbols,Number=.,Type=String,Description="The gene names that the Allele is located on"> | line 24: ##INFO=<ID=allele_of_transcript_ids,Number=.,Type=String,Description="The gene ids that the Allele is located on"> | line 25: ##INFO=<ID=allele_of_transcript_gff3_ids,Number=.,Type=String,Description="The transcript gff3ID that the Allele is located on"> | line 26: ##INFO=<ID=allele_of_transcript_gff3_names,Number=.,Type=String,Description="The transcript gff3 Names that the Allele is located on">		
+alliance-vcf-wbcel235	RDA-I2-01M	partially_evidenced	line 29: ##contig=<ID=IV,assembly=WBcel235,species="Caenorhabditis elegans"> | line 30: ##contig=<ID=II,assembly=WBcel235,species="Caenorhabditis elegans"> | line 31: ##contig=<ID=III,assembly=WBcel235,species="Caenorhabditis elegans"> | line 32: ##contig=<ID=I,assembly=WBcel235,species="Caenorhabditis elegans"> | line 33: ##contig=<ID=V,assembly=WBcel235,species="Caenorhabditis elegans"> | line 34: ##contig=<ID=X,assembly=WBcel235,species="Caenorhabditis elegans">		
+alliance-vcf-wbcel235	RDA-I2-01D	not_evidenced			
+alliance-vcf-wbcel235	RDA-I3-01M	not_evidenced			
+alliance-vcf-wbcel235	RDA-I3-02M	partially_evidenced	line 29: ##contig=<ID=IV,assembly=WBcel235,species="Caenorhabditis elegans"> | line 30: ##contig=<ID=II,assembly=WBcel235,species="Caenorhabditis elegans"> | line 31: ##contig=<ID=III,assembly=WBcel235,species="Caenorhabditis elegans"> | line 32: ##contig=<ID=I,assembly=WBcel235,species="Caenorhabditis elegans"> | line 33: ##contig=<ID=V,assembly=WBcel235,species="Caenorhabditis elegans"> | line 34: ##contig=<ID=X,assembly=WBcel235,species="Caenorhabditis elegans">		
+alliance-vcf-wbcel235	RDA-I3-03M	not_evidenced			
+alliance-vcf-wbcel235	RDA-I3-04M	partially_evidenced	line 29: ##contig=<ID=IV,assembly=WBcel235,species="Caenorhabditis elegans"> | line 30: ##contig=<ID=II,assembly=WBcel235,species="Caenorhabditis elegans"> | line 31: ##contig=<ID=III,assembly=WBcel235,species="Caenorhabditis elegans"> | line 32: ##contig=<ID=I,assembly=WBcel235,species="Caenorhabditis elegans"> | line 33: ##contig=<ID=V,assembly=WBcel235,species="Caenorhabditis elegans"> | line 34: ##contig=<ID=X,assembly=WBcel235,species="Caenorhabditis elegans">		
+alliance-vcf-wbcel235	RDA-R1-01M	partially_evidenced	line 2: ##fileDate=20201017 | line 28: ##source=AGR VCF File generator | line 29: ##contig=<ID=IV,assembly=WBcel235,species="Caenorhabditis elegans"> | line 30: ##contig=<ID=II,assembly=WBcel235,species="Caenorhabditis elegans"> | line 31: ##contig=<ID=III,assembly=WBcel235,species="Caenorhabditis elegans"> | line 32: ##contig=<ID=I,assembly=WBcel235,species="Caenorhabditis elegans"> | line 33: ##contig=<ID=V,assembly=WBcel235,species="Caenorhabditis elegans"> | line 34: ##contig=<ID=X,assembly=WBcel235,species="Caenorhabditis elegans">		
+alliance-vcf-wbcel235	RDA-R1.1-01M	not_evidenced			
+alliance-vcf-wbcel235	RDA-R1.1-02M	not_evidenced			
+alliance-vcf-wbcel235	RDA-R1.1-03M	not_evidenced			
+alliance-vcf-wbcel235	RDA-R1.2-01M	partially_evidenced	line 2: ##fileDate=20201017 | line 28: ##source=AGR VCF File generator		
+alliance-vcf-wbcel235	RDA-R1.2-02M	not_evidenced			
+alliance-vcf-wbcel235	RDA-R1.3-01M	evidenced	line 1: ##fileformat=VCFv4.3		
+alliance-vcf-wbcel235	RDA-R1.3-01D	partially_evidenced	line 1: ##fileformat=VCFv4.3		
+alliance-vcf-wbcel235	RDA-R1.3-02M	partially_evidenced	line 1: ##fileformat=VCFv4.3		
+alliance-vcf-wbcel235	RDA-R1.3-02D	evidenced	line 1: ##fileformat=VCFv4.3		
+ensembl-fasta-protein-grch38-116	RDA-F1-01D	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-F1-02D	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-F2-01M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-F3-01M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-A1-01M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-I1-01M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-I1-01D	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-I1-02M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-I1-02D	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-I2-01M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-I2-01D	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-I3-01M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-I3-02M	partially_evidenced	line 1: >ENSP00000487796.1 pep scaffold:GRCh38:HG2290_PATCH:6058:6610:1 gene:ENSG00000282172.1 transcript:ENST00000632585.1 gene_biotype:IG_V_gene transcript_biotype:IG_V_gene gene_symbol:IGKV5-2 description:immunoglobulin kappa variable 5-2 [Source:HGNC Symbol;Acc:HGNC:5835]		
+ensembl-fasta-protein-grch38-116	RDA-I3-03M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-I3-04M	partially_evidenced	line 1: >ENSP00000487796.1 pep scaffold:GRCh38:HG2290_PATCH:6058:6610:1 gene:ENSG00000282172.1 transcript:ENST00000632585.1 gene_biotype:IG_V_gene transcript_biotype:IG_V_gene gene_symbol:IGKV5-2 description:immunoglobulin kappa variable 5-2 [Source:HGNC Symbol;Acc:HGNC:5835]		
+ensembl-fasta-protein-grch38-116	RDA-R1-01M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-R1.1-01M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-R1.1-02M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-R1.1-03M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-R1.2-01M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-R1.2-02M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-R1.3-01M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-R1.3-01D	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-R1.3-02M	not_evidenced			
+ensembl-fasta-protein-grch38-116	RDA-R1.3-02D	not_evidenced			
+ensembl-gff3-grch38-116	RDA-F1-01D	not_evidenced			
+ensembl-gff3-grch38-116	RDA-F1-02D	not_evidenced			
+ensembl-gff3-grch38-116	RDA-F2-01M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-F3-01M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-A1-01M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-I1-01M	evidenced	line 1: ##gff-version 3		
+ensembl-gff3-grch38-116	RDA-I1-01D	evidenced	line 1: ##gff-version 3		
+ensembl-gff3-grch38-116	RDA-I1-02M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-I1-02D	partially_evidenced	line 1: ##gff-version 3		
+ensembl-gff3-grch38-116	RDA-I2-01M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-I2-01D	partially_evidenced	line 1: ##gff-version 3		
+ensembl-gff3-grch38-116	RDA-I3-01M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-I3-02M	evidenced	line 27: #!genome-build Genome Reference Consortium GRCh38.p14 | line 28: #!genome-version GRCh38 | line 30: #!genome-build-accession GCA_000001405.29		
+ensembl-gff3-grch38-116	RDA-I3-03M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-I3-04M	evidenced	line 27: #!genome-build Genome Reference Consortium GRCh38.p14 | line 28: #!genome-version GRCh38 | line 30: #!genome-build-accession GCA_000001405.29		
+ensembl-gff3-grch38-116	RDA-R1-01M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-R1.1-01M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-R1.1-02M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-R1.1-03M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-R1.2-01M	partially_evidenced	line 31: #!genebuild-last-updated 2025-11		
+ensembl-gff3-grch38-116	RDA-R1.2-02M	not_evidenced			
+ensembl-gff3-grch38-116	RDA-R1.3-01M	evidenced	line 1: ##gff-version 3		
+ensembl-gff3-grch38-116	RDA-R1.3-01D	partially_evidenced	line 1: ##gff-version 3		
+ensembl-gff3-grch38-116	RDA-R1.3-02M	partially_evidenced	line 1: ##gff-version 3		
+ensembl-gff3-grch38-116	RDA-R1.3-02D	evidenced	line 1: ##gff-version 3		
+ensembl-vcf-chrmt-116	RDA-F1-01D	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-F1-02D	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-F2-01M	partially_evidenced	line 2: ##fileDate=20260404 | line 3: ##source=ensembl;version=116;url=https://e116.ensembl.org/homo_sapiens		
+ensembl-vcf-chrmt-116	RDA-F3-01M	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-A1-01M	evidenced	line 3: ##source=ensembl;version=116;url=https://e116.ensembl.org/homo_sapiens		
+ensembl-vcf-chrmt-116	RDA-I1-01M	evidenced	line 1: ##fileformat=VCFv4.1		
+ensembl-vcf-chrmt-116	RDA-I1-01D	evidenced	line 1: ##fileformat=VCFv4.1		
+ensembl-vcf-chrmt-116	RDA-I1-02M	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-I1-02D	evidenced	line 1: ##fileformat=VCFv4.1 | line 5: ##INFO=<ID=ClinVar_202509,Number=0,Type=Flag,Description="Variants of clinical significance imported from ClinVar"> | line 6: ##INFO=<ID=HGMD-PUBLIC_20204,Number=0,Type=Flag,Description="Variants from HGMD-PUBLIC dataset December 2020"> | line 7: ##INFO=<ID=COSMIC_102,Number=0,Type=Flag,Description="Somatic mutations found in human cancers from the COSMIC catalogue"> | line 8: ##INFO=<ID=dbSNP_156,Number=0,Type=Flag,Description="Variants (including SNPs and indels) imported from dbSNP"> | line 9: ##INFO=<ID=TSA,Number=1,Type=String,Description="Type of sequence alteration. Child of term sequence_alteration as defined by the sequence ontology project."> | line 10: ##INFO=<ID=E_ExAC,Number=0,Type=Flag,Description="ExAC.https://www.ensembl.org/info/genome/variation/prediction/variant_quality.html#evidence_status"> | line 11: ##INFO=<ID=E_Freq,Number=0,Type=Flag,Description="Frequency.https://www.ensembl.org/info/genome/variation/prediction/variant_quality.html#evidence_status"> | line 12: ##INFO=<ID=E_1000G,Number=0,Type=Flag,Description="1000Genomes.https://www.ensembl.org/info/genome/variation/prediction/variant_quality.html#evidence_status"> | line 13: ##INFO=<ID=E_Hapmap,Number=0,Type=Flag,Description="HapMap.https://www.ensembl.org/info/genome/variation/prediction/variant_quality.html#evidence_status"> | line 14: ##INFO=<ID=E_Multiple_observations,Number=0,Type=Flag,Description="Multiple_observations.https://www.ensembl.org/info/genome/variation/prediction/variant_quality.html#evidence_status"> | line 15: ##INFO=<ID=E_gnomAD,Number=0,Type=Flag,Description="gnomAD.https://www.ensembl.org/info/genome/variation/prediction/variant_quality.html#evidence_status"> | line 16: ##INFO=<ID=E_Phenotype_or_Disease,Number=0,Type=Flag,Description="Phenotype_or_Disease.https://www.ensembl.org/info/genome/variation/prediction/variant_quality.html#evidence_status"> | line 17: ##INFO=<ID=E_TOPMed,Number=0,Type=Flag,Description="TOPMed.https://www.ensembl.org/info/genome/variation/prediction/variant_quality.html#evidence_status"> | line 18: ##INFO=<ID=E_Cited,Number=0,Type=Flag,Description="Cited.https://www.ensembl.org/info/genome/variation/prediction/variant_quality.html#evidence_status"> | line 19: ##INFO=<ID=E_ESP,Number=0,Type=Flag,Description="ESP.https://www.ensembl.org/info/genome/variation/prediction/variant_quality.html#evidence_status"> | line 20: ##INFO=<ID=CLIN_risk_factor,Number=0,Type=Flag,Description="risk factor.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 21: ##INFO=<ID=CLIN_other,Number=0,Type=Flag,Description="other.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 22: ##INFO=<ID=CLIN_likely_pathogenic,Number=0,Type=Flag,Description="likely pathogenic.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 23: ##INFO=<ID=CLIN_protective,Number=0,Type=Flag,Description="protective.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 24: ##INFO=<ID=CLIN_confers_sensitivity,Number=0,Type=Flag,Description="confers sensitivity.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 25: ##INFO=<ID=CLIN_pathogenic,Number=0,Type=Flag,Description="pathogenic.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 26: ##INFO=<ID=CLIN_drug_response,Number=0,Type=Flag,Description="drug response.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 27: ##INFO=<ID=CLIN_histocompatibility,Number=0,Type=Flag,Description="histocompatibility.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 28: ##INFO=<ID=CLIN_likely_benign,Number=0,Type=Flag,Description="likely benign.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 29: ##INFO=<ID=CLIN_benign,Number=0,Type=Flag,Description="benign.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 30: ##INFO=<ID=CLIN_uncertain_significance,Number=0,Type=Flag,Description="uncertain significance.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 31: ##INFO=<ID=CLIN_not_provided,Number=0,Type=Flag,Description="not provided.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 32: ##INFO=<ID=CLIN_association,Number=0,Type=Flag,Description="association.https://www.ensembl.org/info/genome/variation/phenotype/phenotype_annotation.html#clin_significance"> | line 33: ##INFO=<ID=MA,Number=1,Type=String,Description="Minor Allele"> | line 34: ##INFO=<ID=MAF,Number=1,Type=Float,Description="Minor Allele Frequency"> | line 35: ##INFO=<ID=MAC,Number=1,Type=Integer,Description="Minor Alelele Count"> | line 36: ##INFO=<ID=AA,Number=1,Type=String,Description="Ancestral Allele">		
+ensembl-vcf-chrmt-116	RDA-I2-01M	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-I2-01D	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-I3-01M	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-I3-02M	partially_evidenced	line 4: ##reference=https://ftp.ensembl.org/pub/release-116/fasta/homo_sapiens/dna/		
+ensembl-vcf-chrmt-116	RDA-I3-03M	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-I3-04M	partially_evidenced	line 4: ##reference=https://ftp.ensembl.org/pub/release-116/fasta/homo_sapiens/dna/		
+ensembl-vcf-chrmt-116	RDA-R1-01M	partially_evidenced	line 2: ##fileDate=20260404 | line 3: ##source=ensembl;version=116;url=https://e116.ensembl.org/homo_sapiens		
+ensembl-vcf-chrmt-116	RDA-R1.1-01M	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-R1.1-02M	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-R1.1-03M	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-R1.2-01M	partially_evidenced	line 2: ##fileDate=20260404 | line 3: ##source=ensembl;version=116;url=https://e116.ensembl.org/homo_sapiens		
+ensembl-vcf-chrmt-116	RDA-R1.2-02M	not_evidenced			
+ensembl-vcf-chrmt-116	RDA-R1.3-01M	evidenced	line 1: ##fileformat=VCFv4.1		
+ensembl-vcf-chrmt-116	RDA-R1.3-01D	partially_evidenced	line 1: ##fileformat=VCFv4.1		
+ensembl-vcf-chrmt-116	RDA-R1.3-02M	partially_evidenced	line 1: ##fileformat=VCFv4.1		
+ensembl-vcf-chrmt-116	RDA-R1.3-02D	evidenced	line 1: ##fileformat=VCFv4.1		
+flybase-fasta-transcript-r6.69	RDA-F1-01D	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-F1-02D	partially_evidenced	line 1: >FBtr0070000 type=mRNA; loc=X:join(19961689..19961845,19963955..19964071,19964782..19964944,19965006..19965126,19965197..19965511,19965577..19966071,19966183..19967012,19967081..19967223,19967284..19968479); ID=FBtr0070000; name=Nep3-RA; dbxref=FlyBase:FBtr0070000,FlyBase_Annotation_IDs:CG9565-RA,REFSEQ:NM_078693,REFSEQ:NM_078693; MD5=6c3abf7c6ba8b1392a073c85365b2e75; length=3537; parent=FBgn0031081; release=r6.69; species=Dmel;		
+flybase-fasta-transcript-r6.69	RDA-F2-01M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-F3-01M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-A1-01M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-I1-01M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-I1-01D	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-I1-02M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-I1-02D	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-I2-01M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-I2-01D	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-I3-01M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-I3-02M	partially_evidenced	line 1: >FBtr0070000 type=mRNA; loc=X:join(19961689..19961845,19963955..19964071,19964782..19964944,19965006..19965126,19965197..19965511,19965577..19966071,19966183..19967012,19967081..19967223,19967284..19968479); ID=FBtr0070000; name=Nep3-RA; dbxref=FlyBase:FBtr0070000,FlyBase_Annotation_IDs:CG9565-RA,REFSEQ:NM_078693,REFSEQ:NM_078693; MD5=6c3abf7c6ba8b1392a073c85365b2e75; length=3537; parent=FBgn0031081; release=r6.69; species=Dmel;		
+flybase-fasta-transcript-r6.69	RDA-I3-03M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-I3-04M	partially_evidenced	line 1: >FBtr0070000 type=mRNA; loc=X:join(19961689..19961845,19963955..19964071,19964782..19964944,19965006..19965126,19965197..19965511,19965577..19966071,19966183..19967012,19967081..19967223,19967284..19968479); ID=FBtr0070000; name=Nep3-RA; dbxref=FlyBase:FBtr0070000,FlyBase_Annotation_IDs:CG9565-RA,REFSEQ:NM_078693,REFSEQ:NM_078693; MD5=6c3abf7c6ba8b1392a073c85365b2e75; length=3537; parent=FBgn0031081; release=r6.69; species=Dmel;		
+flybase-fasta-transcript-r6.69	RDA-R1-01M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-R1.1-01M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-R1.1-02M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-R1.1-03M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-R1.2-01M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-R1.2-02M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-R1.3-01M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-R1.3-01D	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-R1.3-02M	not_evidenced			
+flybase-fasta-transcript-r6.69	RDA-R1.3-02D	not_evidenced			
+flybase-gff3-r6.69	RDA-F1-01D	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-F1-02D	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-F2-01M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-F3-01M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-A1-01M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-I1-01M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-I1-01D	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-I1-02M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-I1-02D	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-I2-01M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-I2-01D	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-I3-01M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-I3-02M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-I3-03M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-I3-04M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-R1-01M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-R1.1-01M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-R1.1-02M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-R1.1-03M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-R1.2-01M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-R1.2-02M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-R1.3-01M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-R1.3-01D	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-R1.3-02M	not_assessed/archive-not-supported			
+flybase-gff3-r6.69	RDA-R1.3-02D	not_assessed/archive-not-supported			
+go-gaf-wb	RDA-F1-01D	not_evidenced			
+go-gaf-wb	RDA-F1-02D	not_evidenced			
+go-gaf-wb	RDA-F2-01M	not_evidenced			
+go-gaf-wb	RDA-F3-01M	not_evidenced			
+go-gaf-wb	RDA-A1-01M	not_evidenced			
+go-gaf-wb	RDA-I1-01M	evidenced	line 1: !gaf-version: 2.2		
+go-gaf-wb	RDA-I1-01D	evidenced	line 1: !gaf-version: 2.2		
+go-gaf-wb	RDA-I1-02M	not_evidenced			
+go-gaf-wb	RDA-I1-02D	partially_evidenced	line 1: !gaf-version: 2.2		
+go-gaf-wb	RDA-I2-01M	not_evidenced			
+go-gaf-wb	RDA-I2-01D	partially_evidenced	line 1: !gaf-version: 2.2		
+go-gaf-wb	RDA-I3-01M	not_evidenced			
+go-gaf-wb	RDA-I3-02M	not_evidenced			
+go-gaf-wb	RDA-I3-03M	not_evidenced			
+go-gaf-wb	RDA-I3-04M	not_evidenced			
+go-gaf-wb	RDA-R1-01M	not_evidenced			
+go-gaf-wb	RDA-R1.1-01M	not_evidenced			
+go-gaf-wb	RDA-R1.1-02M	not_evidenced			
+go-gaf-wb	RDA-R1.1-03M	not_evidenced			
+go-gaf-wb	RDA-R1.2-01M	partially_evidenced	line 3: !generated-by: GOC | line 5: !date-generated: 2026-05-21T09:09		
+go-gaf-wb	RDA-R1.2-02M	not_evidenced			
+go-gaf-wb	RDA-R1.3-01M	evidenced	line 1: !gaf-version: 2.2		
+go-gaf-wb	RDA-R1.3-01D	partially_evidenced	line 1: !gaf-version: 2.2		
+go-gaf-wb	RDA-R1.3-02M	partially_evidenced	line 1: !gaf-version: 2.2		
+go-gaf-wb	RDA-R1.3-02D	evidenced	line 1: !gaf-version: 2.2		
+ncbi-clinvar-vcf	RDA-F1-01D	not_evidenced			
+ncbi-clinvar-vcf	RDA-F1-02D	not_evidenced			
+ncbi-clinvar-vcf	RDA-F2-01M	not_evidenced			
+ncbi-clinvar-vcf	RDA-F3-01M	not_evidenced			
+ncbi-clinvar-vcf	RDA-A1-01M	not_evidenced			
+ncbi-clinvar-vcf	RDA-I1-01M	evidenced	line 1: ##fileformat=VCFv4.1		
+ncbi-clinvar-vcf	RDA-I1-01D	evidenced	line 1: ##fileformat=VCFv4.1		
+ncbi-clinvar-vcf	RDA-I1-02M	not_evidenced			
+ncbi-clinvar-vcf	RDA-I1-02D	evidenced	line 1: ##fileformat=VCFv4.1 | line 6: ##INFO=<ID=AF_ESP,Number=1,Type=Float,Description="allele frequencies from GO-ESP"> | line 7: ##INFO=<ID=AF_EXAC,Number=1,Type=Float,Description="allele frequencies from ExAC"> | line 8: ##INFO=<ID=AF_TGP,Number=1,Type=Float,Description="allele frequencies from TGP"> | line 9: ##INFO=<ID=ALLELEID,Number=1,Type=Integer,Description="the ClinVar Allele ID"> | line 10: ##INFO=<ID=CLNDN,Number=.,Type=String,Description="ClinVar's preferred disease name for the concept specified by disease identifiers in CLNDISDB"> | line 11: ##INFO=<ID=CLNDNINCL,Number=.,Type=String,Description="For included Variant : ClinVar's preferred disease name for the concept specified by disease identifiers in CLNDISDB"> | line 12: ##INFO=<ID=CLNDISDB,Number=.,Type=String,Description="Tag-value pairs of disease database name and identifier submitted for germline classifications, e.g. OMIM:NNNNNN"> | line 13: ##INFO=<ID=CLNDISDBINCL,Number=.,Type=String,Description="For included Variant: Tag-value pairs of disease database name and identifier for germline classifications, e.g. OMIM:NNNNNN"> | line 14: ##INFO=<ID=CLNHGVS,Number=.,Type=String,Description="Top-level (primary assembly, alt, or patch) HGVS expression."> | line 15: ##INFO=<ID=CLNREVSTAT,Number=.,Type=String,Description="ClinVar review status of germline classification for the Variation ID"> | line 16: ##INFO=<ID=CLNSIG,Number=.,Type=String,Description="Aggregate germline classification for this single variant; multiple values are separated by a vertical bar"> | line 17: ##INFO=<ID=CLNSIGCONF,Number=.,Type=String,Description="Conflicting germline classification for this single variant; multiple values are separated by a vertical bar"> | line 18: ##INFO=<ID=CLNSIGINCL,Number=.,Type=String,Description="Germline classification for a haplotype or genotype that includes this variant. Reported as pairs of VariationID:classification; multiple values are separated by a vertical bar"> | line 19: ##INFO=<ID=CLNSIGSCV,Number=.,Type=String,Description="SCV accession numbers for the submissions that contribute to the aggregate germline classification in ClinVar; multiple values are separated by a vertical bar"> | line 20: ##INFO=<ID=CLNVC,Number=1,Type=String,Description="Variant type"> | line 21: ##INFO=<ID=CLNVCSO,Number=1,Type=String,Description="Sequence Ontology id for variant type"> | line 22: ##INFO=<ID=CLNVI,Number=.,Type=String,Description="the variant's clinical sources reported as tag-value pairs of database and variant identifier"> | line 23: ##INFO=<ID=DBVARID,Number=.,Type=String,Description="nsv accessions from dbVar for the variant"> | line 24: ##INFO=<ID=GENEINFO,Number=1,Type=String,Description="Gene(s) for the variant reported as gene symbol:gene id. The gene symbol and id are delimited by a colon (:) and each pair is delimited by a vertical bar (|)"> | line 25: ##INFO=<ID=MC,Number=.,Type=String,Description="comma separated list of molecular consequence in the form of Sequence Ontology ID|molecular_consequence"> | line 26: ##INFO=<ID=ONCDN,Number=.,Type=String,Description="ClinVar's preferred disease name for the concept specified by disease identifiers in ONCDISDB"> | line 27: ##INFO=<ID=ONCDNINCL,Number=.,Type=String,Description="For included variant: ClinVar's preferred disease name for the concept specified by disease identifiers in ONCDISDBINCL"> | line 28: ##INFO=<ID=ONCDISDB,Number=.,Type=String,Description="Tag-value pairs of disease database name and identifier submitted for oncogenicity classifications, e.g. MedGen:NNNNNN"> | line 29: ##INFO=<ID=ONCDISDBINCL,Number=.,Type=String,Description="For included variant: Tag-value pairs of disease database name and identifier for oncogenicity classifications, e.g. OMIM:NNNNNN"> | line 30: ##INFO=<ID=ONC,Number=.,Type=String,Description="Aggregate oncogenicity classification for this single variant; multiple values are separated by a vertical bar"> | line 31: ##INFO=<ID=ONCINCL,Number=.,Type=String,Description="Oncogenicity classification for a haplotype or genotype that includes this variant. Reported as pairs of VariationID:classification; multiple values are separated by a vertical bar"> | line 32: ##INFO=<ID=ONCREVSTAT,Number=.,Type=String,Description="ClinVar review status of oncogenicity classification for the Variation ID"> | line 33: ##INFO=<ID=ONCSCV,Number=.,Type=String,Description="SCV accession numbers for the submissions that contribute to the aggregate oncogenicity classification in ClinVar; multiple values are separated by a vertical bar"> | line 34: ##INFO=<ID=ONCCONF,Number=.,Type=String,Description="Conflicting oncogenicity classification for this single variant; multiple values are separated by a vertical bar"> | line 35: ##INFO=<ID=ORIGIN,Number=.,Type=String,Description="Allele origin. One or more of the following values may be added: 0 - unknown; 1 - germline; 2 - somatic; 4 - inherited; 8 - paternal; 16 - maternal; 32 - de-novo; 64 - biparental; 128 - uniparental; 256 - not-tested; 512 - tested-inconclusive; 1073741824 - other"> | line 36: ##INFO=<ID=RS,Number=.,Type=String,Description="dbSNP ID (i.e. rs number)"> | line 37: ##INFO=<ID=SCIDN,Number=.,Type=String,Description="ClinVar's preferred disease name for the concept specified by disease identifiers in SCIDISDB"> | line 38: ##INFO=<ID=SCIDNINCL,Number=.,Type=String,Description="For included variant: ClinVar's preferred disease name for the concept specified by disease identifiers in SCIDISDBINCL"> | line 39: ##INFO=<ID=SCIDISDB,Number=.,Type=String,Description="Tag-value pairs of disease database name and identifier submitted for somatic clinial impact classifications, e.g. MedGen:NNNNNN"> | line 40: ##INFO=<ID=SCIDISDBINCL,Number=.,Type=String,Description="For included variant: Tag-value pairs of disease database name and identifier for somatic clinical impact classifications, e.g. OMIM:NNNNNN"> | line 41: ##INFO=<ID=SCIREVSTAT,Number=.,Type=String,Description="ClinVar review status of somatic clinical impact for the Variation ID"> | line 42: ##INFO=<ID=SCI,Number=.,Type=String,Description="Aggregate somatic clinical impact for this single variant; multiple values are separated by a vertical bar"> | line 43: ##INFO=<ID=SCIINCL,Number=.,Type=String,Description="Somatic clinical impact classification for a haplotype or genotype that includes this variant. Reported as pairs of VariationID:classification; multiple values are separated by a vertical bar"> | line 44: ##INFO=<ID=SCISCV,Number=.,Type=String,Description="SCV accession numbers for the submissions that contribute to the aggregate somatic clinical impact in ClinVar; multiple values are separated by a vertical bar">		
+ncbi-clinvar-vcf	RDA-I2-01M	not_evidenced			
+ncbi-clinvar-vcf	RDA-I2-01D	not_evidenced			
+ncbi-clinvar-vcf	RDA-I3-01M	not_evidenced			
+ncbi-clinvar-vcf	RDA-I3-02M	partially_evidenced	line 4: ##reference=GRCh38		
+ncbi-clinvar-vcf	RDA-I3-03M	not_evidenced			
+ncbi-clinvar-vcf	RDA-I3-04M	partially_evidenced	line 4: ##reference=GRCh38		
+ncbi-clinvar-vcf	RDA-R1-01M	not_evidenced			
+ncbi-clinvar-vcf	RDA-R1.1-01M	not_evidenced			
+ncbi-clinvar-vcf	RDA-R1.1-02M	not_evidenced			
+ncbi-clinvar-vcf	RDA-R1.1-03M	not_evidenced			
+ncbi-clinvar-vcf	RDA-R1.2-01M	partially_evidenced	line 2: ##fileDate=2026-10-04 | line 3: ##source=ClinVar		
+ncbi-clinvar-vcf	RDA-R1.2-02M	not_evidenced			
+ncbi-clinvar-vcf	RDA-R1.3-01M	evidenced	line 1: ##fileformat=VCFv4.1		
+ncbi-clinvar-vcf	RDA-R1.3-01D	partially_evidenced	line 1: ##fileformat=VCFv4.1		
+ncbi-clinvar-vcf	RDA-R1.3-02M	partially_evidenced	line 1: ##fileformat=VCFv4.1		
+ncbi-clinvar-vcf	RDA-R1.3-02D	evidenced	line 1: ##fileformat=VCFv4.1		
+ncbi-refseq-fasta-wbcel235	RDA-F1-01D	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-F1-02D	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-F2-01M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-F3-01M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-A1-01M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-I1-01M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-I1-01D	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-I1-02M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-I1-02D	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-I2-01M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-I2-01D	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-I3-01M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-I3-02M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-I3-03M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-I3-04M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-R1-01M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-R1.1-01M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-R1.1-02M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-R1.1-03M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-R1.2-01M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-R1.2-02M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-R1.3-01M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-R1.3-01D	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-R1.3-02M	not_evidenced			
+ncbi-refseq-fasta-wbcel235	RDA-R1.3-02D	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-F1-01D	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-F1-02D	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-F2-01M	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-F3-01M	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-A1-01M	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-I1-01M	evidenced	line 1: ##gff-version 3		
+ncbi-refseq-gff3-wbcel235	RDA-I1-01D	evidenced	line 1: ##gff-version 3		
+ncbi-refseq-gff3-wbcel235	RDA-I1-02M	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-I1-02D	partially_evidenced	line 1: ##gff-version 3		
+ncbi-refseq-gff3-wbcel235	RDA-I2-01M	partially_evidenced	line 8: ##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239		
+ncbi-refseq-gff3-wbcel235	RDA-I2-01D	partially_evidenced	line 1: ##gff-version 3		
+ncbi-refseq-gff3-wbcel235	RDA-I3-01M	partially_evidenced	line 8: ##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239		
+ncbi-refseq-gff3-wbcel235	RDA-I3-02M	evidenced	line 4: #!genome-build WBcel235 | line 5: #!genome-build-accession NCBI_Assembly:GCF_000002985.6		
+ncbi-refseq-gff3-wbcel235	RDA-I3-03M	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-I3-04M	evidenced	line 4: #!genome-build WBcel235 | line 5: #!genome-build-accession NCBI_Assembly:GCF_000002985.6		
+ncbi-refseq-gff3-wbcel235	RDA-R1-01M	partially_evidenced	line 3: #!processor NCBI annotwriter | line 6: #!annotation-source WormBase WS298 | line 8: ##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239		
+ncbi-refseq-gff3-wbcel235	RDA-R1.1-01M	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-R1.1-02M	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-R1.1-03M	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-R1.2-01M	partially_evidenced	line 3: #!processor NCBI annotwriter | line 6: #!annotation-source WormBase WS298		
+ncbi-refseq-gff3-wbcel235	RDA-R1.2-02M	not_evidenced			
+ncbi-refseq-gff3-wbcel235	RDA-R1.3-01M	evidenced	line 1: ##gff-version 3		
+ncbi-refseq-gff3-wbcel235	RDA-R1.3-01D	partially_evidenced	line 1: ##gff-version 3		
+ncbi-refseq-gff3-wbcel235	RDA-R1.3-02M	partially_evidenced	line 1: ##gff-version 3		
+ncbi-refseq-gff3-wbcel235	RDA-R1.3-02D	evidenced	line 1: ##gff-version 3		
+wormbase-fasta-protein-ws298	RDA-F1-01D	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-F1-02D	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-F2-01M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-F3-01M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-A1-01M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-I1-01M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-I1-01D	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-I1-02M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-I1-02D	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-I2-01M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-I2-01D	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-I3-01M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-I3-02M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-I3-03M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-I3-04M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-R1-01M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-R1.1-01M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-R1.1-02M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-R1.1-03M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-R1.2-01M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-R1.2-02M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-R1.3-01M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-R1.3-01D	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-R1.3-02M	not_evidenced			
+wormbase-fasta-protein-ws298	RDA-R1.3-02D	not_evidenced			
+wormbase-gff3-ws298	RDA-F1-01D	not_evidenced			
+wormbase-gff3-ws298	RDA-F1-02D	not_evidenced			
+wormbase-gff3-ws298	RDA-F2-01M	not_evidenced			
+wormbase-gff3-ws298	RDA-F3-01M	not_evidenced			
+wormbase-gff3-ws298	RDA-A1-01M	not_evidenced			
+wormbase-gff3-ws298	RDA-I1-01M	evidenced	line 1: ##gff-version 3		
+wormbase-gff3-ws298	RDA-I1-01D	evidenced	line 1: ##gff-version 3		
+wormbase-gff3-ws298	RDA-I1-02M	not_evidenced			
+wormbase-gff3-ws298	RDA-I1-02D	partially_evidenced	line 1: ##gff-version 3		
+wormbase-gff3-ws298	RDA-I2-01M	not_evidenced			
+wormbase-gff3-ws298	RDA-I2-01D	partially_evidenced	line 1: ##gff-version 3		
+wormbase-gff3-ws298	RDA-I3-01M	not_evidenced			
+wormbase-gff3-ws298	RDA-I3-02M	not_evidenced			
+wormbase-gff3-ws298	RDA-I3-03M	not_evidenced			
+wormbase-gff3-ws298	RDA-I3-04M	not_evidenced			
+wormbase-gff3-ws298	RDA-R1-01M	not_evidenced			
+wormbase-gff3-ws298	RDA-R1.1-01M	not_evidenced			
+wormbase-gff3-ws298	RDA-R1.1-02M	not_evidenced			
+wormbase-gff3-ws298	RDA-R1.1-03M	not_evidenced			
+wormbase-gff3-ws298	RDA-R1.2-01M	not_evidenced			
+wormbase-gff3-ws298	RDA-R1.2-02M	not_evidenced			
+wormbase-gff3-ws298	RDA-R1.3-01M	evidenced	line 1: ##gff-version 3		
+wormbase-gff3-ws298	RDA-R1.3-01D	partially_evidenced	line 1: ##gff-version 3		
+wormbase-gff3-ws298	RDA-R1.3-02M	partially_evidenced	line 1: ##gff-version 3		
+wormbase-gff3-ws298	RDA-R1.3-02D	evidenced	line 1: ##gff-version 3		
+wormbase-vcf-ws298	RDA-F1-01D	not_evidenced			
+wormbase-vcf-ws298	RDA-F1-02D	not_evidenced			
+wormbase-vcf-ws298	RDA-F2-01M	not_evidenced			
+wormbase-vcf-ws298	RDA-F3-01M	not_evidenced			
+wormbase-vcf-ws298	RDA-A1-01M	not_evidenced			
+wormbase-vcf-ws298	RDA-I1-01M	evidenced	line 1: ##fileformat=VCFv4.3		
+wormbase-vcf-ws298	RDA-I1-01D	evidenced	line 1: ##fileformat=VCFv4.3		
+wormbase-vcf-ws298	RDA-I1-02M	not_evidenced			
+wormbase-vcf-ws298	RDA-I1-02D	evidenced	line 1: ##fileformat=VCFv4.3 | line 9: ##INFO=<ID=HG,Number=1,Type=String,Description="HGVSg identifier"> | line 10: ##INFO=<ID=RF,Number=0,Type=Flag,Description="RFLP"> | line 11: ##INFO=<ID=ON,Number=.,Type=String,Description="Other name"> | line 12: ##INFO=<ID=PL,Number=0,Type=Flag,Description="Polymorphism"> | line 13: ##INFO=<ID=CSQ,Number=.,Type=String,Description="Consequence annotations from EnsEMBL VEP. Format: Transcript|Gene|Consequence|Impact|SIFT_prediction|SIFT_score|PolyPhen_prediction|PolyPhen_score|Codon_change|HGVSp|HGVSc|Amino_acid_position|CDS_position|cDNA_position|Exon_nr|Intron_nr"> | line 14: ##INFO=<ID=PM,Number=1,Type=String,Description="Production method"> | line 15: ##INFO=<ID=EN,Number=0,Type=Flag,Description="Engineereed"> | line 16: ##INFO=<ID=AGR_submitted,Number=0,Type=Flag,Description="Variation meets criteria for submission to Alliance of Genome Resources"> | line 17: ##INFO=<ID=SN,Number=.,Type=String,Description="Strain"> | line 18: ##INFO=<ID=PN,Number=1,Type=String,Description="Public name"> | line 19: ##INFO=<ID=ST,Number=1,Type=String,Description="Status">		
+wormbase-vcf-ws298	RDA-I2-01M	partially_evidenced	line 2: ##contig=<ID=V,length=20924180,species="Caenorhabditis elegans"> | line 3: ##contig=<ID=I,length=15072434,species="Caenorhabditis elegans"> | line 4: ##contig=<ID=II,length=15279421,species="Caenorhabditis elegans"> | line 5: ##contig=<ID=III,length=13783801,species="Caenorhabditis elegans"> | line 6: ##contig=<ID=X,length=17718942,species="Caenorhabditis elegans"> | line 7: ##contig=<ID=MtDNA,length=13794,species="Caenorhabditis elegans"> | line 8: ##contig=<ID=IV,length=17493829,species="Caenorhabditis elegans">		
+wormbase-vcf-ws298	RDA-I2-01D	not_evidenced			
+wormbase-vcf-ws298	RDA-I3-01M	not_evidenced			
+wormbase-vcf-ws298	RDA-I3-02M	not_evidenced			
+wormbase-vcf-ws298	RDA-I3-03M	not_evidenced			
+wormbase-vcf-ws298	RDA-I3-04M	not_evidenced			
+wormbase-vcf-ws298	RDA-R1-01M	not_evidenced			
+wormbase-vcf-ws298	RDA-R1.1-01M	not_evidenced			
+wormbase-vcf-ws298	RDA-R1.1-02M	not_evidenced			
+wormbase-vcf-ws298	RDA-R1.1-03M	not_evidenced			
+wormbase-vcf-ws298	RDA-R1.2-01M	not_evidenced			
+wormbase-vcf-ws298	RDA-R1.2-02M	not_evidenced			
+wormbase-vcf-ws298	RDA-R1.3-01M	evidenced	line 1: ##fileformat=VCFv4.3		
+wormbase-vcf-ws298	RDA-R1.3-01D	partially_evidenced	line 1: ##fileformat=VCFv4.3		
+wormbase-vcf-ws298	RDA-R1.3-02M	partially_evidenced	line 1: ##fileformat=VCFv4.3		
+wormbase-vcf-ws298	RDA-R1.3-02D	evidenced	line 1: ##fileformat=VCFv4.3		
