@@ -1,0 +1,93 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+"""The GitHub Pages site for the JSON-LD files (scripts/build_pages.py)."""
+
+from html.parser import HTMLParser
+from pathlib import Path
+import re
+import sys
+import tempfile
+import unittest
+from unittest import mock
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+import build_pages  # noqa: E402
+
+
+class Ids(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.ids, self.hrefs = [], []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if "id" in attrs:
+            self.ids.append(attrs["id"])
+        if tag == "a":
+            self.hrefs.append(attrs["href"])
+
+
+def parse(path):
+    parser = Ids()
+    parser.feed(path.read_text(encoding="utf-8"))
+    return parser
+
+
+class BuildPagesTests(unittest.TestCase):
+    def build(self, tags=(), files=None):
+        site = Path(self.enterContext(tempfile.TemporaryDirectory())) / "site"
+        with mock.patch.object(build_pages, "release_tags", return_value=list(tags)), \
+                mock.patch.object(build_pages, "tag_file",
+                                  side_effect=lambda tag, name: (files or {}).get((tag, name))):
+            versions = build_pages.build(site)
+        return site, versions
+
+    def test_site_layout(self):
+        site, versions = self.build()
+        self.assertEqual(versions, ["main"])
+        for path in ("index.html", ".nojekyll", "terms/index.html", "terms/terms.ttl",
+                     "terms/terms.jsonld", "fhr/main/jsonld/fhr.context.jsonld",
+                     "fhr/main/jsonld/terms.ttl", "fhr/main/jsonld/terms.jsonld"):
+            self.assertTrue((site / path).is_file(), path)
+        self.assertEqual((site / "terms/terms.ttl").read_bytes(),
+                         (ROOT / "jsonld/terms.ttl").read_bytes())
+
+    def test_every_term_has_an_anchor(self):
+        site, _ = self.build()
+        terms = re.findall(r"^### (.+)$", (ROOT / "docs/TERMS.md").read_text(), flags=re.M)
+        page = parse(site / "terms/index.html")
+        self.assertTrue(terms)
+        for name in terms:
+            self.assertEqual(page.ids.count(name), 1, name)
+        self.assertEqual(len(page.ids), len(set(page.ids)))
+        for href in page.hrefs:
+            self.assertTrue(href.startswith(("https://", "#")), href)
+            self.assertNotIn("..", href)
+
+    def test_release_copies_skip_tags_without_jsonld(self):
+        files = {("v0.4.0", "fhr.context.jsonld"): b"{}\n", ("v0.4.0", "terms.ttl"): b"# t\n"}
+        site, versions = self.build(["v0.3.1", "v0.4.0"], files)
+        self.assertEqual(versions, ["v0.4.0", "main"])
+        self.assertFalse((site / "fhr/v0.3.1").exists())
+        self.assertEqual((site / "fhr/v0.4.0/jsonld/fhr.context.jsonld").read_bytes(), b"{}\n")
+        self.assertFalse((site / "fhr/v0.4.0/jsonld/terms.jsonld").exists())
+        self.assertIn("fhr/v0.4.0/jsonld/fhr.context.jsonld",
+                      parse(site / "index.html").hrefs)
+
+    def test_unsupported_markdown_is_an_error(self):
+        for text in ("| a | b |\n", "```\ncode\n```\n", "#### deep\n", "- item\nloose\n"):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                build_pages.render_markdown(text, "docs/TERMS.md")
+
+    def test_markdown_escaping_and_links(self):
+        out = build_pages.render_markdown(
+            "### a<b\n\nSee [x](../jsonld/terms.ttl) and `<c>`.\n", "docs/TERMS.md")
+        self.assertIn('<h3 id="a&lt;b">a&lt;b</h3>', out)
+        self.assertIn(build_pages.BLOB + "jsonld/terms.ttl", out)
+        self.assertIn("<code>&lt;c&gt;</code>", out)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -21,8 +21,9 @@ Nobody edits it by hand; `make_jsonld.py --check` fails on drift.
 
 | File | Purpose | Media type served |
 |---|---|---|
-| `jsonld/terms.ttl` | RDF vocabulary (Turtle) | `text/turtle` requested. Raw GitHub actually serves `text/plain` (known limitation, research R-09) |
-| `docs/TERMS.md` | Human documentation page and the default redirect target | HTML (GitHub-rendered) |
+| `jsonld/terms.ttl` | RDF vocabulary (Turtle) | `text/turtle` from GitHub Pages (raw GitHub serves `text/plain`, research R-09) |
+| `jsonld/terms.jsonld` | The same vocabulary as JSON-LD | `application/ld+json` from GitHub Pages |
+| `docs/TERMS.md` | Human documentation page; rendered to `terms/index.html` on Pages, the default redirect target | HTML |
 
 ## `jsonld/terms.ttl` layout
 
@@ -114,31 +115,35 @@ Unprefixed GA4GH refget sequence collection top-level digest (sha512t24u); suppl
 The heading text is exactly the local name, so GitHub's anchor is `#seqcol_id`. A test asserts
 that every term has exactly one heading.
 
-## w3id registration (maintainer action; prepared, not submitted)
+## w3id registration (maintainer action)
 
 The rules below go into `ids/fair-bioheaders/.htaccess` in perma-id/w3id.org, before the
-existing `fhr/` rules. The header comment gains the bullet shown. A PR may be opened only by Adam
-Wright or David Molik, the administrators of `/fair-bioheaders/`.
+existing `fhr/` rules (maintainer decision 1 replaced the raw-GitHub targets of the first draft
+with the GitHub Pages site built by `scripts/build_pages.py`). The header comment gains matching
+bullets. A PR may be opened only by Adam Wright or David Molik, the administrators of
+`/fair-bioheaders/`.
 
 ```apache
-# - https://w3id.org/fair-bioheaders/terms is the namespace of FAIR-bioHeaders
-#   vocabulary terms (https://w3id.org/fair-bioheaders/terms#checksum etc.).
-#   RDF clients asking for Turtle get the vocabulary file; everyone else gets
-#   its documentation page, where each term has an anchor.
 RewriteCond %{HTTP_ACCEPT} text/turtle
-RewriteRule ^terms/?$ https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/jsonld/terms.ttl [R=302,L]
-RewriteRule ^terms/?$ https://github.com/FAIR-bioHeaders/FHR-Specification/blob/main/docs/TERMS.md [R=302,L]
+RewriteRule ^terms/?$ https://fair-bioheaders.github.io/FHR-Specification/terms/terms.ttl [R=302,L]
+RewriteCond %{HTTP_ACCEPT} application/ld\+json
+RewriteRule ^terms/?$ https://fair-bioheaders.github.io/FHR-Specification/terms/terms.jsonld [R=302,L]
+RewriteRule ^terms/?$ https://fair-bioheaders.github.io/FHR-Specification/terms/ [R=302,L]
+RewriteRule ^fhr/(v[0-9]+\.[0-9]+\.[0-9]+)/jsonld/([^/]+)$ https://fair-bioheaders.github.io/FHR-Specification/fhr/$1/jsonld/$2 [R=302,L]
 ```
 
-Checks before submitting:
-1. Run `node tools/check/bin/w3id-check.js` in a clone. There must be no error, and no
-   `htaccess/no-406-fallback`, `htaccess/github-raw-target` (`/blob/` is for documentation only)
-   or `htaccess/avoid-permanent-redirect` warning.
-2. Run a local Apache from `tools/server` and request the namespace twice:
-   - `curl -sI -H 'Accept: text/turtle' http://localhost/fair-bioheaders/terms` → 302 to `terms.ttl`;
-   - `curl -sI http://localhost/fair-bioheaders/terms` → 302 to `TERMS.md`.
-3. Confirm that the targets exist on `main`: `jsonld/terms.ttl` and `docs/TERMS.md` are merged.
-4. Confirm that the existing rules still behave as before (`fhr/vX.Y.Z`, `gff3-validator`).
+The third rule is the 406-safe fallback: a client that accepts neither RDF form gets the HTML
+page.
+
+Checks before submitting (done 2026-10-10 against perma-id/w3id.org master):
+1. `node tools/check/bin/w3id-check.js ids/fair-bioheaders`: "No problems found" (41 rules).
+2. The Apache of `tools/server` (Docker), requesting `/fair-bioheaders/terms`:
+   - `Accept: text/turtle` → 302 to `terms/terms.ttl`;
+   - `Accept: application/ld+json` → 302 to `terms/terms.jsonld`;
+   - `Accept: text/html` and `*/*` → 302 to `terms/`;
+   - `fhr/v0.4.0/jsonld/fhr.context.jsonld` → 302 to the Pages copy;
+   - `fhr/v0.3.1`, `fhr/v0.3.1/schemas/core.yaml`, `gff3-validator` and the root are unchanged.
+3. The targets are live on Pages (the `jsonld-pages` workflow has run on `main`).
 
 ## Verification (FHR-Specification)
 
