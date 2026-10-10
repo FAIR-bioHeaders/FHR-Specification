@@ -201,7 +201,7 @@
       "additionalProperties": false,
       "required": ["header_type", "cited_schema", "cited_schema_version", "schema_used", "result", "reason"],
       "properties": {
-        "header_type": {"enum": ["FHR", "FHT", "FHP", "FHGFF3"]},
+        "header_type": {"description": "From the cited schema against an allow-list (spec#44); null when the schema value is missing or not on the list.", "enum": ["FHR", "FHT", "FHP", "FHGFF3", null]},
         "cited_schema": {"type": ["string", "null"]},
         "cited_schema_version": {"type": ["string", "null"]},
         "schema_used": {

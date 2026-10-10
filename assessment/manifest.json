@@ -1,0 +1,160 @@
+{
+  "manifest_version": "1.0.0",
+  "rubric_version": "1.0.0",
+  "fixtures": [
+    {
+      "id": "alliance-gff3-mgi",
+      "file": "headers/alliance_gff3_GFF_MGI_1.gff",
+      "format": "gff3",
+      "source_url": "https://download.alliancegenome.org/9.1.0/GFF/MGI/GFF_MGI_1.gff.gz",
+      "fetched": "2026-10-10T12:35Z",
+      "release": "Alliance 9.1.0",
+      "expected": {}
+    },
+    {
+      "id": "alliance-gff3-wb",
+      "file": "headers/alliance_gff3_GFF_WB_4.gff",
+      "format": "gff3",
+      "source_url": "https://download.alliancegenome.org/8.3.0/GFF/WB/GFF_WB_4.gff.gz",
+      "fetched": "2026-10-10T12:35Z",
+      "release": "Alliance 8.3.0 (WormBase WS298)",
+      "expected": {}
+    },
+    {
+      "id": "alliance-gaf-wb",
+      "file": "headers/alliance_gaf_GAF_WB_1.gaf",
+      "format": "gaf",
+      "source_url": "https://download.alliancegenome.org/9.1.0/GAF/WB/GAF_WB_1.gaf.gz",
+      "fetched": "2026-10-10T12:35Z",
+      "release": "Alliance 9.1.0",
+      "expected": {}
+    },
+    {
+      "id": "alliance-vcf-wbcel235",
+      "file": "headers/alliance_vcf_VCF-GZ_WBcel235_38.vcf",
+      "format": "vcf",
+      "source_url": "https://download.alliancegenome.org/3.2.0/VCF-GZ/WBcel235/VCF-GZ_WBcel235_38.vcf.gz",
+      "fetched": "2026-10-10T12:35Z",
+      "release": "Alliance 3.2.0",
+      "expected": {}
+    },
+    {
+      "id": "alliance-fasta-grcz12tu",
+      "file": "headers/alliance_fasta-genome_FASTA_GRCz12tu_0.fa",
+      "format": "fasta",
+      "source_url": "https://download.alliancegenome.org/9.1.0/FASTA/GRCz12tu/FASTA_GRCz12tu_0.fa.gz",
+      "fetched": "2026-10-10T12:35Z",
+      "release": "Alliance 9.1.0",
+      "expected": {}
+    },
+    {
+      "id": "wormbase-gff3-ws298",
+      "file": "headers/wormbase_gff3_c_elegans.PRJNA13758.WS298.annotations.gff3",
+      "format": "gff3",
+      "source_url": "https://ftp.ebi.ac.uk/pub/databases/wormbase/releases/WS298/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.WS298.annotations.gff3.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "WormBase WS298 (EBI mirror)",
+      "expected": {}
+    },
+    {
+      "id": "wormbase-fasta-protein-ws298",
+      "file": "headers/wormbase_fasta-protein_c_elegans.PRJNA13758.WS298.protein.fa",
+      "format": "fasta",
+      "source_url": "https://ftp.ebi.ac.uk/pub/databases/wormbase/releases/WS298/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.WS298.protein.fa.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "WormBase WS298 (EBI mirror)",
+      "expected": {}
+    },
+    {
+      "id": "wormbase-vcf-ws298",
+      "file": "headers/wormbase_vcf_c_elegans.PRJNA13758.WS298.variations.vcf",
+      "format": "vcf",
+      "source_url": "https://ftp.ebi.ac.uk/pub/databases/wormbase/releases/WS298/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.WS298.variations.vcf.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "WormBase WS298 (EBI mirror)",
+      "expected": {}
+    },
+    {
+      "id": "flybase-gff3-r6.69",
+      "file": "headers/flybase_gff3_dmel-all-r6.69.gff.gz",
+      "format": "gff3",
+      "source_url": "https://s3ftp.flybase.org/genomes/Drosophila_melanogaster/current/gff/dmel-all-r6.69.gff.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "FlyBase FB2026_03 / r6.69",
+      "expected": {},
+      "notes": "The provider file is a gzipped tar archive whose member dmel-all-r6.69.gff begins with these header lines; the fixture keeps that packaging (tar member mtime 0, gzip mtime 0). The 1,865 further ##sequence-region lines that the survey elided are not reconstructed."
+    },
+    {
+      "id": "flybase-fasta-transcript-r6.69",
+      "file": "headers/flybase_fasta-transcript_dmel-all-transcript-r6.69.fasta",
+      "format": "fasta",
+      "source_url": "https://s3ftp.flybase.org/genomes/Drosophila_melanogaster/current/fasta/dmel-all-transcript-r6.69.fasta.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "FlyBase FB2026_03 / r6.69",
+      "expected": {}
+    },
+    {
+      "id": "ensembl-gff3-grch38-116",
+      "file": "headers/ensembl_gff3_Homo_sapiens.GRCh38.116.chr.gff3",
+      "format": "gff3",
+      "source_url": "https://ftp.ensembl.org/pub/current_gff3/homo_sapiens/Homo_sapiens.GRCh38.116.chr.gff3.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "Ensembl 116",
+      "expected": {}
+    },
+    {
+      "id": "ensembl-fasta-protein-grch38-116",
+      "file": "headers/ensembl_fasta-protein_Homo_sapiens.GRCh38.pep.all.fa",
+      "format": "fasta",
+      "source_url": "https://ftp.ensembl.org/pub/current_fasta/homo_sapiens/pep/Homo_sapiens.GRCh38.pep.all.fa.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "Ensembl 116",
+      "expected": {}
+    },
+    {
+      "id": "ensembl-vcf-chrmt-116",
+      "file": "headers/ensembl_vcf_homo_sapiens-chrMT.vcf",
+      "format": "vcf",
+      "source_url": "https://ftp.ensembl.org/pub/current_variation/vcf/homo_sapiens/homo_sapiens-chrMT.vcf.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "Ensembl 116",
+      "expected": {}
+    },
+    {
+      "id": "ncbi-refseq-gff3-wbcel235",
+      "file": "headers/ncbi-refseq_gff3_GCF_000002985.6_WBcel235_genomic.gff",
+      "format": "gff3",
+      "source_url": "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/002/985/GCF_000002985.6_WBcel235/GCF_000002985.6_WBcel235_genomic.gff.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "NCBI RefSeq assembly GCF_000002985.6",
+      "expected": {}
+    },
+    {
+      "id": "ncbi-refseq-fasta-wbcel235",
+      "file": "headers/ncbi-refseq_fasta-genome_GCF_000002985.6_WBcel235_genomic.fna",
+      "format": "fasta",
+      "source_url": "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/002/985/GCF_000002985.6_WBcel235/GCF_000002985.6_WBcel235_genomic.fna.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "NCBI RefSeq assembly GCF_000002985.6",
+      "expected": {}
+    },
+    {
+      "id": "go-gaf-wb",
+      "file": "headers/go_gaf_wb.gaf",
+      "format": "gaf",
+      "source_url": "https://current.geneontology.org/annotations/wb.gaf.gz",
+      "fetched": "2026-10-10T12:34Z",
+      "release": "GO current (release 2026-08-05)",
+      "expected": {}
+    },
+    {
+      "id": "ncbi-clinvar-vcf",
+      "file": "headers/ncbi-clinvar_vcf_clinvar.vcf",
+      "format": "vcf",
+      "source_url": "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz",
+      "fetched": "2026-10-10T12:31Z",
+      "release": "ClinVar weekly, fileDate 2026-10-04",
+      "expected": {}
+    }
+  ]
+}
