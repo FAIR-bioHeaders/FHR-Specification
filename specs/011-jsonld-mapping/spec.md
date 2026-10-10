@@ -11,6 +11,14 @@ Molik (2026-10-10): "Go ahead and make the JSON-LD mapping. I haven't started th
 Core, DataCite, Crossref, ARK, and BibTeX/BibLaTeX documentation and mappings yet, and I
 can reuse that in that ticket" (FHR-Specification#56).
 
+## Clarifications
+
+### Session 2026-10-10
+
+- Q: JSON-LD shape? → A: FHR's own keys plus `@context` (lossless, round-trips) (FR-007).
+- Q: Namespace for FHR-specific terms? → A: `https://w3id.org/fair-bioheaders/terms#`, unversioned (FR-008).
+- Q: Validating JSON-LD documents? → A: The schema stays unchanged; the toolkit sets `@context`/`@type` aside before validation (FR-009).
+
 ## Context
 
 FHR metadata is already available as JSON, YAML, HTML microdata and embedded FASTA/GFA
@@ -93,17 +101,9 @@ with keys reordered or compacted differently, both convert to the same FHR recor
   formats, offline, without fetching the context from the network.
 - **FR-006**: Typed resources MUST be used for the record, taxon, people, software and
   identifiers, following Bioschemas profiles where one exists.
-- **FR-007**: The JSON-LD shape [NEEDS CLARIFICATION: FHR's own keys plus an `@context`
-  (lossless and simple), or a restructured schema.org document such as a Bioschemas
-  Dataset (closer to what search engines expect, but needs custom code and may lose
-  detail)?]
-- **FR-008**: The vocabulary for FHR-specific terms [NEEDS CLARIFICATION: a new
-  persistent namespace such as `https://w3id.org/fair-bioheaders/terms#` (one more
-  w3id.org registration), or terms under the raw GitHub schema URL?]
-- **FR-009**: Validation of JSON-LD documents [NEEDS CLARIFICATION: allow optional
-  `@context` and `@type` keys in the v0.4 schema so a JSON-LD document validates as FHR
-  directly, or keep the schema unchanged and have the toolkit set them aside before
-  validation?]
+- **FR-007**: The JSON-LD form MUST be the FHR record itself with FHR's own keys, plus an `@context` (and optional `@type`), so one document is both FHR metadata and linked data.
+- **FR-008**: FHR-specific terms MUST use the persistent, unversioned namespace `https://w3id.org/fair-bioheaders/terms#`, registered with w3id.org; term IRIs do not change between schema versions.
+- **FR-009**: The FHR schema stays unchanged; when reading JSON-LD, the toolkit sets `@context` and `@type` aside before validating against the schema.
 
 ### Key Entities
 

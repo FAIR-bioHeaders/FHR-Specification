@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain (FR-007 shape, FR-008 namespace, FR-009 validation)
+- [x] No [NEEDS CLARIFICATION] markers remain (resolved 2026-10-10)
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,4 +31,4 @@
 
 ## Notes
 
-- Three clarifications remain; resolved before planning.
+- Clarifications resolved 2026-10-10: FHR keys + @context; w3id terms namespace; toolkit sets JSON-LD keywords aside.
