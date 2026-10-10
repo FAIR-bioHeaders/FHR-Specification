@@ -9,8 +9,10 @@ PyYAML and jsonschema); JSON-LD vectors are read by rule J1 first.
 vector and ``fhr-convert in.html out.json`` or ``fhr-convert in.jsonld out.json``
 on every microdata or JSON-LD vector: valid vectors must exit 0 (microdata and
 JSON-LD ones must also produce exactly the manifest metadata) and invalid
-vectors nonzero. ``--skip-format`` leaves out the vectors of a format, for
-converters that predate it.
+vectors nonzero. A converter that rejects every vector of a format as an
+unsupported file extension predates that format; those vectors are left out and
+reported, unless ``--require-format`` names the format. ``--skip-format`` leaves
+out a format explicitly.
 """
 
 import argparse
@@ -258,9 +260,19 @@ def same_json(left, right):
     return type(left) is type(right) and left == right
 
 
-def check_converter(conformance, manifest, location, skip=()):
+UNSUPPORTED = "Unsupported file extension"
+
+
+def check_converter(conformance, manifest, location, skip=(), require=(), unsupported=None):
+    """Run the converter on every vector and return the disagreements.
+
+    A converter that rejects every vector of a format with "Unsupported file
+    extension" predates that format: its vectors are left out and the format is
+    added to ``unsupported``, unless the format is in ``require``.
+    """
     command = converter_commands(location)
     problems = []
+    by_format = {}
     for vector in manifest["vectors"]:
         if vector["format"] in skip:
             continue
@@ -275,6 +287,8 @@ def check_converter(conformance, manifest, location, skip=()):
                 env={**os.environ, "PYTHONSAFEPATH": "1"},
             )
             accepted = result.returncode == 0
+            by_format.setdefault(vector["format"], []).append(
+                not accepted and UNSUPPORTED in (result.stderr + result.stdout))
             extracted = None
             if accepted and vector["format"] in EXTRACTED:
                 try:
@@ -282,6 +296,11 @@ def check_converter(conformance, manifest, location, skip=()):
                 except (OSError, ValueError) as error:
                     problems.append(f"{vector['id']}: converter wrote no JSON metadata ({error})")
                     continue
+        if not accepted and UNSUPPORTED in (result.stderr + result.stdout) \
+                and vector["format"] not in require:
+            problems.append((vector["format"], f"{vector['id']}: converter does not support "
+                             f"the {vector['format']} format"))
+            continue
         if accepted != (vector["expected"] == "valid"):
             detail = (result.stderr or result.stdout).strip().splitlines()
             detail = detail[-1] if detail else f"exit {result.returncode}"
@@ -297,7 +316,14 @@ def check_converter(conformance, manifest, location, skip=()):
                             f"{', '.join(differences)}: "
                             + json.dumps({key: extracted.get(key) for key in differences},
                                          ensure_ascii=False))
-    return problems
+    # A format is skipped only if the converter rejected all of its vectors as
+    # unsupported; otherwise those rejections are real disagreements.
+    skipped = {fmt for fmt, flags in by_format.items() if flags and all(flags)
+               and fmt not in require}
+    if unsupported is not None:
+        unsupported.update(skipped)
+    return [problem[1] if isinstance(problem, tuple) else problem for problem in problems
+            if not (isinstance(problem, tuple) and problem[0] in skipped)]
 
 
 def main():
@@ -315,7 +341,14 @@ def main():
                         choices=sorted(COMMANDS),
                         help="with --converter, leave out the vectors of FORMAT (repeatable), "
                              "for converters that predate it")
+    parser.add_argument("--require-format", action="append", default=[], metavar="FORMAT",
+                        choices=sorted(COMMANDS),
+                        help="with --converter, fail instead of skipping when the converter "
+                             "does not support FORMAT (repeatable). Without it, a format whose "
+                             "every vector is rejected as an unsupported file extension is "
+                             "skipped and reported")
     args = parser.parse_args()
+    unsupported = set()
     conformance = args.conformance.resolve()
     manifest = json.loads((conformance / "manifest.json").read_text())
 
@@ -329,7 +362,8 @@ def main():
     if args.converter:
         steps.append((f"converter ({args.converter}) agrees with the manifest",
                       lambda: check_converter(conformance, manifest, args.converter,
-                                              args.skip_format)))
+                                              args.skip_format, args.require_format,
+                                              unsupported)))
 
     failed = False
     for label, step in steps:
@@ -342,9 +376,13 @@ def main():
         failed |= bool(problems)
         print(f"{'FAIL' if problems else 'ok'}: {label}", flush=True)
     count = len(manifest["vectors"])
-    skipped = sum(vector["format"] in args.skip_format for vector in manifest["vectors"])
-    note = f" ({skipped} {', '.join(args.skip_format)} vectors skipped by the converter)" \
-        if args.converter and skipped else ""
+    left_out = set(args.skip_format) | unsupported
+    skipped = sum(vector["format"] in left_out for vector in manifest["vectors"])
+    note = ""
+    if args.converter and skipped:
+        reasons = [f"{fmt} not supported by this converter" for fmt in sorted(unsupported)]
+        reasons += [f"{fmt} skipped" for fmt in sorted(set(args.skip_format) - unsupported)]
+        note = f" ({skipped} vectors left out: {'; '.join(reasons)})"
     print(f"{count} vectors {'failed' if failed else 'passed'}{note}")
     return int(failed)
 
