@@ -37,9 +37,9 @@ alphabetically by local name), and the file ends with a trailing newline. Every 
 | `rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms>` | yes | constant |
 | `sdo:domainIncludes` | properties | The `class_uri` of every class that uses the slot (FHR → `sdo:Dataset`) |
 | `sdo:rangeIncludes` | properties | `sdo:Text`, `sdo:Number`, `sdo:Integer` or `sdo:URL`, or the range class's `class_uri` |
-| `rdfs:subPropertyOf` | when stated | Only where the mapping table says so. In release 1 that is `fhr:accessionID rdfs:subPropertyOf sdo:identifier` |
+| `rdfs:subPropertyOf` | when stated | From a LinkML `broad_mappings` entry that points at an `sdo:` property. In release 1 that is `fhr:accessionID rdfs:subPropertyOf sdo:identifier`. The mapping table must agree (test) |
 | `rdfs:subClassOf` | classes | `sdo:Thing` for `fhr:Agent`; `sdo:StructuredValue` for `fhr:VitalStats` |
-| `skos:closeMatch` | when stated | Only from the mapping table. In release 1 that is `fhr:Agent skos:closeMatch dcterms:Agent` |
+| `skos:closeMatch` | when stated | From LinkML `close_mappings`. In release 1 that is `fhr:Agent skos:closeMatch dcterms:Agent` |
 | `owl:deprecated`, `dcterms:isReplacedBy` | when deprecated | |
 
 The ontology header node:

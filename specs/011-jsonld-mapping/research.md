@@ -367,6 +367,9 @@ not use `gen-jsonld-context` as is. The LinkML changes add only annotations, so
 - **Two annotations**: `jsonld_node_id: true` on `Taxon.uri` and `Author.uri`, and
   `jsonld_type_if_uri: sdo:Person` on `Author`.
 - **`list_elements_ordered: true`** on `commandLineOption`.
+- **Two vocabulary links**: `broad_mappings: [sdo:identifier]` on `accessionID`, emitted as
+  `rdfs:subPropertyOf`, and `close_mappings: [dcterms:Agent]` on `Author`, emitted as
+  `skos:closeMatch` (with a `dcterms:` prefix).
 - **`uri: xsd:string`** on the core type `sha2`.
 - **Descriptions** for slots that have none in LinkML (`N90`, `gcContent`, the AssemblySoftware
   attributes), copied from `fhr.json`. FR-002 needs a description for every FHR term. This changes
