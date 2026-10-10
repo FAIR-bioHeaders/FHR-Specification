@@ -12,6 +12,13 @@ at least guidelines for file types we have not specified yet? For example the
 Alliance could put their download files through it to find out whether their headers
 are FAIR."
 
+## Clarifications
+
+### Session 2026-10-10
+
+- Q: Should the assessment contact external services? → A: Offline by default; an explicit opt-in may check that identifiers and URLs resolve (FR-011).
+- Q: What should the criteria be based on? → A: The RDA FAIR Data Maturity Model indicators, with file-header interpretations (FR-012).
+
 ## Context
 
 FAIR-bioHeaders specifies headers for particular file types (FHR for genomes, with
@@ -147,13 +154,13 @@ reports; re-running on an unchanged release gives identical results.
 - **FR-009**: Reports MUST be available in a human-readable form and a machine-readable
   form, and results for unchanged inputs MUST be reproducible.
 - **FR-010**: The assessment MUST run without sending file contents anywhere.
-- **FR-011**: Online resolution of identifiers and URLs (whether an accession or licence
-  URL resolves) [NEEDS CLARIFICATION: should the assessment ever contact external
-  services, for example as an explicit opt-in, or stay strictly offline?]
-- **FR-012**: The assessment criteria [NEEDS CLARIFICATION: should they follow an
-  established FAIR indicator set (for example the RDA FAIR Data Maturity Model
-  indicators) with file-level interpretations, or be FAIR-bioHeaders' own criteria
-  mapped to the principles?]
+- **FR-011**: By default the assessment MUST work fully offline and judge only what
+  the file states. An explicit opt-in MAY additionally check that identifiers and URLs
+  resolve; the report MUST say whether online checks ran, and file contents MUST never
+  be sent anywhere.
+- **FR-012**: The assessment criteria MUST be based on the RDA FAIR Data Maturity Model
+  indicators, each with a documented file-header interpretation; indicators that cannot
+  apply to a file header are listed as not applicable with a reason.
 
 ### Key Entities
 

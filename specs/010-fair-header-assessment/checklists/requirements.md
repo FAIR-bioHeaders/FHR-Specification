@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain (FR-011 online resolution, FR-012 criteria basis: asked of the maintainers)
+- [x] No [NEEDS CLARIFICATION] markers remain (FR-011 and FR-012 resolved 2026-10-10)
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -33,4 +33,4 @@
 
 - File-format conventions (GFF3 `##`, GAF `!`, VCF `##`) are named as domain inputs, not
   implementation choices.
-- Two clarifications remain; they are resolved before `/speckit-plan`.
+- Clarifications resolved 2026-10-10: offline by default with opt-in online checks; RDA FAIR Data Maturity Model indicators.
