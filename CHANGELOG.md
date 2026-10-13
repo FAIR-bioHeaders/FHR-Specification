@@ -2,6 +2,11 @@
 
 ## Unreleased (v0.4)
 
+- FHGFF3 v0.1 (draft GFF3 annotation header, spec 007) is released from this
+  line too: `fhgff3.json` is generated here from the v0.4 core (tightened
+  patterns, optional author `nameType`), with its baseline
+  `.github/schema-baseline-fhgff3.json` updated deliberately. `fhp.json` is
+  unchanged by the merge.
 - FHP v0.1 (draft protein header, spec 006) is released from this line, so
   `fhp.json` is generated here from the v0.4 core: the tightened patterns and the
   optional author `nameType` apply to FHP as well. Its baseline
@@ -48,6 +53,28 @@
   `documentation` block scalar so their metadata stays valid; their expected
   checksums changed. The converter's three bundled schema copies must be
   updated to match.
+- Add a **draft** FAIR header for GFF3 annotations, FHGFF3 (spec 007, #48, the
+  FHGFF3 part of #50). **FHR and FHP are unchanged**: `fhr.json`, `fhp.json`, the
+  core and every existing vector are byte-identical. The new files are:
+  - `fhgff3_linkml.yml`, which imports the core, and `fhgff3.json`, generated from it
+    (`json-schema-generator.py --type fhgff3`), with its own review baseline;
+  - the required `annotation` field and a required genome link. The link is a
+    `derivedFrom` item that `annotates` an FHR genome by checksum, or a
+    `genomeReference` (assembly accession plus SeqCol digest), or both, with the
+    checksum authoritative. The generator adds this rule, and the rule that at most
+    one item `annotates` an FHR parent, to the schema;
+  - the optional `source`, `annotationSoftware`, `annotationProtocol`, `soVersion`,
+    `featureCounts` and BUSCO `completeness` fields.
+
+  `schemas/shared.yaml` takes FHP's software, source and completeness objects, so
+  both types share them. `docs/FHGFF3.md` gives the placement rule (after
+  `##gff-version 3`, ending at the first feature or `##FASTA`), the fields, the
+  native-directive cross-check (warnings only) and rules G1–G3. `examples/fhgff3/`
+  has checksum- and reference-linked, embedded-FASTA, plain, invalid and
+  stale-parent examples. Twenty-five `fhgff3` conformance vectors cover R1–R10 on
+  GFF3 and G1–G3. `check_conformance.py --converter` reports FHGFF3 as unsupported
+  for converters without `fhr-gff3-validate` (unless `--require-format fhgff3` is
+  given). JSON-LD and microdata for FHGFF3 are follow-ups. FHGFF3 is not released.
 - Add a **draft** FAIR header for protein FASTA, FHP (spec 006, #47, the FHP part of
   #50). **FHR is unchanged**: `fhr.json`, `fhr_linkml.yml`, the core and every FHR
   vector are untouched. The new files are:
