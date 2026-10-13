@@ -125,11 +125,11 @@ bullets. A PR may be opened only by Adam Wright or David Molik, the administrato
 
 ```apache
 RewriteCond %{HTTP_ACCEPT} text/turtle
-RewriteRule ^terms/?$ https://fair-bioheaders.github.io/FHR-Specification/terms/terms.ttl [R=302,L]
+RewriteRule ^terms/?$ https://fhref.org/FHR-Specification/terms/terms.ttl [R=302,L]
 RewriteCond %{HTTP_ACCEPT} application/ld\+json
-RewriteRule ^terms/?$ https://fair-bioheaders.github.io/FHR-Specification/terms/terms.jsonld [R=302,L]
-RewriteRule ^terms/?$ https://fair-bioheaders.github.io/FHR-Specification/terms/ [R=302,L]
-RewriteRule ^fhr/(v[0-9]+\.[0-9]+\.[0-9]+)/jsonld/([^/]+)$ https://fair-bioheaders.github.io/FHR-Specification/fhr/$1/jsonld/$2 [R=302,L]
+RewriteRule ^terms/?$ https://fhref.org/FHR-Specification/terms/terms.jsonld [R=302,L]
+RewriteRule ^terms/?$ https://fhref.org/FHR-Specification/terms/ [R=302,L]
+RewriteRule ^fhr/(v[0-9]+\.[0-9]+\.[0-9]+)/jsonld/([^/]+)$ https://fhref.org/FHR-Specification/fhr/$1/jsonld/$2 [R=302,L]
 ```
 
 The third rule is the 406-safe fallback: a client that accepts neither RDF form gets the HTML

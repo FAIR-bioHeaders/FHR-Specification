@@ -114,7 +114,7 @@ if any, stays separate ([MICRODATA.md](MICRODATA.md)).
 - Release copies are addressed as
   `https://w3id.org/fair-bioheaders/fhr/vX.Y.Z/jsonld/fhr.context.jsonld`, once a release
   contains the file. That URL redirects to the copy on the
-  [GitHub Pages site](https://fair-bioheaders.github.io/FHR-Specification/), which serves it as
+  [GitHub Pages site](https://fhref.org/FHR-Specification/), which serves it as
   `application/ld+json` with CORS, so JSON-LD processors can load it.
 - The vocabulary namespace `https://w3id.org/fair-bioheaders/terms` redirects by content
   negotiation: `Accept: text/turtle` gets `terms.ttl`, `Accept: application/ld+json` gets
