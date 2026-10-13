@@ -1,8 +1,8 @@
 # FHP: FAIR header for protein FASTA (draft)
 
 **Status: draft, not released.** FHP is the working name (#54). The schema, examples and
-conformance vectors are on `main` for review. No FHP release, DOI or persistent alias exists
-yet, and the fields may change after curator review. The design is in
+conformance vectors are on `main` for review. No FHP release or DOI exists yet (the persistent
+schema URL is registered and resolves once v0.4.0 is tagged), and the fields may change after curator review. The design is in
 [specs/006-protein-header](../specs/006-protein-header/spec.md).
 
 FHP brings the FHR header to protein FASTA files: predicted proteomes, sets taken from protein
@@ -107,6 +107,7 @@ These are recorded as follow-ups F-01 to F-07 in the
 **Release line (maintainer decision, 2026-10-11).** FHP v0.1 is released from the
 `release-v0.4` line, with FHR-Specification v0.4.0, so it starts with the tightened core
 patterns (anchored ORCID and taxon URLs, padded checksums, bare DOIs) and the optional author
-`nameType`. Its persistent schema URL will be
-`https://w3id.org/fair-bioheaders/fhp/vX.Y.Z`, where `vX.Y.Z` is the FHR-Specification release
-tag, as for `/fhr/vX.Y.Z`. On `main`, FHP still inherits the core's v0.3 patterns.
+`nameType`. Its persistent schema URL is `https://w3id.org/fair-bioheaders/fhp/vX.Y.Z`, where
+`vX.Y.Z` is the FHR-Specification release tag, as for `/fhr/vX.Y.Z` (registered in
+perma-id/w3id.org#6868; it resolves once v0.4.0 is tagged). On `main`, FHP still inherits the
+core's v0.3 patterns.
