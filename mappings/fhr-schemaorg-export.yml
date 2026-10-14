@@ -66,6 +66,13 @@ entries:
   property: '@id'
   sources:
   - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+- path: metadataAuthor[].nameType
+  subject: author
+  property: '@type'
+  transformation: Personal gives Person and Organizational gives Organization; an explicit nameType
+    decides the type before the ORCID or ROR inference (v0.4).
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
 - path: assemblyAuthor[]
   subject: assembly
   property: sdo:creator
@@ -80,6 +87,13 @@ entries:
 - path: assemblyAuthor[].uri
   subject: author
   property: '@id'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+- path: assemblyAuthor[].nameType
+  subject: author
+  property: '@type'
+  transformation: Personal gives Person and Organizational gives Organization; an explicit nameType
+    decides the type before the ORCID or ROR inference (v0.4).
   sources:
   - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
 - path: dateCreated
@@ -229,6 +243,34 @@ entries:
   property: sdo:value
   transformation: 'Observation about the assembly: measuredProperty fhr:N90, the number as value, unitCode
     UO_0000244 (base pair).'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+- path: vitalStats.scaffoldN50
+  subject: observation
+  property: sdo:value
+  transformation: 'Observation about the assembly: measuredProperty fhr:scaffoldN50, the number as value,
+    unitCode UO_0000244 (base pair).'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+- path: vitalStats.scaffoldN90
+  subject: observation
+  property: sdo:value
+  transformation: 'Observation about the assembly: measuredProperty fhr:scaffoldN90, the number as value,
+    unitCode UO_0000244 (base pair).'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+- path: vitalStats.scaffoldL50
+  subject: observation
+  property: sdo:value
+  transformation: 'Observation about the assembly: measuredProperty fhr:scaffoldL50, the number as value,
+    unitCode UO_0000189 (count unit).'
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+- path: vitalStats.scaffoldL90
+  subject: observation
+  property: sdo:value
+  transformation: 'Observation about the assembly: measuredProperty fhr:scaffoldL90, the number as value,
+    unitCode UO_0000189 (count unit).'
   sources:
   - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
 - path: vitalStats.gcContent

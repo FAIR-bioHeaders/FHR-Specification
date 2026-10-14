@@ -19,14 +19,14 @@
 
 fhr:Agent a rdfs:Class ;
     rdfs:label "Agent"@en ;
-    rdfs:comment "A person or organization that the FHR record does not classify; FHR records the kind of agent only through an ORCID or ROR identifier."@en ;
+    rdfs:comment "A person or organization that the FHR record does not classify; FHR records the kind of agent through nameType or an ORCID or ROR identifier."@en ;
     rdfs:subClassOf sdo:Thing ;
     skos:closeMatch dcterms:Agent ;
     rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
 
 fhr:VitalStats a rdfs:Class ;
     rdfs:label "VitalStats"@en ;
-    rdfs:comment "General statistics about the genome assembly"@en ;
+    rdfs:comment "General statistics about the genome assembly. N50, N90, L50 and L90 are contig statistics; the scaffold* variants are the scaffold statistics."@en ;
     rdfs:subClassOf sdo:StructuredValue ;
     rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
 
@@ -68,7 +68,7 @@ fhr:commandLineOption a rdf:Property ;
 
 fhr:gcContent a rdf:Property ;
     rdfs:label "gcContent"@en ;
-    rdfs:comment "GC content as a percentage (0 to 100), not a fraction."@en ;
+    rdfs:comment "GC content as a percentage from 0 to 100, not a fraction (write 42.0 for 42 percent; 0.42 means 0.42 percent)"@en ;
     sdo:domainIncludes fhr:VitalStats ;
     sdo:rangeIncludes sdo:Number ;
     rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
@@ -82,14 +82,14 @@ fhr:instrument a rdf:Property ;
 
 fhr:L50 a rdf:Property ;
     rdfs:label "L50"@en ;
-    rdfs:comment "L50 of the genome assembly"@en ;
+    rdfs:comment "Contig L50, the smallest number of contigs whose lengths sum to at least 50 percent of the assembly length"@en ;
     sdo:domainIncludes fhr:VitalStats ;
     sdo:rangeIncludes sdo:Integer ;
     rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
 
 fhr:L90 a rdf:Property ;
     rdfs:label "L90"@en ;
-    rdfs:comment "L90 of the genome assembly"@en ;
+    rdfs:comment "Contig L90, the smallest number of contigs whose lengths sum to at least 90 percent of the assembly length"@en ;
     sdo:domainIncludes fhr:VitalStats ;
     sdo:rangeIncludes sdo:Integer ;
     rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
@@ -110,16 +110,23 @@ fhr:metadataAuthor a rdf:Property ;
 
 fhr:N50 a rdf:Property ;
     rdfs:label "N50"@en ;
-    rdfs:comment "N50 of the genome assembly"@en ;
+    rdfs:comment "Contig N50, the contig length in base pairs at 50 percent of the assembly length"@en ;
     sdo:domainIncludes fhr:VitalStats ;
     sdo:rangeIncludes sdo:Integer ;
     rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
 
 fhr:N90 a rdf:Property ;
     rdfs:label "N90"@en ;
-    rdfs:comment "Contig length in base pairs at 90 percent of the assembly length."@en ;
+    rdfs:comment "Contig N90, the contig length in base pairs at 90 percent of the assembly length"@en ;
     sdo:domainIncludes fhr:VitalStats ;
     sdo:rangeIncludes sdo:Integer ;
+    rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
+
+fhr:nameType a rdf:Property ;
+    rdfs:label "nameType"@en ;
+    rdfs:comment "Whether the author is a person (Personal) or an organization (Organizational), as DataCite nameType"@en ;
+    sdo:domainIncludes fhr:Agent ;
+    sdo:rangeIncludes sdo:Text ;
     rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
 
 fhr:numberContigs a rdf:Property ;
@@ -150,11 +157,39 @@ fhr:relatedLink a rdf:Property ;
     sdo:rangeIncludes sdo:URL ;
     rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
 
+fhr:scaffoldL50 a rdf:Property ;
+    rdfs:label "scaffoldL50"@en ;
+    rdfs:comment "Scaffold L50, the smallest number of scaffolds whose lengths sum to at least 50 percent of the assembly length"@en ;
+    sdo:domainIncludes fhr:VitalStats ;
+    sdo:rangeIncludes sdo:Integer ;
+    rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
+
+fhr:scaffoldL90 a rdf:Property ;
+    rdfs:label "scaffoldL90"@en ;
+    rdfs:comment "Scaffold L90, the smallest number of scaffolds whose lengths sum to at least 90 percent of the assembly length"@en ;
+    sdo:domainIncludes fhr:VitalStats ;
+    sdo:rangeIncludes sdo:Integer ;
+    rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
+
+fhr:scaffoldN50 a rdf:Property ;
+    rdfs:label "scaffoldN50"@en ;
+    rdfs:comment "Scaffold N50, the scaffold length in base pairs at 50 percent of the assembly length"@en ;
+    sdo:domainIncludes fhr:VitalStats ;
+    sdo:rangeIncludes sdo:Integer ;
+    rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
+
+fhr:scaffoldN90 a rdf:Property ;
+    rdfs:label "scaffoldN90"@en ;
+    rdfs:comment "Scaffold N90, the scaffold length in base pairs at 90 percent of the assembly length"@en ;
+    sdo:domainIncludes fhr:VitalStats ;
+    sdo:rangeIncludes sdo:Integer ;
+    rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
+
 fhr:schemaVersion a rdf:Property ;
     rdfs:label "schemaVersion"@en ;
-    rdfs:comment "Version of FHR"@en ;
+    rdfs:comment "Version of the FHR schema contract (\"MAJOR.MINOR\"); 2.0 from v0.4"@en ;
     sdo:domainIncludes sdo:Dataset ;
-    sdo:rangeIncludes sdo:Number ;
+    sdo:rangeIncludes sdo:Text ;
     rdfs:isDefinedBy <https://w3id.org/fair-bioheaders/terms> .
 
 fhr:seqcol_id a rdf:Property ;

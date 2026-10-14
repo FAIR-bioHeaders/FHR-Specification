@@ -1,14 +1,88 @@
 # Changelog
 
-## Unreleased
+## v0.4.0 — 2026-10-14
 
-- Rename the repository from `FHR-Specification` to `FAIR-bioHeaders-Specification`
-  (#108). It holds the released specifications for every header type; each type is
-  developed in its own repository (a new `FHR-Specification` for FHR). Links and
-  generated text use the new name. The FHP and FHGFF3 schemas accept raw GitHub
-  schema URLs under either name, and the JSON-LD context URL under either name is a
-  known context. Raw URLs under the old name remain supported aliases that serve the
-  same files; schema URLs inside existing examples and vectors are unchanged.
+The next major public release. FHR's metadata contract moves to `schemaVersion`
+`"2.0"`: the v0.4 tightening rejects some files that v0.3 accepted (see
+docs/SCHEMA-CHANGES-v0.4.md). The protein header FHP and the GFF3 annotation
+header FHGFF3 have their first releases, each at `schemaVersion` `"1.0"`. A file's
+`schema` URL selects the schema it is validated against (docs/SCHEMA-VERSIONS.md):
+the raw-`main` URL means the current schema, a versioned w3id or tag URL selects
+that release, and an unknown version is reported as unsupported. Release-targeted
+files cite `https://w3id.org/fair-bioheaders/<type>/v0.4.0`.
+
+- The repository is now `FAIR-bioHeaders-Specification` (#108). Schema
+  selection (docs/SCHEMA-VERSIONS.md V1, V2) recognises raw GitHub URLs under
+  either name, FAIR-bioHeaders-Specification or FHR-Specification, and the FHP
+  and FHGFF3 schemas accept both. New vectors `fasta-schema-canonical-raw-main`,
+  `fasta-schema-canonical-raw-tag`, `fhp-fasta-schema-canonical-raw-main` and
+  `fhgff3-schema-canonical-raw-main` cover the new name.
+- **Schema versions and schema selection** (spec 012, #44). `schemaVersion` is now a
+  `"MAJOR.MINOR"` string: FHR `"2.0"` (a major version, because the v0.4
+  tightening rejects some files v0.3 accepted), FHP `"1.0"` and FHGFF3 `"1.0"`.
+  `docs/SCHEMA-VERSIONS.md` defines major and minor and the rule readers use to
+  choose a schema from a file's `schema` URL: raw-main is the current schema with
+  no fallback to v0.3.1, a release's raw tag or w3id URL selects that release, and
+  a release the reader lacks, a branch or commit ref, or a release without that
+  type is unsupported-version (rules V1-V5). `schemas/versions.json` records each
+  release's versions. Examples, conformance vectors and assessment fixtures cite
+  `https://w3id.org/fair-bioheaders/<type>/v0.4.0`, with recomputed checksums;
+  15 vectors test selection. `check_conformance.py --schema` applies the rule and
+  reads older releases' schemas from git tags. The FHP and FHGFF3 `schema`
+  patterns accept the raw-main, raw tag and w3id forms. Files that cite raw-main
+  with `schemaVersion: 1` must be updated or pinned to v0.3.1 (migration in
+  `docs/SCHEMA-VERSIONS.md`); no tool rewrites them.
+- FHGFF3 v0.1 (draft GFF3 annotation header, spec 007) is released from this
+  line too: `fhgff3.json` is generated here from the v0.4 core (tightened
+  patterns, optional author `nameType`), with its baseline
+  `.github/schema-baseline-fhgff3.json` updated deliberately. `fhp.json` is
+  unchanged by the merge.
+- FHP v0.1 (draft protein header, spec 006) is released from this line, so
+  `fhp.json` is generated here from the v0.4 core: the tightened patterns and the
+  optional author `nameType` apply to FHP as well. Its baseline
+  `.github/schema-baseline-fhp.json` was updated deliberately. Every core object is
+  closed for FHP and FHR alike on this line.
+- Tighten loose schema constraints (#35, spec 002). `schemaVersion` stays 1;
+  every change rejects values that were already malformed.
+  docs/SCHEMA-CHANGES-v0.4.md lists each change with a before/after example and
+  a migration hint. Possibly breaking for existing metadata:
+  - `schemaVersion` is restricted to 1 (`enum: [1]`); `99` or `2` now fail.
+  - Nested objects (`taxon`, `metadataAuthor`/`assemblyAuthor` items,
+    `accessionID`, `vitalStats`) reject unknown keys, so a typo such as
+    `vitalStats.n50` now fails. Use profiles (#51) for extra fields.
+  - `masking` must be exactly one of its five values (anchored pattern).
+  - `scholarlyArticle` must be a bare DOI `10.<registrant>/<suffix>` (escaped
+    dot, non-empty suffix, no spaces).
+  - `identifier` items must be `prefix:accession` with a non-empty prefix of
+    letters, digits, `.`, `_` or `-` (uppercase now explicitly allowed) and a
+    non-empty accession (anchored).
+  - `taxon.uri` and ORCID URIs are anchored at both ends with escaped dots;
+    ORCID `X` check digits remain valid and `https://` is still required.
+  - `checksum` must be standard padded base64 of a 32-byte digest
+    (`^[A-Za-z0-9+/]{43}=$`); 44 `=` characters or unpadded values now fail.
+  - `N50`, `L50`, `L90`, `totalBasePairs`, `numberContigs` and
+    `numberScaffolds` have `minimum: 0`, like `N90`.
+- Add optional `vitalStats.scaffoldN50`, `scaffoldN90`, `scaffoldL50` and
+  `scaffoldL90` (nonnegative integers). `N50`, `N90`, `L50` and `L90` are now
+  described as contig statistics.
+- Add optional `nameType` (`Personal` or `Organizational`, the DataCite
+  `nameType` values) to `metadataAuthor` and `assemblyAuthor` items (feature 011,
+  maintainer decision 4). It is the vocabulary term `fhr:nameType`, and the
+  JSON-LD writer types the author node from it before inferring the type from an
+  ORCID or ROR `uri`. The key is `nameType`, not `type`, because JSON-LD contexts
+  such as schema.org's alias `type` to `@type`.
+- Document that `gcContent` is a percentage from 0 to 100, not a fraction; `0.42`
+  remains valid as 0.42 percent.
+- LinkML (`schemas/core.yaml`, `fhr_linkml.yml`) carries the same constraints;
+  `json-schema-generator.py` no longer reopens nested objects and emits
+  `schemaVersion` as `enum: [1]`. The schema review baseline was updated
+  deliberately. New tests cover each rejected value against both schemas, real
+  edge forms (ORCID `X`, preprint DOIs, uppercase CURIEs, low GC percentages)
+  and all examples. The `fasta-nested-checksum`/`gfa-nested-checksum`
+  conformance vectors move their nested `checksum:` line from `taxon` into a
+  `documentation` block scalar so their metadata stays valid; their expected
+  checksums changed. The converter's three bundled schema copies must be
+  updated to match.
 - Add a one-way schema.org export profile (feature 013, #56, from David Molik's
   2026-10-14 proposals). It is separate from the canonical JSON-LD, which does
   not change, and an export document cannot be read back.

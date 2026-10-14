@@ -1,8 +1,9 @@
-# FHGFF3: FAIR header for GFF3 annotations (draft)
+# FHGFF3: FAIR header for GFF3 annotations
 
-**Status: draft, not released.** FHGFF3 is the working name (#54). The schema, examples and
-conformance vectors are on `main` for review. No FHGFF3 release or DOI exists yet (the persistent
-schema URL is registered and resolves once v0.4.0 is tagged), and the fields may change after curator review. The design is in
+**Status: v0.1, first released in FAIR-bioHeaders-Specification v0.4.0** (`schemaVersion`
+`"1.0"`). FHGFF3 is the working name (#54), and the fields may still change after curator
+review, through a new schema version. Its persistent schema URL is
+`https://w3id.org/fair-bioheaders/fhgff3/v0.4.0`. The design is in
 [specs/007-gff3-header](../specs/007-gff3-header/spec.md).
 
 FHGFF3 is a provenance header around ordinary GFF3. It adds YAML lines that start with `#~` after
@@ -30,8 +31,8 @@ biodatamodels/gff-schema, whose upstream licence is unresolved (#75).
 ```
 ##gff-version 3
 #!genome-build Synthetic SyntheticAssembly1
-#~schema: https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/main/fhgff3.json
-#~schemaVersion: 1
+#~schema: https://w3id.org/fair-bioheaders/fhgff3/v0.4.0
+#~schemaVersion: '1.0'
 #~annotation: Synthetic example annotation
 ##sequence-region ctg1 1 20
 #~...
@@ -62,11 +63,10 @@ Required are the core's required fields (`schema`, `schemaVersion`, `taxon`, `ve
 | `annotation` | Name of the annotation |
 | the genome link | At least one of the two forms below |
 
-`schema` must be the raw GitHub URL of `fhgff3.json` in FAIR-bioHeaders-Specification, for example
-`https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/main/fhgff3.json`.
-The same URL under the repository's former name, `FHR-Specification`, is also
-recognised (#108): existing files cite it, and it serves the same file.
-`schemaVersion` is `1`.
+`schema` must be an FHGFF3 schema URL ([SCHEMA-VERSIONS.md](SCHEMA-VERSIONS.md)): preferably the
+versioned `https://w3id.org/fair-bioheaders/fhgff3/v0.4.0` of the release a file targets, or the raw
+GitHub URL of `fhgff3.json` on `main` or at a release tag, under either repository name. `schemaVersion` is `'1.0'` (FHGFF3 1.0),
+quoted in YAML.
 
 ### The genome link
 
@@ -139,7 +139,9 @@ unchanged, and R10 with the GFF3 block end below. In addition:
   other `#` lines inside it. A `#~` line on line 1 or after the block is invalid.
 - [G2] FHGFF3 metadata must validate against `fhgff3.json`. That includes the genome link: an
   `annotates` link to an FHR genome, a complete `genomeReference`, or both.
-- [G3] A record is read as FHGFF3 only when its `schema` is an FHGFF3 schema URL. Tools validate
+- [G3] A record is read as FHGFF3 only when its `schema` is an FHGFF3 schema URL: the raw-main or
+  raw tag URL of `fhgff3.json`, or `https://w3id.org/fair-bioheaders/fhgff3/vX.Y.Z`; which FHGFF3
+  schema is used follows [SCHEMA-VERSIONS.md](SCHEMA-VERSIONS.md). Tools validate
   any other header as that type (FHR by default), so a GFF3 file that cites `fhr.json` is checked
   against FHR.
 
