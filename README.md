@@ -1,15 +1,55 @@
-# FHR Specification
+# FHR-Specification (FHR development)
 
-[![Specification checks](https://github.com/FAIR-bioHeaders/FHR-Specification/actions/workflows/validate-specification.yml/badge.svg?branch=main)](https://github.com/FAIR-bioHeaders/FHR-Specification/actions/workflows/validate-specification.yml)
-[![Schema drift checks](https://github.com/FAIR-bioHeaders/FHR-Specification/actions/workflows/check-schema-drift.yml/badge.svg?branch=main)](https://github.com/FAIR-bioHeaders/FHR-Specification/actions/workflows/check-schema-drift.yml)
+> **This repository is where the FHR (FAIR Header Reference genome) header is
+> developed.** The released specifications of every FAIR-bioHeaders header type,
+> including FHR, live in
+> [FAIR-bioHeaders-Specification](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification),
+> which was called `FHR-Specification` until 2026-10-14
+> ([#108](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/108)).
+>
+> - **`main` keeps the published files unchanged.** Existing FHR files cite
+>   `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json`,
+>   so `main`'s `fhr.json`, `fhp.json`, `fhgff3.json` and `jsonld/` always equal
+>   FAIR-bioHeaders-Specification `main`'s copies; the `published-files` check enforces it.
+>   The release tags (`v0.3.0`, `v0.3.1`) stay for the same reason.
+> - **Develop on branches** and open issues here for FHR-specific work.
+> - **Finished changes go to FAIR-bioHeaders-Specification by pull request.** Once merged
+>   there, `main` here is updated to match.
+>
+> The rest of this README is a copy of the specification repository's README.
+
+# FAIR-bioHeaders Specification
+
+[![Specification checks](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/actions/workflows/validate-specification.yml/badge.svg?branch=main)](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/actions/workflows/validate-specification.yml)
+[![Schema drift checks](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/actions/workflows/check-schema-drift.yml/badge.svg?branch=main)](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/actions/workflows/check-schema-drift.yml)
 [![Specification DOI](https://img.shields.io/badge/Specification_DOI-10.5281%2Fzenodo.6762549-blue)](https://doi.org/10.5281/zenodo.6762549)
 [![File Converter DOI](https://img.shields.io/badge/File_Converter_DOI-10.5281%2Fzenodo.6762547-blue)](https://doi.org/10.5281/zenodo.6762547)
+
+This repository holds the released FAIR-bioHeaders specifications: FHR (reference
+genomes), the draft FHP (protein FASTA) and FHGFF3 (GFF3 annotation) headers, the
+shared core schema, the format rules, the JSON-LD context and vocabulary, and the
+conformance suite. It was called `FHR-Specification` until 2026-10-14 (#108).
+
+Development of each header type happens in its own repository, and finished work
+comes here by pull request:
+
+| Header type | Development repository |
+| --- | --- |
+| FHR | [FHR-Specification](https://github.com/FAIR-bioHeaders/FHR-Specification) |
+| FHP | [FHP-Specification](https://github.com/FAIR-bioHeaders/FHP-Specification) |
+| FHT | [FHT-Specification](https://github.com/FAIR-bioHeaders/FHT-Specification) |
+| FHGFF3 | [FHGFF3](https://github.com/FAIR-bioHeaders/FHGFF3) |
+
+Schema URLs under the old name
+(`https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json`
+and the like) keep working and are recognised by the tools; new files should cite a
+versioned w3id URL (see [SCHEMA-VERSIONS](docs/SCHEMA-VERSIONS.md) on `release-v0.4`).
 
 FHR (FAIR Header Reference genome) keeps machine-readable and human-readable
 provenance with reference genome data. This repository defines the JSON Schema,
 LinkML model, examples, and partial MIxS/MIGS mappings. The
-[FHR File Converter](https://github.com/FAIR-bioHeaders/FHR-File-Converter)
-provides conversion, validation, and FASTA/GFA header tools.
+[FAIR-bioHeaders toolkit](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Tools)
+provides conversion, validation, and FASTA/GFA/GFF3 header tools.
 
 ## v0.3 metadata
 
