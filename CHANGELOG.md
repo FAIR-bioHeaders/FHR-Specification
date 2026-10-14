@@ -2,6 +2,12 @@
 
 ## Unreleased (v0.4)
 
+- The repository is now `FAIR-bioHeaders-Specification` (#108). Schema
+  selection (docs/SCHEMA-VERSIONS.md V1, V2) recognises raw GitHub URLs under
+  either name, FAIR-bioHeaders-Specification or FHR-Specification, and the FHP
+  and FHGFF3 schemas accept both. New vectors `fasta-schema-canonical-raw-main`,
+  `fasta-schema-canonical-raw-tag`, `fhp-fasta-schema-canonical-raw-main` and
+  `fhgff3-schema-canonical-raw-main` cover the new name.
 - **Schema versions and schema selection** (spec 012, #44). `schemaVersion` is now a
   `"MAJOR.MINOR"` string: FHR `"2.0"` (a major version, because the v0.4
   tightening rejects some files v0.3 accepted), FHP `"1.0"` and FHGFF3 `"1.0"`.

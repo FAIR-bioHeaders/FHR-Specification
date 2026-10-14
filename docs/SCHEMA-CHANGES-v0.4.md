@@ -1,12 +1,12 @@
 # FHR v0.4 schema changes (unreleased)
 
 This is the explained diff between the v0.3 `fhr.json` and the v0.4 schema. It
-resolves [FHR-Specification#35](https://github.com/FAIR-bioHeaders/FHR-Specification/issues/35)
+resolves [FAIR-bioHeaders-Specification#35](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/35)
 and [spec 002](../specs/002-v04-constraint-tightening/spec.md), following the
 maintainer decisions recorded in that issue on 2026-10-09.
 
 `schemaVersion` becomes the string `"2.0"` (maintainer decision on
-[#44](https://github.com/FAIR-bioHeaders/FHR-Specification/issues/44), 2026-10-14;
+[#44](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/44), 2026-10-14;
 [SCHEMA-VERSIONS.md](SCHEMA-VERSIONS.md)). Each tightening rejects values that were
 already malformed under the documented meaning of the field, but because some files
 valid under v0.3 become invalid, the contract version is a major one. No field becomes
@@ -42,7 +42,7 @@ example that v0.3 accepted and v0.4 rejects, and how to fix it.
 `assemblySoftware` objects were already closed, and the top level already
 rejected unknown keys. After this change every object in `fhr.json` rejects
 unknown keys. Communities that need more fields should use profiles
-([#51](https://github.com/FAIR-bioHeaders/FHR-Specification/issues/51)) rather
+([#51](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/51)) rather
 than extra keys.
 
 ## Additions (no existing instance is affected)

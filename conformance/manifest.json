@@ -88,10 +88,10 @@
       "summary": "FHGFF3: a record is read as FHGFF3 only when its schema is an FHGFF3 schema URL; any other header is validated as that type."
     },
     "V1": {
-      "summary": "Selection: the raw-main URL of a type's schema file selects the current schema of that type; there is no fallback to an older release."
+      "summary": "Selection: the raw-main URL of a type's schema file selects the current schema of that type; there is no fallback to an older release. Raw URLs under either repository name, FAIR-bioHeaders-Specification or FHR-Specification, are the same."
     },
     "V2": {
-      "summary": "Selection: a release's raw tag URL (.../FHR-Specification/vX.Y.Z/<file>) selects that release's schema of the file's type."
+      "summary": "Selection: a release's raw tag URL (.../FAIR-bioHeaders-Specification/vX.Y.Z/<file>, or the same under FHR-Specification) selects that release's schema of the file's type."
     },
     "V3": {
       "summary": "Selection: a w3id URL https://w3id.org/fair-bioheaders/<type>/vX.Y.Z (trailing slash allowed) selects that release's schema of the type, including older releases."
@@ -2530,6 +2530,77 @@
         "masking": "not-masked",
         "schema": "https://example.org/schemas/my-fhr-profile.json",
         "schemaVersion": "2.0"
+      }
+    },
+    {
+      "id": "fasta-schema-canonical-raw-main",
+      "file": "valid/fasta-schema-canonical-raw-main.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "V1"
+      ],
+      "description": "The raw-main URL under the repository's current name selects the current FHR schema, as the old name does.",
+      "checksum": "+MUc8GxyLSO99UvY2HDwbfPL9lSCRfKbG0pNq+ghICA=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked",
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/main/fhr.json",
+        "schemaVersion": "2.0"
+      }
+    },
+    {
+      "id": "fasta-schema-canonical-raw-tag",
+      "file": "valid/fasta-schema-canonical-raw-tag.fhr.fasta",
+      "format": "fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "V2"
+      ],
+      "description": "The v0.4.0 raw tag URL under the repository's current name selects the v0.4.0 FHR schema.",
+      "checksum": "xAOubR+30DK2sznX5SVUyCCabsFyZ0ZNPc5MsRyKr+w=",
+      "metadata": {
+        "genome": "Synthetic FHR conformance genome",
+        "version": "1.0.0",
+        "masking": "not-masked",
+        "schema": "https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/v0.4.0/fhr.json",
+        "schemaVersion": "2.0"
+      }
+    },
+    {
+      "id": "fhp-fasta-schema-canonical-raw-main",
+      "file": "valid/fhp-fasta-schema-canonical-raw-main.fhp.fasta",
+      "format": "fhp-fasta",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "V1"
+      ],
+      "description": "The raw-main FHP URL under the repository's current name selects the current FHP schema.",
+      "checksum": "b2+lbyBeQZ0AwzRVS1rIBN5OgaVe4BexhQ/AIyt2BBI=",
+      "metadata": {
+        "proteome": "Synthetic FHP conformance protein set",
+        "version": "1.0.0",
+        "sourceType": "predicted"
+      }
+    },
+    {
+      "id": "fhgff3-schema-canonical-raw-main",
+      "file": "valid/fhgff3-schema-canonical-raw-main.fhgff3.gff3",
+      "format": "fhgff3",
+      "compressed": false,
+      "expected": "valid",
+      "rules": [
+        "V1"
+      ],
+      "description": "The raw-main FHGFF3 URL under the repository's current name selects the current FHGFF3 schema.",
+      "checksum": "gGlU8Loh35l1DIFA9U6Qi/nszM2CRfw/FKoqXBgGDHE=",
+      "metadata": {
+        "annotation": "Synthetic FHGFF3 conformance annotation",
+        "version": "1.0.0"
       }
     },
     {

@@ -74,9 +74,9 @@ answer before tagging); prose only (not checkable).
 ## D-05 The selection rule
 
 **Decision**: The table in [contracts/schema-selection.md](contracts/schema-selection.md):
-1. raw-main `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/<file>`
+1. raw-main `https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/main/<file>`
    → current schema of the file's type;
-2. raw tag `…/FHR-Specification/vX.Y.Z/<file>` or w3id
+2. raw tag `…/FAIR-bioHeaders-Specification/vX.Y.Z/<file>` or w3id
    `https://w3id.org/fair-bioheaders/<type>/vX.Y.Z` (optional trailing slash) → that release's
    schema of the type;
 3. a raw URL with any other ref, a release the reader does not have, or a release without that
@@ -132,10 +132,10 @@ drift); fetching from w3id at run time (network).
 
 **Decision**:
 1. **Now, on toolkit `main`**: the selection rule, unsupported-version results and the bundled
-   v0.3.0/v0.3.1 FHR copy. The current copies stay equal to FHR-Specification `main`, so
+   v0.3.0/v0.3.1 FHR copy. The current copies stay equal to FAIR-bioHeaders-Specification `main`, so
    `check_release.py` on `main` still passes and FHR results do not change for raw-main files.
 2. **Prepared as a draft**: the v0.4 copies (current FHR 2.0, FHP 1.0, FHGFF3 1.0, registry with
-   `v0.4.0`), examples and fixtures. It merges when FHR-Specification v0.4.0 is released.
+   `v0.4.0`), examples and fixtures. It merges when FAIR-bioHeaders-Specification v0.4.0 is released.
 
 *As implemented:* the two steps are one draft PR (FAIR-bioHeaders-Tools#57). Step 1 alone would
 already disagree with spec `main`: its `jsonld-schema-versioned-url` vector cites `fhr/v0.4.0`,

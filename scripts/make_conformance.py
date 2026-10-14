@@ -88,9 +88,11 @@ RULES = {
     "G3": "FHGFF3: a record is read as FHGFF3 only when its schema is an FHGFF3 schema URL; "
           "any other header is validated as that type.",
     "V1": "Selection: the raw-main URL of a type's schema file selects the current schema of "
-          "that type; there is no fallback to an older release.",
-    "V2": "Selection: a release's raw tag URL (.../FHR-Specification/vX.Y.Z/<file>) selects that "
-          "release's schema of the file's type.",
+          "that type; there is no fallback to an older release. Raw URLs under either "
+          "repository name, FAIR-bioHeaders-Specification or FHR-Specification, are the same.",
+    "V2": "Selection: a release's raw tag URL (.../FAIR-bioHeaders-Specification/vX.Y.Z/<file>, "
+          "or the same under FHR-Specification) selects that release's schema of the file's "
+          "type.",
     "V3": "Selection: a w3id URL https://w3id.org/fair-bioheaders/<type>/vX.Y.Z (trailing slash "
           "allowed) selects that release's schema of the type, including older releases.",
     "V4": "Selection: a release that the reader does not have, a release without a schema of "
@@ -109,6 +111,8 @@ CONTAINER = {"fasta": "fasta", "gfa": "gfa", "fhp-fasta": "fasta", "fhgff3": "gf
 ITEM_TYPE = "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json"
 # Schema URLs (docs/SCHEMA-VERSIONS.md): vectors cite the release they target.
 RAW = "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/"
+# The repository's name since #108; RAW (the old name) stays a supported alias.
+RAW_CANONICAL = "https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/"
 W3ID = "https://w3id.org/fair-bioheaders/"
 RELEASE = "v0.4.0"
 FHR_SCHEMA = f"{W3ID}fhr/{RELEASE}"
@@ -954,6 +958,20 @@ def build_selection():
                       "https://example.org/schemas/my-fhr-profile.json", "1", "V5",
                       "Any other schema value is checked against the current FHR schema (2.0), "
                       "so schemaVersion 1 fails.")
+    selection_valid("fasta-schema-canonical-raw-main", f"{RAW_CANONICAL}main/fhr.json", "'2.0'",
+                    ["V1"], "The raw-main URL under the repository's current name selects the "
+                    "current FHR schema, as the old name does.", "2.0")
+    selection_valid("fasta-schema-canonical-raw-tag", f"{RAW_CANONICAL}{RELEASE}/fhr.json",
+                    "'2.0'", ["V2"], f"The {RELEASE} raw tag URL under the repository's current "
+                    f"name selects the {RELEASE} FHR schema.", "2.0")
+    fhp_valid("fhp-fasta-schema-canonical-raw-main",
+              fhp_lines(fhp_record(schema=f"{RAW_CANONICAL}main/fhp.json")), ["V1"],
+              "The raw-main FHP URL under the repository's current name selects the current "
+              "FHP schema.")
+    fhgff3_valid("fhgff3-schema-canonical-raw-main",
+                 fhgff3_lines(fhgff3_record(schema=f"{RAW_CANONICAL}main/fhgff3.json")), ["V1"],
+                 "The raw-main FHGFF3 URL under the repository's current name selects the "
+                 "current FHGFF3 schema.")
     fhp_valid("fhp-fasta-schema-raw-tag", fhp_lines(fhp_record(schema=f"{RAW}{RELEASE}/fhp.json")),
               ["V2", "V4"], f"The {RELEASE} release publishes FHP, so its raw tag URL selects "
               "the FHP 1.0 schema.")

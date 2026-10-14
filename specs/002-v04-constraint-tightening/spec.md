@@ -6,7 +6,7 @@
 
 **Status**: Implemented on `release-v0.4` (decisions recorded in #35, 2026-10-09)
 
-**Input**: Review finding for FHR-Specification#29 (decision 4): "Review retained
+**Input**: Review finding for FAIR-bioHeaders-Specification#29 (decision 4): "Review retained
 legacy constraints and unknown-property behavior rather than silently tightening
 them."
 

@@ -34,7 +34,7 @@ Required are the core's required fields (`schema`, `schemaVersion`, `taxon`, `ve
 
 `schema` must be an FHP schema URL ([SCHEMA-VERSIONS.md](SCHEMA-VERSIONS.md)): preferably the
 versioned `https://w3id.org/fair-bioheaders/fhp/v0.4.0` of the release a file targets, or the raw
-GitHub URL of `fhp.json` on `main` or at a release tag. `schemaVersion` is `'1.0'` (FHP 1.0), quoted
+GitHub URL of `fhp.json` on `main` or at a release tag, under either repository name. `schemaVersion` is `'1.0'` (FHP 1.0), quoted
 in YAML.
 
 The following fields are optional. Leave a field out when you do not know its value; tools never
@@ -108,9 +108,9 @@ These are recorded as follow-ups F-01 to F-07 in the
 - A persistent schema alias and a release.
 
 **Release line (maintainer decision, 2026-10-11).** FHP v0.1 is released from the
-`release-v0.4` line, with FHR-Specification v0.4.0, so it starts with the tightened core
+`release-v0.4` line, with FAIR-bioHeaders-Specification v0.4.0, so it starts with the tightened core
 patterns (anchored ORCID and taxon URLs, padded checksums, bare DOIs) and the optional author
 `nameType`. Its persistent schema URL is `https://w3id.org/fair-bioheaders/fhp/vX.Y.Z`, where
-`vX.Y.Z` is the FHR-Specification release tag, as for `/fhr/vX.Y.Z` (registered in
+`vX.Y.Z` is the FAIR-bioHeaders-Specification release tag, as for `/fhr/vX.Y.Z` (registered in
 perma-id/w3id.org#6868; it resolves once v0.4.0 is tagged). On `main`, FHP still inherits the
 core's v0.3 patterns.

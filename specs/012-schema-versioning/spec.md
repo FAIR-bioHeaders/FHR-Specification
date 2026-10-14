@@ -6,7 +6,7 @@
 
 **Status**: Draft (clarified 2026-10-14)
 
-**Input**: Maintainer decision on [#44](https://github.com/FAIR-bioHeaders/FHR-Specification/issues/44)
+**Input**: Maintainer decision on [#44](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/44)
 (David Molik, 2026-10-14) and Adam Wright's answers of the same day:
 - skip the proposed v0.3.1 legacy fallback; raw-main keeps meaning the current canonical schema;
 - new release-targeted files and examples cite the release's versioned URL;
@@ -28,7 +28,7 @@ Related: #35 (v0.4 tightening), #54 (header family), website
   `"2.0"`: a major version, because the v0.4 tightening rejects some files that v0.3 accepted. The
   additive v0.4 changes (author `nameType`, scaffold statistics) are part of 2.0 (FR-001, FR-003).
 - Q: What do FHP and FHGFF3 start at? → A: Each header type versions its own contract, so FHP and
-  FHGFF3 start at `"1.0"`. Their versioned URLs still use the shared FHR-Specification release
+  FHGFF3 start at `"1.0"`. Their versioned URLs still use the shared FAIR-bioHeaders-Specification release
   tag, for example `https://w3id.org/fair-bioheaders/fhp/v0.4.0` (FR-004).
 - Q: What does a raw-main URL select? → A: The current canonical schema. There is no fallback to
   v0.3.1 for files that cite raw-main (David, #44) (FR-007).
@@ -62,7 +62,7 @@ URL in turn; each passes or fails as that release's schema says.
 1. **Given** a header citing the w3id URL of a release the tool has, **When** it is validated,
    **Then** that release's schema of the header's type is used.
 2. **Given** the same header citing the release's raw tag URL
-   (`…/FHR-Specification/v0.4.0/fhr.json`), **When** it is validated, **Then** the result is the
+   (`…/FAIR-bioHeaders-Specification/v0.4.0/fhr.json`), **When** it is validated, **Then** the result is the
    same as with the w3id URL.
 3. **Given** a header citing `https://w3id.org/fair-bioheaders/fhr/v0.3.1` with
    `schemaVersion: 1`, **When** a tool that has the v0.3.1 schema validates it, **Then** it is
@@ -85,7 +85,7 @@ unsupported-version result in every tool.
 
 1. **Given** a header citing `https://w3id.org/fair-bioheaders/fhr/v0.0.0`, **When** it is
    validated, **Then** the result names the unsupported version and lists the supported ones.
-2. **Given** a header citing `…/FHR-Specification/some-branch/fhr.json`, **When** it is validated,
+2. **Given** a header citing `…/FAIR-bioHeaders-Specification/some-branch/fhr.json`, **When** it is validated,
    **Then** the same unsupported result is given: only `main` and release tags are recognised refs.
 3. **Given** a header citing a release that has no schema of that type (FHP at v0.3.1), **When** it
    is validated, **Then** the result is unsupported-version.
@@ -186,7 +186,7 @@ the validator's header checks.
   when its own schema changes.
 - **FR-005**: The schema of version M.N MUST accept `schemaVersion` values `"M.0"` to `"M.N"` and
   no others.
-- **FR-006**: A machine-readable version registry MUST record, for each FHR-Specification release
+- **FR-006**: A machine-readable version registry MUST record, for each FAIR-bioHeaders-Specification release
   tag, the `schemaVersion` of each header type it publishes, and which release the working tree's
   schemas belong to.
 - **FR-007**: The selection rule MUST map a `schema` value to a header type and a schema:
@@ -217,7 +217,7 @@ the validator's header checks.
 ### Key Entities
 
 - **Schema version**: the `"MAJOR.MINOR"` contract version of one header type.
-- **Release**: an FHR-Specification tag `vX.Y.Z` that publishes one schema version per header
+- **Release**: an FAIR-bioHeaders-Specification tag `vX.Y.Z` that publishes one schema version per header
   type it contains.
 - **Schema URL**: a `schema` value in one of the recognised forms.
 - **Version registry**: `schemas/versions.json`, the release → type → schemaVersion table.

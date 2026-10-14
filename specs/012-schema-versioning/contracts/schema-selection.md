@@ -23,8 +23,8 @@ Let `S` be the record's `schema` value.
 
 | # | `S` matches | Header type | Schema used |
 | --- | --- | --- | --- |
-| V1 | `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/F` | type of `F` | the reader's current schema of that type |
-| V2 | `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/vX.Y.Z/F` | type of `F` | release vX.Y.Z's schema of that type |
+| V1 | `https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/main/F` | type of `F` | the reader's current schema of that type |
+| V2 | `https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/vX.Y.Z/F` | type of `F` | release vX.Y.Z's schema of that type |
 | V3 | `https://w3id.org/fair-bioheaders/T/vX.Y.Z` or `…/T/vX.Y.Z/` | `T` | release vX.Y.Z's schema of that type |
 | V4 | as V1–V3 but the reader lacks that release, the release has no schema of that type, or a raw URL names any other ref | type of `F` or `T` | none: **unsupported-version** |
 | V5 | anything else | FHR | the reader's current FHR schema |
