@@ -22,7 +22,7 @@ Each heading is the term's local name, so `https://w3id.org/fair-bioheaders/term
 
 `https://w3id.org/fair-bioheaders/terms#Agent`. Class.
 
-A person or organization that the FHR record does not classify; FHR records the kind of agent only through an ORCID or ROR identifier.
+A person or organization that the FHR record does not classify; FHR records the kind of agent through nameType or an ORCID or ROR identifier.
 
 - Subclass of: `sdo:Thing`
 - Close match: `dcterms:Agent`
@@ -31,7 +31,7 @@ A person or organization that the FHR record does not classify; FHR records the 
 
 `https://w3id.org/fair-bioheaders/terms#VitalStats`. Class.
 
-General statistics about the genome assembly
+General statistics about the genome assembly. N50, N90, L50 and L90 are contig statistics; the scaffold* variants are the scaffold statistics.
 
 - Subclass of: `sdo:StructuredValue`
 
@@ -92,7 +92,7 @@ Command-line options given to the assembly software, in order
 
 `https://w3id.org/fair-bioheaders/terms#gcContent`. Property.
 
-GC content as a percentage (0 to 100), not a fraction.
+GC content as a percentage from 0 to 100, not a fraction (write 42.0 for 42 percent; 0.42 means 0.42 percent)
 
 - Used on: VitalStats (the `vitalStats` object)
 - Value: Number
@@ -112,7 +112,7 @@ Physical tools and instruments used in the creation of the genome assembly
 
 `https://w3id.org/fair-bioheaders/terms#L50`. Property.
 
-L50 of the genome assembly
+Contig L50, the smallest number of contigs whose lengths sum to at least 50 percent of the assembly length
 
 - Used on: VitalStats (the `vitalStats` object)
 - Value: Integer
@@ -122,7 +122,7 @@ L50 of the genome assembly
 
 `https://w3id.org/fair-bioheaders/terms#L90`. Property.
 
-L90 of the genome assembly
+Contig L90, the smallest number of contigs whose lengths sum to at least 90 percent of the assembly length
 
 - Used on: VitalStats (the `vitalStats` object)
 - Value: Integer
@@ -152,7 +152,7 @@ Authors of the FHR instance
 
 `https://w3id.org/fair-bioheaders/terms#N50`. Property.
 
-N50 of the genome assembly
+Contig N50, the contig length in base pairs at 50 percent of the assembly length
 
 - Used on: VitalStats (the `vitalStats` object)
 - Value: Integer
@@ -162,10 +162,20 @@ N50 of the genome assembly
 
 `https://w3id.org/fair-bioheaders/terms#N90`. Property.
 
-Contig length in base pairs at 90 percent of the assembly length.
+Contig N90, the contig length in base pairs at 90 percent of the assembly length
 
 - Used on: VitalStats (the `vitalStats` object)
 - Value: Integer
+- DCMI: none (see the [mapping table](../mappings/fhr-jsonld-dcmi.yml))
+
+### nameType
+
+`https://w3id.org/fair-bioheaders/terms#nameType`. Property.
+
+Whether the author is a person (Personal) or an organization (Organizational), as DataCite nameType
+
+- Used on: Agent (Author)
+- Value: Text
 - DCMI: none (see the [mapping table](../mappings/fhr-jsonld-dcmi.yml))
 
 ### numberContigs
@@ -208,14 +218,54 @@ Related URLs to the genome
 - Value: URL
 - DCMI: `dcterms:relation` (exact) (see the [mapping table](../mappings/fhr-jsonld-dcmi.yml))
 
+### scaffoldL50
+
+`https://w3id.org/fair-bioheaders/terms#scaffoldL50`. Property.
+
+Scaffold L50, the smallest number of scaffolds whose lengths sum to at least 50 percent of the assembly length
+
+- Used on: VitalStats (the `vitalStats` object)
+- Value: Integer
+- DCMI: none (see the [mapping table](../mappings/fhr-jsonld-dcmi.yml))
+
+### scaffoldL90
+
+`https://w3id.org/fair-bioheaders/terms#scaffoldL90`. Property.
+
+Scaffold L90, the smallest number of scaffolds whose lengths sum to at least 90 percent of the assembly length
+
+- Used on: VitalStats (the `vitalStats` object)
+- Value: Integer
+- DCMI: none (see the [mapping table](../mappings/fhr-jsonld-dcmi.yml))
+
+### scaffoldN50
+
+`https://w3id.org/fair-bioheaders/terms#scaffoldN50`. Property.
+
+Scaffold N50, the scaffold length in base pairs at 50 percent of the assembly length
+
+- Used on: VitalStats (the `vitalStats` object)
+- Value: Integer
+- DCMI: none (see the [mapping table](../mappings/fhr-jsonld-dcmi.yml))
+
+### scaffoldN90
+
+`https://w3id.org/fair-bioheaders/terms#scaffoldN90`. Property.
+
+Scaffold N90, the scaffold length in base pairs at 90 percent of the assembly length
+
+- Used on: VitalStats (the `vitalStats` object)
+- Value: Integer
+- DCMI: none (see the [mapping table](../mappings/fhr-jsonld-dcmi.yml))
+
 ### schemaVersion
 
 `https://w3id.org/fair-bioheaders/terms#schemaVersion`. Property.
 
-Version of FHR
+Version of the FHR schema contract ("MAJOR.MINOR"); 2.0 from v0.4
 
 - Used on: Dataset (the FHR record)
-- Value: Number
+- Value: Text
 - DCMI: none (see the [mapping table](../mappings/fhr-jsonld-dcmi.yml))
 
 ### seqcol_id

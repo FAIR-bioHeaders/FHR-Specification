@@ -4,7 +4,8 @@ description: >-
   Shared core for the FAIR-bioHeaders family (FHR, FHT, FHP, FHGFF3). Header-type
   schemas import this module, list the core slots on their root class, and add
   their own subject slot and type-specific slots. Slot names, types, patterns and
-  constraints match FHR schemaVersion 1. The id is provisional pending the
+  constraints match FHR schemaVersion 1 as tightened for v0.4
+  (docs/SCHEMA-CHANGES-v0.4.md). The id is provisional pending the
   persistent schema URL decision (specs/004-shared-core-schema FR-004).
 prefixes:
   linkml: https://w3id.org/linkml/
@@ -22,8 +23,11 @@ types:
   sha2:
     base: str
     uri: xsd:string
-    pattern: ^[A-Za-z0-9/+=]{44}$
-    description: Base64 SHA-512/256 digest (44 characters), as defined for FHR checksums.
+    pattern: ^[A-Za-z0-9+/]{43}=$
+    description: >-
+      Base64 SHA-512/256 digest: standard padded base64 of 32 bytes (43 base64
+      characters, then one "="), as defined for FHR checksums. A syntactic check
+      only; it does not verify the file.
 slots:
   # Required core slots (FR-001).
   schema:
@@ -35,8 +39,11 @@ slots:
       jsonld_iri: true
     required: true
   schemaVersion:
-    description: Version of the header schema
-    range: float
+    description: >-
+      Version of the header type's schema contract, as "MAJOR.MINOR"
+      (docs/SCHEMA-VERSIONS.md); each header type pins its accepted values
+    range: string
+    pattern: ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$
     required: true
   taxon:
     description: Species name and URL of the species information at identifiers.org
@@ -68,7 +75,7 @@ slots:
     description: Identifiers of the described data
     slot_uri: sdo:identifier
     multivalued: true
-    pattern: '[a-z0-9]*:.*'
+    pattern: ^[A-Za-z0-9._-]+:.+$
   accessionID:
     description: Accession of the described data
     broad_mappings:
@@ -76,9 +83,9 @@ slots:
     range: AccessionID
     inlined: true
   scholarlyArticle:
-    description: Scholarly article where the data was published
+    description: DOI (without a resolver prefix) of the scholarly article where the data was published
     slot_uri: sdo:citation
-    pattern: ^10.
+    pattern: ^10\.[0-9]+(\.[0-9]+)*/\S+$
   documentation:
     description: Documentation about the described data
     slot_uri: sdo:description
@@ -138,7 +145,7 @@ classes:
         range: uri
         annotations:
           jsonld_node_id: true
-        pattern: https://identifiers.org/taxonomy:[0-9]+
+        pattern: ^https://identifiers\.org/taxonomy:[0-9]+$
   Author:
     description: Person or organization; uri is an ORCID URI
     class_uri: fhr:Agent
@@ -151,7 +158,7 @@ classes:
       jsonld_type_if_ror: sdo:Organization
       vocabulary_comment: >-
         A person or organization that the FHR record does not classify; FHR
-        records the kind of agent only through an ORCID or ROR identifier.
+        records the kind of agent through nameType or an ORCID or ROR identifier.
       vocabulary_subclass_of: sdo:Thing
     attributes:
       name:
@@ -162,7 +169,14 @@ classes:
         range: uri
         annotations:
           jsonld_node_id: true
-        pattern: ^https://orcid.org/[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9X]
+        pattern: ^https://orcid\.org/[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]$
+      nameType:
+        description: >-
+          Whether the author is a person (Personal) or an organization
+          (Organizational), as DataCite nameType
+        range: NameType
+        see_also:
+        - https://datacite-metadata-schema.readthedocs.io/en/4.6/properties/creator/#nametype
   AccessionID:
     description: Accession identifier
     class_uri: sdo:PropertyValue
@@ -197,6 +211,15 @@ classes:
       relationship:
         required: true
 enums:
+  NameType:
+    description: Kind of author, with the values of DataCite nameType
+    permissible_values:
+      Personal:
+        description: A person
+        meaning: sdo:Person
+      Organizational:
+        description: An organization
+        meaning: sdo:Organization
   HeaderType:
     description: FAIR-bioHeaders header types
     permissible_values:

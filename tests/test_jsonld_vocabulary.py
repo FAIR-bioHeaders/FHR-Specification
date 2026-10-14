@@ -34,8 +34,9 @@ PROPERTIES = {
     "relatedLink", "masking", "vitalStats", "checksum", "assemblySoftware",
     "assemblyProtocol", "seqcol_id",
     "L50", "N50", "L90", "N90", "totalBasePairs", "numberContigs", "numberScaffolds",
-    "readTechnology", "gcContent",
+    "readTechnology", "gcContent", "scaffoldN50", "scaffoldN90", "scaffoldL50", "scaffoldL90",
     "commandLineOption",
+    "nameType",
 }
 
 

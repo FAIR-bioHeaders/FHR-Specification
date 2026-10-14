@@ -82,8 +82,8 @@ def subject_kind(node):
 def compact_keys(node):
     keys = set()
     for key in node:
-        if key == "@id":
-            keys.add("@id")
+        if key in ("@id", "@type"):
+            keys.add(key)
         elif key.startswith("fhr:") or key.startswith("dct:"):
             keys.add(key)
         elif not key.startswith("@"):
@@ -102,9 +102,14 @@ class ExportFixtureTests(unittest.TestCase):
                 self.assertEqual(path.read_text(encoding="utf-8"), text)
 
     def test_every_source_record_is_valid_fhr(self):
-        schema = json.loads((ROOT / "fhr.json").read_text(encoding="utf-8"))
-        validator = Draft202012Validator(schema, format_checker=FormatChecker())
+        """Each record is valid against the schema its URL selects (docs/SCHEMA-VERSIONS.md):
+        article-not-doi cites v0.3.1, whose DOI pattern is not anchored."""
+        import check_conformance
+
         for name, (record, _, _) in self.cases.items():
+            _, release, file_name = check_conformance.select_schema(record["schema"])
+            schema = check_conformance.load_schema(release, file_name)
+            validator = Draft202012Validator(schema, format_checker=FormatChecker())
             with self.subTest(case=name):
                 self.assertEqual([e.message for e in validator.iter_errors(record)], [])
 

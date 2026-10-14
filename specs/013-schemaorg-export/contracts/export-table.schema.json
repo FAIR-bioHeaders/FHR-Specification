@@ -18,9 +18,9 @@
                "taxon", "author", "software", "accession", "seqcol", "vital-stats"]
     },
     "property": {
-      "description": "A compact property IRI (sdo: or fhr:) or @id.",
+      "description": "A compact property IRI (sdo: or fhr:), @id, or @type (a field that sets the node type, such as the v0.4 author nameType).",
       "type": "string",
-      "pattern": "^(sdo:[A-Za-z]+|fhr:[A-Za-z0-9_]+|@id)$"
+      "pattern": "^(sdo:[A-Za-z]+|fhr:[A-Za-z0-9_]+|@id|@type)$"
     },
     "text": {"type": "string", "minLength": 1},
     "entry": {
