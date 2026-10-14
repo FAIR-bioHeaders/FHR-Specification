@@ -53,6 +53,8 @@
   `documentation` block scalar so their metadata stays valid; their expected
   checksums changed. The converter's three bundled schema copies must be
   updated to match.
+- Update current maintainer contacts to `molik@fhref.org` and `wright@fhref.org` and project Pages links to `https://fhref.org`. Citation/package metadata and private reporting routes are checked; runtime behavior and historical notices are unchanged.
+
 - Add a **draft** FAIR header for GFF3 annotations, FHGFF3 (spec 007, #48, the
   FHGFF3 part of #50). **FHR and FHP are unchanged**: `fhr.json`, `fhp.json`, the
   core and every existing vector are byte-identical. The new files are:
