@@ -59,6 +59,6 @@ jobs:
         # commit of FAIR-bioHeaders-Tools#57 that does (pinned: branches move).
         run: |
           python -m venv "$RUNNER_TEMP/fhr-converter"
-          "$RUNNER_TEMP/fhr-converter/bin/python" -m pip install "fair-bioheaders[jsonld] @ git+https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Tools@fb3a0f5c0e008e3bc3cbfc43e7f941e798fd1d20"
+          "$RUNNER_TEMP/fhr-converter/bin/python" -m pip install "fair-bioheaders[jsonld] @ git+https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Tools@26580b6fef88f1526f35f824bf82c944894bb42d"
       - name: Run the toolkit on every vector
         run: python scripts/check_conformance.py --skip-regeneration --require-format jsonld --require-format fhp-fasta --require-format fhgff3 --converter "$RUNNER_TEMP/fhr-converter"

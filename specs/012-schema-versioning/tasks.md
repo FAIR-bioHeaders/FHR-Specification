@@ -15,7 +15,7 @@ description: "Task list for feature 012: schema versions and schema selection"
 
 ## Path Conventions
 
-- `FHR-Specification/`: this repository, branch `release-v0.4`.
+- `FAIR-bioHeaders-Specification/`: this repository, branch `release-v0.4`.
 - `FAIR-bioHeaders-Tools/`: the toolkit.
 - `gff3-validator/`: the validator.
 
@@ -26,11 +26,11 @@ No task releases, tags, archives a DOI, changes w3id.org or edits the website.
 ## Phase 1: Setup
 
 - [X] T001 Merge `main` into `release-v0.4` (merge commit) so the work starts from current docs
-  *Done:* FHR-Specification#103
+  *Done:* FAIR-bioHeaders-Specification#103
 
 ## Phase 2: Foundational
 
-- [X] T002 `FHR-Specification/schemas/versions.json`: the registry (D-04) and a test that every
+- [X] T002 `FAIR-bioHeaders-Specification/schemas/versions.json`: the registry (D-04) and a test that every
   schema's `schemaVersion` enum equals `releases[current]`
 - [X] T003 Core `schemaVersion`: string, version pattern; per-type `equals_string`: FHR `"2.0"`,
   FHP `"1.0"`, FHGFF3 `"1.0"`; FHP and FHGFF3 `schema` patterns accept V1–V3 forms

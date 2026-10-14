@@ -1,6 +1,6 @@
 # Implementation Plan: Schema versions and schema selection
 
-**Branch**: `012-schema-versioning` (FHR-Specification, from `release-v0.4`),
+**Branch**: `012-schema-versioning` (FAIR-bioHeaders-Specification, from `release-v0.4`),
 `schema-selection` and `v04-schemas` (FAIR-bioHeaders-Tools), `schema-selection` (gff3-validator)
 | **Date**: 2026-10-14 | **Spec**: [spec.md](spec.md)
 
@@ -14,7 +14,7 @@ v0.4 line. A registry (`schemas/versions.json`) records each release's versions.
 URLs select their release, and unknown versions are unsupported. Examples and vectors cite the
 v0.4.0 versioned URLs, and new vectors cover selection.
 
-**FHR-Specification (`release-v0.4`)**
+**FAIR-bioHeaders-Specification (`release-v0.4`)**
 - Core `schemaVersion` as a string with the version pattern; per-type enums; FHP and FHGFF3
   `schema` patterns accept the V1–V3 forms.
 - Regenerated `fhr.json`, `fhp.json` and `fhgff3.json`, with deliberately updated baselines.
@@ -27,7 +27,7 @@ v0.4.0 versioned URLs, and new vectors cover selection.
   pinned commit (D-09).
 
 **FAIR-bioHeaders-Tools**
-- One draft PR (FAIR-bioHeaders-Tools#57), merged with FHR-Specification v0.4.0: the rule in
+- One draft PR (FAIR-bioHeaders-Tools#57), merged with FAIR-bioHeaders-Specification v0.4.0: the rule in
   `bioheaders/selection.py`; bundled copies in `bioheaders/schemas/` (`bundled.json`, frozen
   v0.3.x and v0.4.0 copies); the v0.4 current copies, examples and fixtures; unsupported-version
   errors in every command, `verify-links`, the GFF3 header report and `assess` (D-09).
@@ -71,7 +71,7 @@ specs/012-schema-versioning/
 ├── contracts/schema-selection.md
 └── checklists/requirements.md
 
-FHR-Specification/ (release-v0.4)
+FAIR-bioHeaders-Specification/ (release-v0.4)
 ├── schemas/core.yaml, schemas/versions.json (new)
 ├── fhr_linkml.yml, fhp_linkml.yml, fhgff3_linkml.yml
 ├── fhr.json, fhp.json, fhgff3.json, .github/schema-baseline*.json
@@ -107,7 +107,7 @@ gff3-validator/
 
 | Id | Follow-up | Why deferred |
 |---|---|---|
-| F-01 | Merge toolkit step 2 and release the toolkit with the v0.4 copies | Waits for FHR-Specification v0.4.0 |
+| F-01 | Merge toolkit step 2 and release the toolkit with the v0.4 copies | Waits for FAIR-bioHeaders-Specification v0.4.0 |
 | F-02 | gff3-validator `headers` extra → that toolkit release; drop CI pin | Release action |
 | F-03 | Website selection (#15/#16) | David's repository |
 | F-04 | Release-line CI: replace the pinned toolkit commit with the toolkit release | After F-01 |

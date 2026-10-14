@@ -2,7 +2,7 @@
 
 **Feature**: 012-schema-versioning
 
-From an FHR-Specification checkout of `release-v0.4` with a full git history (tags fetched):
+From an FAIR-bioHeaders-Specification checkout of `release-v0.4` with a full git history (tags fetched):
 
 ```bash
 python -m unittest discover -s tests -v

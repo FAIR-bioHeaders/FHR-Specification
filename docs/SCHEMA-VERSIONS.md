@@ -5,7 +5,7 @@ schema's contract in `schemaVersion`. This page says what the version means, whi
 which versions, and how a reader chooses the schema to validate a file against. The toolkit, the
 gff3-validator header checks and the website follow it. The design is in
 [specs/012-schema-versioning](../specs/012-schema-versioning/spec.md) (maintainer decision on
-[#44](https://github.com/FAIR-bioHeaders/FHR-Specification/issues/44), 2026-10-14).
+[#44](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/44), 2026-10-14).
 
 ## Three different versions
 
@@ -55,10 +55,14 @@ released in v0.4.0.
 A reader looks only at the record's `schema` value. `<file>` is `fhr.json`, `fhp.json` or
 `fhgff3.json` and gives the header type; `<type>` is `fhr`, `fhp` or `fhgff3`. Matching is exact.
 
-- [V1] `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/<file>` selects
+Raw URLs may name the repository by its current name, `FAIR-bioHeaders-Specification`, or by
+`FHR-Specification`, its name until #108. Both forms are recognised everywhere and mean the
+same; existing files cite the old form, and it keeps serving the same files.
+
+- [V1] `https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/main/<file>` selects
   the reader's **current** schema of that type: the copy of `main` the reader has. There is no
   fallback to an older release.
-- [V2] `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/vX.Y.Z/<file>` selects
+- [V2] `https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/vX.Y.Z/<file>` selects
   **release vX.Y.Z's** schema of that type.
 - [V3] `https://w3id.org/fair-bioheaders/<type>/vX.Y.Z`, with or without a trailing slash, selects
   release vX.Y.Z's schema of that type, the same as V2.

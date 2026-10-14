@@ -97,7 +97,7 @@ classes:
           URL of the FHGFF3 JSON Schema this record follows (raw-main, a release's
           raw tag URL or its w3id URL; docs/SCHEMA-VERSIONS.md); it identifies the
           header type (FR-010)
-        pattern: ^(https://raw\.githubusercontent\.com/FAIR-bioHeaders/FHR-Specification/(main|v[0-9]+\.[0-9]+\.[0-9]+)/fhgff3\.json|https://w3id\.org/fair-bioheaders/fhgff3/v[0-9]+\.[0-9]+\.[0-9]+/?)$
+        pattern: ^(https://raw\.githubusercontent\.com/FAIR-bioHeaders/(FHR|FAIR-bioHeaders)-Specification/(main|v[0-9]+\.[0-9]+\.[0-9]+)/fhgff3\.json|https://w3id\.org/fair-bioheaders/fhgff3/v[0-9]+\.[0-9]+\.[0-9]+/?)$
       schemaVersion:
         description: Version of the FHGFF3 schema contract ("MAJOR.MINOR")
         equals_string: "1.0"

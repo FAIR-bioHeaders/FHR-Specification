@@ -1,5 +1,5 @@
 {
-  "description": "FAIR-bioHeaders schema versions by FHR-Specification release (docs/SCHEMA-VERSIONS.md). 'current' is the release the schemas in this working tree belong to: the release being prepared on a release line, or the latest release on main.",
+  "description": "FAIR-bioHeaders schema versions by FAIR-bioHeaders-Specification release (docs/SCHEMA-VERSIONS.md). 'current' is the release the schemas in this working tree belong to: the release being prepared on a release line, or the latest release on main.",
   "current": "v0.4.0",
   "files": {
     "FHR": "fhr.json",

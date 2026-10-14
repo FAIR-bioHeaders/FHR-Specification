@@ -64,7 +64,7 @@ Required are the core's required fields (`schema`, `schemaVersion`, `taxon`, `ve
 
 `schema` must be an FHGFF3 schema URL ([SCHEMA-VERSIONS.md](SCHEMA-VERSIONS.md)): preferably the
 versioned `https://w3id.org/fair-bioheaders/fhgff3/v0.4.0` of the release a file targets, or the raw
-GitHub URL of `fhgff3.json` on `main` or at a release tag. `schemaVersion` is `'1.0'` (FHGFF3 1.0),
+GitHub URL of `fhgff3.json` on `main` or at a release tag, under either repository name. `schemaVersion` is `'1.0'` (FHGFF3 1.0),
 quoted in YAML.
 
 ### The genome link
@@ -173,8 +173,8 @@ These are recorded as follow-ups F-01 to F-07 in the
 - Header checks in the gff3-validator's browser build.
 - A release.
 
-FHGFF3 v0.1 is released from the `release-v0.4` line with FHR-Specification v0.4.0, as FHP is;
-it is on that line (FHR-Specification#97). Its persistent schema URL is
-`https://w3id.org/fair-bioheaders/fhgff3/vX.Y.Z`, the FHR-Specification release tag
+FHGFF3 v0.1 is released from the `release-v0.4` line with FAIR-bioHeaders-Specification v0.4.0, as FHP is;
+it is on that line (FAIR-bioHeaders-Specification#97). Its persistent schema URL is
+`https://w3id.org/fair-bioheaders/fhgff3/vX.Y.Z`, the FAIR-bioHeaders-Specification release tag
 (registered in perma-id/w3id.org#6890; it resolves once v0.4.0 is tagged). On `main`, it
 inherits the core's v0.3 patterns.

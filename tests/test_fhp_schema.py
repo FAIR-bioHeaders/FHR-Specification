@@ -72,6 +72,8 @@ def changed(path, value, base=RICH):
 
 DELETE = object()
 REJECTED = [
+    ("schema", "https://raw.githubusercontent.com/FAIR-bioHeaders/Other-Specification/"
+     "main/fhp.json", "only the two FAIR-bioHeaders specification repositories"),
     ("proteome", DELETE, "proteome is required"),
     ("sourceType", DELETE, "sourceType is required"),
     ("sourceType", "curated", "curated is not an FHP source type"),
@@ -120,6 +122,10 @@ REJECTED = [
     ("completeness.mode", "protein", "not a BUSCO mode"),
 ]
 ACCEPTED = [
+    ("schema", "https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/"
+     "main/fhp.json", "the canonical repository name since #108"),
+    ("schema", "https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/"
+     "v0.4.0/fhp.json", "a release tag under the canonical name"),
     ("schema", "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhp.json",
      "the raw-main URL"),
     ("schema", "https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/v0.4.0/fhp.json",
