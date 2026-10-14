@@ -35,7 +35,7 @@
         "@language": "en"
       },
       "rdfs:comment": {
-        "@value": "A person or organization that the FHR record does not classify; FHR records the kind of agent only through an ORCID or ROR identifier.",
+        "@value": "A person or organization that the FHR record does not classify; FHR records the kind of agent through nameType or an ORCID or ROR identifier.",
         "@language": "en"
       },
       "rdfs:subClassOf": [
@@ -60,7 +60,7 @@
         "@language": "en"
       },
       "rdfs:comment": {
-        "@value": "General statistics about the genome assembly",
+        "@value": "General statistics about the genome assembly. N50, N90, L50 and L90 are contig statistics; the scaffold* variants are the scaffold statistics.",
         "@language": "en"
       },
       "rdfs:subClassOf": [
@@ -213,7 +213,7 @@
         "@language": "en"
       },
       "rdfs:comment": {
-        "@value": "GC content as a percentage (0 to 100), not a fraction.",
+        "@value": "GC content as a percentage from 0 to 100, not a fraction (write 42.0 for 42 percent; 0.42 means 0.42 percent)",
         "@language": "en"
       },
       "sdo:domainIncludes": [
@@ -263,7 +263,7 @@
         "@language": "en"
       },
       "rdfs:comment": {
-        "@value": "L50 of the genome assembly",
+        "@value": "Contig L50, the smallest number of contigs whose lengths sum to at least 50 percent of the assembly length",
         "@language": "en"
       },
       "sdo:domainIncludes": [
@@ -288,7 +288,7 @@
         "@language": "en"
       },
       "rdfs:comment": {
-        "@value": "L90 of the genome assembly",
+        "@value": "Contig L90, the smallest number of contigs whose lengths sum to at least 90 percent of the assembly length",
         "@language": "en"
       },
       "sdo:domainIncludes": [
@@ -369,7 +369,7 @@
         "@language": "en"
       },
       "rdfs:comment": {
-        "@value": "N50 of the genome assembly",
+        "@value": "Contig N50, the contig length in base pairs at 50 percent of the assembly length",
         "@language": "en"
       },
       "sdo:domainIncludes": [
@@ -394,7 +394,7 @@
         "@language": "en"
       },
       "rdfs:comment": {
-        "@value": "Contig length in base pairs at 90 percent of the assembly length.",
+        "@value": "Contig N90, the contig length in base pairs at 90 percent of the assembly length",
         "@language": "en"
       },
       "sdo:domainIncludes": [
@@ -405,6 +405,31 @@
       "sdo:rangeIncludes": [
         {
           "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:nameType",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "nameType",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Whether the author is a person (Personal) or an organization (Organizational), as DataCite nameType",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:Agent"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Text"
         }
       ],
       "rdfs:isDefinedBy": {
@@ -512,6 +537,106 @@
       }
     },
     {
+      "@id": "fhr:scaffoldL50",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "scaffoldL50",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Scaffold L50, the smallest number of scaffolds whose lengths sum to at least 50 percent of the assembly length",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:scaffoldL90",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "scaffoldL90",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Scaffold L90, the smallest number of scaffolds whose lengths sum to at least 90 percent of the assembly length",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:scaffoldN50",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "scaffoldN50",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Scaffold N50, the scaffold length in base pairs at 50 percent of the assembly length",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
+      "@id": "fhr:scaffoldN90",
+      "@type": "rdf:Property",
+      "rdfs:label": {
+        "@value": "scaffoldN90",
+        "@language": "en"
+      },
+      "rdfs:comment": {
+        "@value": "Scaffold N90, the scaffold length in base pairs at 90 percent of the assembly length",
+        "@language": "en"
+      },
+      "sdo:domainIncludes": [
+        {
+          "@id": "fhr:VitalStats"
+        }
+      ],
+      "sdo:rangeIncludes": [
+        {
+          "@id": "sdo:Integer"
+        }
+      ],
+      "rdfs:isDefinedBy": {
+        "@id": "https://w3id.org/fair-bioheaders/terms"
+      }
+    },
+    {
       "@id": "fhr:schemaVersion",
       "@type": "rdf:Property",
       "rdfs:label": {
@@ -519,7 +644,7 @@
         "@language": "en"
       },
       "rdfs:comment": {
-        "@value": "Version of FHR",
+        "@value": "Version of the FHR schema contract (\"MAJOR.MINOR\"); 2.0 from v0.4",
         "@language": "en"
       },
       "sdo:domainIncludes": [
@@ -529,7 +654,7 @@
       ],
       "sdo:rangeIncludes": [
         {
-          "@id": "sdo:Number"
+          "@id": "sdo:Text"
         }
       ],
       "rdfs:isDefinedBy": {

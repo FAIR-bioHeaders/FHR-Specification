@@ -24,8 +24,8 @@ NESTED = {
     "vitalStats": ("vitalStats",),
     "assemblySoftware": ("assemblySoftware", "[]"),
 }
-COUNTS = {"record": 24, "taxon": 2, "metadataAuthor": 2, "assemblyAuthor": 2,
-          "accessionID": 2, "vitalStats": 9, "assemblySoftware": 4}
+COUNTS = {"record": 24, "taxon": 2, "metadataAuthor": 3, "assemblyAuthor": 3,
+          "accessionID": 2, "vitalStats": 13, "assemblySoftware": 4}
 # Root terms that are not FHR keys: the documentation-as-URL term (maintainer
 # decision 3) and the export-context terms (maintainer decision 2).
 EXPORT_TERMS = {

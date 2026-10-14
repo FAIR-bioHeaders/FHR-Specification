@@ -94,9 +94,11 @@ assembly authors).
 | `metadataAuthor[]` | `fhr:metadataAuthor` | exact | `dcterms:creator` | conditional |
 | `metadataAuthor[].name` | `schema:name` | exact | none | unsupported |
 | `metadataAuthor[].uri` | `@id` | exact | `dcterms:creator` | conditional |
+| `metadataAuthor[].nameType` | `fhr:nameType` | exact | none | unsupported |
 | `assemblyAuthor[]` | `schema:creator` | exact | `dcterms:creator` | exact |
 | `assemblyAuthor[].name` | `schema:name` | exact | none | unsupported |
 | `assemblyAuthor[].uri` | `@id` | exact | `dcterms:creator` | exact |
+| `assemblyAuthor[].nameType` | `fhr:nameType` | exact | none | unsupported |
 | `dateCreated` | `schema:dateCreated` | exact | `dcterms:created` | exact |
 | `voucherSpecimen` | `fhr:voucherSpecimen` | exact | none | unsupported |
 | `accessionID` | `fhr:accessionID` | exact | `dcterms:identifier` | conditional |
@@ -119,6 +121,10 @@ assembly authors).
 | `vitalStats.numberScaffolds` | `fhr:numberScaffolds` | exact | none | unsupported |
 | `vitalStats.readTechnology` | `fhr:readTechnology` | exact | none | unsupported |
 | `vitalStats.N90` | `fhr:N90` | exact | none | unsupported |
+| `vitalStats.scaffoldN50` | `fhr:scaffoldN50` | exact | none | unsupported |
+| `vitalStats.scaffoldN90` | `fhr:scaffoldN90` | exact | none | unsupported |
+| `vitalStats.scaffoldL50` | `fhr:scaffoldL50` | exact | none | unsupported |
+| `vitalStats.scaffoldL90` | `fhr:scaffoldL90` | exact | none | unsupported |
 | `vitalStats.gcContent` | `fhr:gcContent` | exact | none | unsupported |
 | `checksum` | `fhr:checksum` | exact | none | unsupported |
 | `assemblySoftware` | `fhr:assemblySoftware` | exact | none | unsupported |

@@ -66,7 +66,8 @@ entries:
   - term: none
     kind: unsupported
     reason: DCMI has no term for the version of the metadata contract.
-  notes: The version of the FHR contract, not of the assembly (#56).
+  notes: The version of the FHR contract, not of the assembly (#56). From v0.4 it is a "MAJOR.MINOR"
+    string (docs/SCHEMA-VERSIONS.md), still a plain literal.
   sources:
   - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
   - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/docs/MAPPINGS.md
@@ -235,6 +236,25 @@ entries:
   - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
   - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/docs/MAPPINGS.md
   - https://bioschemas.org/profiles/Person/0.3-DRAFT
+- path: metadataAuthor[].nameType
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#nameType
+    status: fhr
+    kind: exact
+    subject: record
+    coercion: literal
+  schemaorg_gap: schema.org expresses the kind of agent only as the node's type, which the writer
+    also sets (Personal gives Person, Organizational gives Organization); the literal keeps the
+    value for an exact round trip.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for the kind of agent.
+  notes: DataCite nameType values (v0.4). It takes precedence over typing from the ORCID or ROR
+    uri.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+  - https://datacite-metadata-schema.readthedocs.io/en/4.6/properties/creator/#nametype
 - path: assemblyAuthor[]
   jsonld:
     term: http://schema.org/creator
@@ -287,6 +307,24 @@ entries:
   - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
   - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/docs/MAPPINGS.md
   - https://bioschemas.org/profiles/Person/0.3-DRAFT
+- path: assemblyAuthor[].nameType
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#nameType
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org expresses the kind of agent only as the node's type, which the writer
+    also sets (Personal gives Person, Organizational gives Organization); the literal keeps the
+    value for an exact round trip.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for the kind of agent.
+  notes: DataCite nameType values (v0.4). It takes precedence over typing from the ORCID or ROR
+    uri.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+  - https://datacite-metadata-schema.readthedocs.io/en/4.6/properties/creator/#nametype
 - path: dateCreated
   jsonld:
     term: http://schema.org/dateCreated
@@ -636,6 +674,62 @@ entries:
     kind: exact
     coercion: literal
   schemaorg_gap: schema.org has no term for N90 of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.scaffoldN50
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#scaffoldN50
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for scaffold N50 of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.scaffoldN90
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#scaffoldN90
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for scaffold N90 of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.scaffoldL50
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#scaffoldL50
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for scaffold L50 of a genome assembly.
+  dcmi:
+  - term: none
+    kind: unsupported
+    reason: DCMI Metadata Terms have no property for assembly statistics.
+  sources:
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/56
+  - https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/docs/MAPPINGS.md
+- path: vitalStats.scaffoldL90
+  jsonld:
+    term: https://w3id.org/fair-bioheaders/terms#scaffoldL90
+    status: fhr
+    kind: exact
+    coercion: literal
+  schemaorg_gap: schema.org has no term for scaffold L90 of a genome assembly.
   dcmi:
   - term: none
     kind: unsupported

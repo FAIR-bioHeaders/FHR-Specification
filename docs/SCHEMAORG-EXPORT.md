@@ -40,7 +40,8 @@ The bracketed ids are stable labels used by the tests.
    - The metadata record is `about` the assembly. It carries `metadataAuthor` as `creator`, the
      schema URL as `schemaVersion` and FHR's `schemaVersion` as `fhr:schemaVersion`.
    - The assembly carries `assemblyAuthor` as `creator`, plus `version` and `dateCreated`.
-   - Authors are typed as in the canonical form: ORCID gives `Person`, ROR gives `Organization`,
+   - Authors are typed as in the canonical form: an explicit `nameType` (v0.4) decides first
+     (`Personal` gives `Person`, `Organizational` gives `Organization`); otherwise ORCID gives `Person`, ROR gives `Organization`,
      and an author with neither stays `fhr:Agent`. `fhr:Agent` is outside `creator`'s expected
      range, but classifying the author would invent metadata.
 4. **[X4] Statistics are observations of the assembly.**

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="912" viewBox="0 0 1200 912">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="942" viewBox="0 0 1200 942">
 <title>FHR metadata field overview</title>
 <desc>Required and optional fields in the FHR v0.3 schema. See fhr.json for full validation constraints.</desc>
 <rect width="1200" height="100%" fill="#f8fafc"/>
@@ -32,9 +32,10 @@
 <text x="620" y="626" font-size="18">assemblyProtocol: string</text>
 <text x="620" y="664" font-size="18">seqcol_id: string</text>
 <text x="40" y="757" font-size="15">assemblySoftware objects: name (required), uri, version, commandLineOption[]</text>
-<text x="40" y="787" font-size="15">vitalStats: N50, L50, N90, L90, totalBasePairs, numberContigs, numberScaffolds, gcContent, readTechnology</text>
-<text x="40" y="817" font-size="15">N90: base pairs · gcContent: 0–100 percent · seqcol_id: supplied 32-character base64url digest</text>
-<text x="40" y="847" font-size="15">checksum: exact-byte SHA-512/256 including metadata and sequence, except its checksum line</text>
-<text x="40" y="877" font-size="15">This overview is generated from fhr.json; the JSON Schema defines the full contract.</text>
+<text x="40" y="787" font-size="15">vitalStats: contig N50, L50, N90, L90; scaffoldN50, scaffoldL50, scaffoldN90, scaffoldL90; totalBasePairs,</text>
+<text x="40" y="817" font-size="15">numberContigs, numberScaffolds, gcContent, readTechnology · nested objects reject unknown keys</text>
+<text x="40" y="847" font-size="15">N50/N90: base pairs · gcContent: 0–100 percent · seqcol_id: supplied 32-character base64url digest</text>
+<text x="40" y="877" font-size="15">checksum: exact-byte SHA-512/256 including metadata and sequence, except its checksum line</text>
+<text x="40" y="907" font-size="15">This overview is generated from fhr.json; the JSON Schema defines the full contract.</text>
 </g>
 </svg>

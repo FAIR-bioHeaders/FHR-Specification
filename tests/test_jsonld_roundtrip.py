@@ -27,7 +27,9 @@ except ImportError:  # pragma: no cover - depends on the environment
 
 PREFIXES = {"fasta": b";~", "gfa": b"#~"}
 NESTED_TYPES = {"taxon": "Taxon", "accessionID": "PropertyValue", "vitalStats": "VitalStats"}
-LOSSY = {"fasta-nested-checksum", "gfa-nested-checksum"}  # research R-12: taxon.checksum
+# Records that lose a key in RDF (research R-12). v0.4 closed the nested objects, so the
+# nested-checksum vectors keep their nested checksum in documentation and lose nothing.
+LOSSY = set()
 ORCID = "https://orcid.org/0000-0002-1825-0097"  # ORCID's documented example iD.
 ROR = "https://ror.org/05gq02987"  # A ROR iD, used only to test the typing rule.
 EXPORT = {
@@ -99,7 +101,7 @@ class WriterTests(unittest.TestCase):
         cls.context = json.loads(make_jsonld.CONTEXT_PATH.read_text())["@context"]
 
     def test_record_set(self):
-        self.assertEqual(len(self.records), 33)  # 3 examples and 30 vector headers.
+        self.assertEqual(len(self.records), 40)  # 3 examples and 37 vector headers.
 
     def test_writer_steps(self):
         for name, record in self.records.items():
@@ -144,9 +146,11 @@ class WriterTests(unittest.TestCase):
         self.assertEqual(set(document) - {"@context", "@type"}, set(minimal))
 
     def test_unmapped_nested_keys(self):
-        self.assertEqual(make_jsonld.unmapped_keys(self.records["fasta-nested-checksum"]),
-                         ["taxon.checksum"])
+        self.assertEqual(make_jsonld.unmapped_keys(self.records["fasta-nested-checksum"]), [])
         record = copy.deepcopy(self.records["example.fhr.json"])
+        record["taxon"]["checksum"] = "nested property, not the file checksum"
+        self.assertEqual(make_jsonld.unmapped_keys(record), ["taxon.checksum"])
+        del record["taxon"]["checksum"]
         record["assemblyAuthor"][0]["affiliation"] = "Example institute"
         record["vitalStats"]["contigN50"] = 3
         self.assertEqual(make_jsonld.unmapped_keys(record),
@@ -175,6 +179,20 @@ class MaintainerDecisionTests(unittest.TestCase):
         written = make_jsonld.to_jsonld(self.record)["metadataAuthor"]
         self.assertEqual([item["@type"] for item in written],
                          ["Person", "Organization", "Agent", "Agent"])
+        document = json.loads(json.dumps(make_jsonld.to_jsonld(self.record)))
+        self.assertTrue(equal(make_jsonld.canonical_record(document), self.record))
+
+    def test_explicit_name_type_wins_over_the_identifier(self):
+        self.record["metadataAuthor"] = [
+            {"name": "Josiah Carberry", "uri": ORCID, "nameType": "Organizational"},
+            {"name": "Example organization", "uri": ROR, "nameType": "Personal"},
+            {"name": "Name only", "nameType": "Organizational"},
+            {"name": "Name only", "nameType": "Personal"}]
+        written = make_jsonld.to_jsonld(self.record)["metadataAuthor"]
+        self.assertEqual([item["@type"] for item in written],
+                         ["Organization", "Person", "Organization", "Person"])
+        self.assertEqual([item["nameType"] for item in written],
+                         ["Organizational", "Personal", "Organizational", "Personal"])
         document = json.loads(json.dumps(make_jsonld.to_jsonld(self.record)))
         self.assertTrue(equal(make_jsonld.canonical_record(document), self.record))
 
