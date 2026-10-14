@@ -13,6 +13,12 @@
 >   FAIR-bioHeaders-Specification `main`'s copies; the `published-files` check enforces it.
 >   The release tags (`v0.3.0`, `v0.3.1`) stay for the same reason.
 > - **Develop on branches** and open issues here for FHR-specific work.
+> - **Old issue and pull request links.** Links from before 2026-10-14 such as
+>   `github.com/FAIR-bioHeaders/FHR-Specification/issues/44` or `FHR-Specification#44`
+>   (numbers up to #116) refer to
+>   [FAIR-bioHeaders-Specification](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues):
+>   replace the repository name. GitHub does not redirect them, because this
+>   repository reuses the old name, and new issues here may later reuse those numbers.
 > - **Finished changes go to FAIR-bioHeaders-Specification by pull request.** Once merged
 >   there, `main` here is updated to match.
 >
