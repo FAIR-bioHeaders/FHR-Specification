@@ -1,3 +1,23 @@
+# FHR-Specification (FHR development)
+
+> **This repository is where the FHR (FAIR Header Reference genome) header is
+> developed.** The released specifications of every FAIR-bioHeaders header type,
+> including FHR, live in
+> [FAIR-bioHeaders-Specification](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification),
+> which was called `FHR-Specification` until 2026-10-14
+> ([#108](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/108)).
+>
+> - **`main` keeps the published files unchanged.** Existing FHR files cite
+>   `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json`,
+>   so `main`'s `fhr.json`, `fhp.json`, `fhgff3.json` and `jsonld/` always equal
+>   FAIR-bioHeaders-Specification `main`'s copies; the `published-files` check enforces it.
+>   The release tags (`v0.3.0`, `v0.3.1`) stay for the same reason.
+> - **Develop on branches** and open issues here for FHR-specific work.
+> - **Finished changes go to FAIR-bioHeaders-Specification by pull request.** Once merged
+>   there, `main` here is updated to match.
+>
+> The rest of this README is a copy of the specification repository's README.
+
 # FAIR-bioHeaders Specification
 
 [![Specification checks](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/actions/workflows/validate-specification.yml/badge.svg?branch=main)](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/actions/workflows/validate-specification.yml)

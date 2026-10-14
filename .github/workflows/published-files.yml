@@ -1,0 +1,39 @@
+name: Published files
+
+# Existing FHR files cite raw-main URLs in this repository. They must keep
+# serving exactly what FAIR-bioHeaders-Specification main serves, so main's
+# copies here may not drift from it (FAIR-bioHeaders-Specification#108).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  published-files:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Compare with FAIR-bioHeaders-Specification main
+        run: |
+          base=https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/main
+          status=0
+          for file in fhr.json fhp.json fhgff3.json jsonld/*; do
+            if curl -fsSL --retry 3 "$base/$file" | cmp -s - "$file"; then
+              echo "same: $file"
+            else
+              echo "::error file=$file::differs from FAIR-bioHeaders-Specification main"
+              status=1
+            fi
+          done
+          exit $status
