@@ -62,10 +62,11 @@ for implementing an existing contract. Never rewrite immutable releases, fixed
 schema aliases or existing file-bound headers as incidental cleanup. Header edits
 require checksum recomputation and may affect downstream parent links.
 
-Proposals are not adopted contracts: structured vouchers (shared #139 / draft
-#140) and mapping profiles still under review (#56) must remain identified as
-proposals until adopted. Implemented subsets do not establish complete profile
-or header-family support. Website mappings page #29 depends on approved profiles.
+Proposals are not adopted contracts: FAIR-bioHeaders-Specification#139 / draft
+PR #140 (structured vouchers) and profiles still under review in that repository
+(#56) remain proposals until adopted. Implemented subsets do not establish full
+profile or header-family support. The mapping page in fair-bioheaders.github.io#29
+depends on approved profiles.
 
 ## Models, generated artifacts and compatibility
 
@@ -94,6 +95,27 @@ silently substitute current main for an unknown release. Raw-main is a current
 contract link, not an immutable version. Keep supported old-name URL aliases and
 published example/vector bytes intact. Exact file checksum coverage follows
 `docs/FORMAT.md`; SeqCol identifies sequence collections and is not a file checksum.
+
+## Using FAIR-bioHeaders in another project
+
+For assistants and people adding FAIR-bioHeaders headers to data elsewhere (summary in
+[the shared `llms.txt`](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/llms.txt)):
+
+- Use the `fair-bioheaders` tools (`pip install fair-bioheaders`): `bioheaders combine
+  metadata.yaml genome.fa -o genome.fhr.fa` adds a header and computes the checksum;
+  `bioheaders verify` checks it; `bioheaders strip` removes it. Never write or edit a
+  checksum by hand. The Claude Code plugin in FAIR-bioHeaders-Tools
+  (`plugins/fair-bioheaders`) packages these steps as a skill.
+- Cite a versioned schema in `schema` (`https://w3id.org/fair-bioheaders/fhr/v0.4.0`,
+  `.../fhp/v0.4.0`, `.../fhgff3/v0.4.0`) with its `schemaVersion` from
+  `schemas/versions.json`. Required fields are in `fhr.json`, `fhp.json` and
+  `fhgff3.json`; never invent values for them.
+- Strict FASTA readers (samtools faidx and the rest of htslib, Picard, Biopython's default
+  `fasta` format and others in `docs/TOOL_COMPATIBILITY.md`) reject a leading `;~`
+  block: strip it first, or use Biopython's `fasta-pearson`.
+- FASTA header values with `>` or `@` are escaped as `\x3E` and `\x40` (FORMAT.md R11).
+- Keep `llms.txt` current when a release changes schema versions, URLs or commands;
+  `tests/test_llms_txt.py` checks the versions and required fields.
 
 ## Verification
 
