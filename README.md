@@ -13,6 +13,12 @@
 >   FAIR-bioHeaders-Specification `main`'s copies; the `published-files` check enforces it.
 >   The release tags (`v0.3.0`, `v0.3.1`) stay for the same reason.
 > - **Develop on branches** and open issues here for FHR-specific work.
+> - **What belongs here.** The FHR model, documentation, examples and checks live
+>   here. The inherited FHP/FHGFF3/shared fixtures and machinery are classified
+>   in [docs/DEVELOPMENT-TREE.md](docs/DEVELOPMENT-TREE.md), which
+>   `scripts/check_development_tree.py` enforces; the family migration is tracked
+>   in
+>   [#107](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/107).
 > - **Old issue and pull request links.** Links from before 2026-10-14 such as
 >   `github.com/FAIR-bioHeaders/FHR-Specification/issues/44` or `FHR-Specification#44`
 >   (numbers up to #116) refer to
