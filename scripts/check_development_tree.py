@@ -9,8 +9,9 @@ publication tree, so this check encodes which files may be edited here and which
 are compatibility copies that must stay byte-identical to the shared repository.
 
 Only the standard library is used. By default the check is offline: it compares
-each published file against the recorded SHA-256 of its shared copy and lists
-the files classified as removable. ``--shared PATH`` compares against a local
+each published file against the recorded SHA-256 of its shared copy, rejects
+unclassified files in a strict published location, and lists the files
+classified as removable. ``--shared PATH`` compares against a local
 FAIR-bioHeaders-Specification checkout instead, and ``--remote`` against its
 raw ``main`` over the network (as .github/workflows/published-files.yml does).
 
@@ -31,6 +32,17 @@ ROOT = Path(__file__).resolve().parents[1]
 SHARED_REPOSITORY = "FAIR-bioHeaders-Specification"
 RAW_MAIN = ("https://raw.githubusercontent.com/FAIR-bioHeaders/"
             + SHARED_REPOSITORY + "/main")
+
+# Section 2 of docs/DEVELOPMENT-TREE.md: directories whose entire contents are
+# published. Every file below one of these does not have to be listed in
+# PUBLISHED explicitly to be checked, but an unlisted file is an unexpected
+# published path: either classify it (with its digest) or move it elsewhere.
+STRICT_DIRECTORIES = ("examples", "jsonld")
+
+# The only root-level JSON schemas that serve published URLs. The root holds
+# other file types, but a fourth root-level ``*.json`` schema is an unexpected
+# published path until it is classified here and in PUBLISHED.
+ROOT_SCHEMAS = ("fhr.json", "fhp.json", "fhgff3.json")
 
 # Section 2 of docs/DEVELOPMENT-TREE.md: files that serve established raw-main,
 # tag or Pages URLs, or are published companion copies. Each value is the
@@ -74,9 +86,10 @@ PUBLISHED = {
 }
 
 # Section 4 of docs/DEVELOPMENT-TREE.md: candidates assessed for removal. This
-# change removes none of them: each is either agent tooling, historical design
-# provenance, or URL-served. The tuple stays so a later, separately reviewed
-# change can classify a file and have the check enforce its removal.
+# change classifies and defers removals and deletes nothing: every candidate is
+# either agent tooling, historical design provenance, or URL-served. The tuple
+# stays so a later, separately reviewed change can add a path and have the check
+# enforce that it stays gone (with --strict failing while it is present).
 REMOVABLE = ()
 
 
@@ -84,8 +97,36 @@ def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def unexpected_published(root, published=PUBLISHED):
+    """Published-location files that ``published`` does not classify.
+
+    The whole of each strict directory is published, so a new file there must
+    get a digest instead of silently escaping the check. Root-level ``*.json``
+    schemas are held to the same rule. Hidden files are ignored (they are local
+    editor/OS droppings, not part of the published tree).
+    """
+    unexpected = set()
+    for directory in STRICT_DIRECTORIES:
+        base = root / directory
+        if not base.is_dir():
+            continue
+        for path in base.rglob("*"):
+            if not path.is_file():
+                continue
+            relative = path.relative_to(root)
+            if any(part.startswith(".") for part in relative.parts):
+                continue
+            name = relative.as_posix()
+            if name not in published:
+                unexpected.add(name)
+    for path in root.glob("*.json"):
+        if path.is_file() and path.name not in ROOT_SCHEMAS:
+            unexpected.add(path.name)
+    return sorted(unexpected)
+
+
 def check_published(root, published=PUBLISHED):
-    """Problems with the published set: missing files or changed bytes."""
+    """Problems with the published set: missing, changed or unclassified files."""
     problems = []
     for name, expected in sorted(published.items()):
         path = root / name
@@ -97,6 +138,11 @@ def check_published(root, published=PUBLISHED):
             problems.append(
                 f"changed published file: {name} (expected {expected[:12]}…, "
                 f"got {actual[:12]}…); synchronize the shared main copy")
+    for name in unexpected_published(root, published):
+        problems.append(
+            f"unexpected published file: {name} (not in the published set; "
+            "classify it with its shared-copy digest or move it out of the "
+            "published location)")
     return problems
 
 
@@ -149,7 +195,9 @@ def main(argv=None):
                         help="compare the published set with raw shared main over "
                              "the network")
     parser.add_argument("--strict", action="store_true",
-                        help="also fail when a classified-removable file is present")
+                        help="also fail when a classified-removable file is "
+                             "present (no additional effect while REMOVABLE is "
+                             "empty)")
     parser.add_argument("--list", action="store_true",
                         help="only list the classification and exit")
     args = parser.parse_args(argv)
@@ -157,10 +205,13 @@ def main(argv=None):
     present = removable_present(ROOT)
     if args.list:
         print(f"{len(PUBLISHED)} published/URL-served files; "
+              f"strict directories: {', '.join(STRICT_DIRECTORIES)}; "
               f"{len(REMOVABLE)} classified removable")
         for name in REMOVABLE:
             state = "present" if name in present else "removed"
             print(f"  removable ({state}): {name}")
+        if not REMOVABLE:
+            print("  none classified; removals are deferred to a later change")
         return 0
 
     if args.shared:
@@ -180,9 +231,14 @@ def main(argv=None):
     if problems:
         print(f"{len(problems)} problem(s); see docs/DEVELOPMENT-TREE.md", file=sys.stderr)
         return 1
+    if REMOVABLE:
+        removals = (f"{len(REMOVABLE) - len(present)} of {len(REMOVABLE)} "
+                    f"classified-removable file(s) removed ({len(present)} still "
+                    "present)")
+    else:
+        removals = "no files classified removable yet (removals deferred)"
     print(f"ok: {len(PUBLISHED)} published files match their shared copy; "
-          f"{len(REMOVABLE) - len(present)} of {len(REMOVABLE)} classified-removable "
-          f"file(s) removed ({len(present)} still present)")
+          f"{removals}")
     return 0
 
 

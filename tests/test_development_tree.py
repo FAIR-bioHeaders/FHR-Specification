@@ -42,6 +42,50 @@ class DevelopmentTreeTests(unittest.TestCase):
             self.assertEqual(len(problems), 1)
             self.assertIn("changed published file: fhr.json", problems[0])
 
+    def test_no_unexpected_published_files(self):
+        self.assertEqual(tree.unexpected_published(ROOT), [])
+
+    def test_extra_file_in_strict_directory_fails(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "jsonld").mkdir()
+            (root / "jsonld" / "fhr.context.jsonld").write_text("{}\n")
+            (root / "jsonld" / "new-vocabulary.jsonld").write_text("{}\n")
+            (root / "examples" / "fhp").mkdir(parents=True)
+            (root / "examples" / "fhp" / "unclassified.fhp.yaml").write_text("{}\n")
+            digest = tree.digest(b"{}\n")
+            problems = tree.check_published(
+                root, {"jsonld/fhr.context.jsonld": digest})
+            self.assertTrue(any(
+                p.startswith("unexpected published file: "
+                             "jsonld/new-vocabulary.jsonld")
+                for p in problems))
+            self.assertTrue(any(
+                p.startswith("unexpected published file: "
+                             "examples/fhp/unclassified.fhp.yaml")
+                for p in problems))
+            self.assertEqual(len(problems), 2)
+
+    def test_extra_root_schema_fails(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "fhr.json").write_text("{}\n")
+            (root / "fht.json").write_text("{}\n")
+            problems = tree.check_published(
+                root, {"fhr.json": tree.digest(b"{}\n")})
+            self.assertEqual(
+                problems,
+                ["unexpected published file: fht.json (not in the published "
+                 "set; classify it with its shared-copy digest or move it out "
+                 "of the published location)"])
+
+    def test_hidden_files_in_strict_directories_are_ignored(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "jsonld").mkdir()
+            (root / "jsonld" / ".DS_Store").write_bytes(b"local\n")
+            self.assertEqual(tree.unexpected_published(root, {}), [])
+
     def test_shared_comparison_detects_a_difference(self):
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary)

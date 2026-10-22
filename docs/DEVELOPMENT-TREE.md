@@ -28,10 +28,12 @@ checked in CI (`.github/workflows/validate-specification.yml`).
   FAIR-bioHeaders-Specification `main`'s copies. The `published-files` workflow
   enforces that live; `scripts/check_development_tree.py` enforces it locally
   against recorded digests.
-- **Never rewrite history, tags or released bytes.** The release tags
-  (`v0.3.0`, `v0.3.1`, `v0.4.0`) and their files stay. Deleting a file from a
-  development branch does not touch a tag; it only stops serving that path on
-  `main`, which is why a published path may not be deleted.
+- **Never rewrite history, tags or released bytes.** This repository's release
+  tags (`v0.3.0`, `v0.3.1`) and their files stay. The `v0.4.x` release tags are
+  in `FAIR-bioHeaders-Specification`, not here; do not recreate or move them in
+  this repository. Deleting a file from a development branch does not touch a
+  tag; it only stops serving that path on `main`, which is why a published path
+  may not be deleted.
 
 ## Classification
 
@@ -65,6 +67,14 @@ are published companion copies. They may not be edited here except by
 synchronizing the shared `main`, and they may not be deleted:
 `scripts/check_development_tree.py` fails if any is missing or differs from its
 recorded shared-copy digest.
+
+The rule is strict about new paths. The whole of `jsonld/` and `examples/` is
+published, and `fhr.json`, `fhp.json` and `fhgff3.json` are the only published
+root-level `*.json` schemas. Adding a file under `jsonld/` or `examples/`, or a
+fourth root-level `*.json` schema, fails the check until the file is classified
+in the published set with its shared-copy digest (or moved out of the published
+location). That is how a newly published file is prevented from escaping the
+digest check.
 
 | Path | Why it must stay |
 | --- | --- |
@@ -140,9 +150,12 @@ without scoping the family checks, which is a separate change.
 
 ### 4. Inherited shared machinery assessed and retained
 
-No files were removed by this change. Every candidate was checked against the
-published-URL rule and against references from scripts, tests, workflows and
-other family repositories; each is retained for a concrete reason.
+**This change classifies and defers removals; it removes no files.** Every
+candidate below was checked against the published-URL rule and against
+references from scripts, tests, workflows and other family repositories; each is
+retained for a concrete reason. The removal list in
+`scripts/check_development_tree.py` is intentionally empty, and a later,
+separately reviewed change can add entries to it (see below).
 
 | Candidate | Why it stays |
 | --- | --- |
@@ -153,9 +166,11 @@ other family repositories; each is retained for a concrete reason.
 | `scripts/tool_survey/**` | Provenance for the published `docs/TOOL_COMPATIBILITY.md`; the doc and CHANGELOG link its files. |
 
 A later, separately reviewed change may remove a candidate after rechecking the
-URL inventory and the cross-repository references. `scripts/check_development_tree.py`
-keeps an empty removal list so such a change can add entries and have the check
-enforce that they stay gone.
+URL inventory and the cross-repository references. It should add each removed
+path to `REMOVABLE` in `scripts/check_development_tree.py`; the check then
+reports whether that path is still present, and `--strict` fails while it is.
+The list is empty here, so this change trims nothing and `--strict` currently
+adds no failure beyond the published-file checks.
 
 ## What the check does
 
@@ -163,12 +178,16 @@ enforce that they stay gone.
 
 1. fails if any file in section 2 is missing or its bytes differ from the
    recorded shared-copy SHA-256;
-2. lists any files classified as removable (section 4; currently none),
+2. fails if an unclassified file appears under `jsonld/` or `examples/`, or as
+   a fourth root-level `*.json` schema (section 2); hidden files are ignored;
+3. lists any files classified as removable (section 4; currently none),
    reporting whether each is still present; `--strict` fails if a
-   classified-removable file is still present;
-3. with `--shared PATH`, compares section 2 byte-for-byte against a local
+   classified-removable file is still present and otherwise has no effect while
+   the list is empty;
+4. with `--shared PATH`, compares section 2 byte-for-byte against a local
    `FAIR-bioHeaders-Specification` checkout; with `--remote`, against its raw
-   `main` over the network.
+   `main` over the network. `--list` prints the classification without checking
+   bytes.
 
 Run it from the repository root:
 
@@ -182,4 +201,6 @@ python scripts/check_development_tree.py --shared ../FAIR-bioHeaders-Specificati
 When a file moves between sections, update both this document and the
 classification constants in `scripts/check_development_tree.py`, and recompute
 the digests of any newly published file. Adding a new published path without a
-digest makes the check fail, which is intentional.
+digest makes the check fail, which is intentional: an unclassified file under
+`jsonld/` or `examples/`, or a new root-level `*.json` schema, is reported by
+name until it is classified.
