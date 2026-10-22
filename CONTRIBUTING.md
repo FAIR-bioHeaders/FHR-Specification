@@ -7,6 +7,21 @@ conformance suite here. Development of one header type belongs in its own reposi
 [FHT-Specification](https://github.com/FAIR-bioHeaders/FHT-Specification) or
 [FHGFF3](https://github.com/FAIR-bioHeaders/FHGFF3).
 
+## This repository is the FHR development home
+
+`FHR-Specification` develops the FHR header; the released specification for every
+type publishes from
+[FAIR-bioHeaders-Specification](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification).
+Open FHR-specific issues and branches here, and send finished work there by pull
+request. The repository's `main` keeps the published `fhr.json`, `fhp.json`,
+`fhgff3.json` and `jsonld/` byte-identical to shared `main`. What belongs here,
+what publishes elsewhere, and the inherited FHP/FHGFF3/shared fixtures are
+classified in [docs/DEVELOPMENT-TREE.md](docs/DEVELOPMENT-TREE.md); the family
+migration is tracked in
+[#107](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/107).
+See the [README notice](README.md) for the development-branch versus released-`main`
+rules.
+
 Start with an issue describing the use case or failure and a small reproducible
 example. Submit a focused branch/PR with behavior, compatibility implications,
 and relevant validation. Link related work in [FHR-File-Converter](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Tools)
@@ -20,6 +35,7 @@ See README for Python requirements and environment setup. From this checkout:
 ```bash
 python -m pip install -r requirements-linkml.txt
 python -m unittest discover -s tests -v
+python scripts/check_development_tree.py
 python scripts/validate_examples.py
 python scripts/check_linkml.py
 python scripts/check_schema_drift.py

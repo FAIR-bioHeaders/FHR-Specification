@@ -193,6 +193,13 @@ on FHR main. `.github/workflows/published-files.yml` checks `fhr.json`, `fhp.jso
 change into FHR main that makes those public raw URLs diverge. Preserve historical
 tags and file-bound examples; schema addition review still follows its own cycle.
 
+`docs/DEVELOPMENT-TREE.md` classifies this tree: the FHR development surface, the
+published compatibility copies that must stay byte-identical to shared main, and the
+inherited FHP/FHGFF3/shared fixtures and machinery together with the checks that
+depend on them. `scripts/check_development_tree.py` enforces the published set and
+lists the files classified as removable; run it with the other checks. The family
+migration is tracked in FAIR-bioHeaders-Specification#107.
+
 Issue/PR links under FHR-Specification from before the October 14, 2026 rename
 refer to the old shared repository, now FAIR-bioHeaders-Specification. The new
 repository reuses the old name, so historical numbers can point at unrelated new
