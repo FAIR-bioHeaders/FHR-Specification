@@ -1,5 +1,9 @@
 # Mappings
 
+[Draft citation/deposit profile work for #56](mappings/README.md) now has a
+separate export-context proposal, field inventory and worked descriptive bundle.
+These are not adopted profiles or shipped DataCite/Crossref/ARK/Bib exporters.
+
 FHR metadata is mapped to other vocabularies in separate profiles:
 
 - [MIxS/MIGS](#mixsmigs-mappings): a partial projection to MIxS v7.0.1 terms
@@ -43,6 +47,19 @@ repository and must not be treated as an INSDC accession. Taxonomy and accession
 crosswalks need additional source context. The earlier speculative NCBI/RefSeq/JGI
 mappings have been removed rather than emitting misleading accession values.
 
+**Identifier Conventions:** The shared core reserves `identifier` (a CURIE list) and
+`accessionID` (a `{name, url}` object) for the described data itself
+(`schemas/core.yaml`); they must not carry related project, sample or publication
+identifiers. Links to related INSDC records — BioProject, BioSample, SRA studies —
+belong in `relatedLink` as URLs (e.g. `https://www.ncbi.nlm.nih.gov/bioproject/PRJNA…`,
+`https://www.ebi.ac.uk/ena/browser/view/PRJEB…`,
+`https://www.ncbi.nlm.nih.gov/biosample/SAMN…`). Publications are recorded with
+`scholarlyArticle` (a bare DOI, no resolver prefix) or a `relatedLink` URL. The
+CURIE pattern `^[A-Za-z0-9._-]+:.+$` applies to `identifier` entries of the
+described data. How each INSDC minimum-specification requirement is covered, and how
+to use FH headers alongside an INSDC submission, is in the
+[INSDC coverage review](insdc-coverage.md).
+
 Check the target checklist's required fields, controlled vocabularies, and resource
 submission rules before using the projection in a submission. Updating MIxS versions
 requires reviewing term definitions and running the mapping fixtures again.
@@ -50,13 +67,21 @@ requires reviewing term definitions and running the mapping fixtures again.
 ## JSON-LD and Dublin Core (DCMI Terms)
 
 [`mappings/fhr-jsonld-dcmi.yml`](../mappings/fhr-jsonld-dcmi.yml) has one entry for each of the
-45 property paths of `fhr.json` (schemaVersion 1). Each entry gives the term that the
+51 property paths of the current `fhr.json` (`schemaVersion` `"2.0"`), including the v0.4
+`nameType` and scaffold statistics. Each entry gives the term that the
 [JSON-LD context](../jsonld/fhr.context.jsonld) uses ([JSONLD.md](JSONLD.md)), its DCMI
 Metadata Terms equivalents (release 2020-01-20), a mapping kind for each, and the conditions,
 losses and sources. Its format is [`mappings/mapping-table.schema.json`](../mappings/mapping-table.schema.json),
 and `tests/test_jsonld_mappings.py` checks it against `fhr.json`, the context, the
 [FAIR-bioHeaders vocabulary](TERMS.md), the pinned schema.org v30.1 subset and the DCMI term
 list. Term IRIs come from LinkML; the table is curated and test-checked against them.
+
+**Known mismatch.** The table records `source_schema_version: 1.0` as a number, because
+[`mappings/mapping-table.schema.json`](../mappings/mapping-table.schema.json) types that field
+as `number`, matching v0.3's numeric `schemaVersion`. It cannot hold the v0.4 string `"2.0"`,
+even though the entry paths are the v2.0 paths checked against the current `fhr.json`.
+Changing the field to a string is a mapping-format change and is separate from this
+documentation update.
 
 **Kinds** give the target term relative to the FHR field, as SKOS and LinkML do:
 

@@ -62,8 +62,8 @@ the report format (specs/010-fair-header-assessment/contracts/).
 ## Running
 
 ```bash
-python scripts/check_assessment.py --tool ../FHR-File-Converter
-python scripts/check_assessment.py --tool ../FHR-File-Converter --batch --guideline
+python scripts/check_assessment.py --tool ../FAIR-bioHeaders-Tools
+python scripts/check_assessment.py --tool ../FAIR-bioHeaders-Tools --batch --guideline
 ```
 
 `--tool` takes a toolkit checkout, a virtual environment or bin directory, or
@@ -77,7 +77,8 @@ rubric with the item table of
 writes the SC-001 review packet.
 
 `python scripts/make_assessment_fixtures.py [--output DIR]` regenerates `pairs/` and
-`edge/` deterministically (gzip members with `mtime=0`); `tests/test_assessment_fixtures.py`
+`edge/` deterministically (gzip members with `mtime=0` and OS byte 255, on any
+Python version); `tests/test_assessment_fixtures.py`
 checks that the committed files match its output and that every file is listed once.
 
 ## Other implementations

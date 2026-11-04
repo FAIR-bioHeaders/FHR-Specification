@@ -31,9 +31,12 @@ checked in CI (`.github/workflows/validate-specification.yml`).
 - **Never rewrite history, tags or released bytes.** This repository's release
   tags (`v0.3.0`, `v0.3.1`) and their files stay. The `v0.4.x` release tags are
   in `FAIR-bioHeaders-Specification`, not here; do not recreate or move them in
-  this repository. Deleting a file from a development branch does not touch a
-  tag; it only stops serving that path on `main`, which is why a published path
-  may not be deleted.
+  this repository. CI fetches them from the shared repository into its
+  checkout (`.github/workflows/validate-specification.yml`), because the
+  release-identity test and the schema-selection vectors read schemas from
+  them. Deleting a file from a development branch does not touch a tag; it
+  only stops serving that path on `main`, which is why a published path may
+  not be deleted.
 
 ## Classification
 

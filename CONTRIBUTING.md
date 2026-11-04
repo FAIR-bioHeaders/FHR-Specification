@@ -24,7 +24,7 @@ rules.
 
 Start with an issue describing the use case or failure and a small reproducible
 example. Submit a focused branch/PR with behavior, compatibility implications,
-and relevant validation. Link related work in [FHR-File-Converter](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Tools)
+and relevant validation. Link related work in [FAIR-bioHeaders-Tools](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Tools)
 and the release tracker when a change spans repositories. Do not include private
 genome data, credentials, or unrelated formatting in fixtures.
 

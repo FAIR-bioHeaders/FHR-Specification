@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run the FHR tool-compatibility survey.
 
-Usage: run_survey.py INPUTS OUTDIR [--node-dir DIR] [--only SUBSTRING]
+Usage: run_survey.py INPUTS OUTDIR [--node-dir DIR] [--only SUBSTRING[,SUBSTRING...]]
 
 INPUTS is the directory written by make_inputs.py. Every test is run twice,
 on a header-free control file and on the matching FHR-headed file, each in a
@@ -41,6 +41,8 @@ GFA = [("control.gfa", "fhr.gfa")]
 GFA_NUM = [("control.numeric.gfa", "fhr.numeric.gfa")]
 GFF = [("control.gff3", "fhr.gff3"), ("control.gff3", "fhr.sr-before.gff3")]
 GFF_FA = [("control.fasta.gff3", "fhr.fasta.gff3")]
+FAA = [("control.faa", "fhr.faa")]
+ALN = [("control.aln.fa", "fhr.aln.fa")]
 
 FAFP = '$FP fasta out.fa'
 SAMFP = '$FP sam out.sam'
@@ -135,6 +137,99 @@ TESTS = [
     dict(t="fasta", tool="JBrowse CLI add-assembly", ver="echo @jbrowse/cli $($NODE/node_modules/.bin/jbrowse --version | awk '{print $NF}')",
          cmd="(samtools faidx $IN 2>faidx.txt || true) && mkdir jb && $NODE/node_modules/.bin/jbrowse add-assembly $IN --load copy --out jb -n g > out.txt 2>&1",
          fp="ls jb", pairs=FA_PLAIN + FA_CONCAT),
+    # ------------------------------------------------------------ FASTA, 2026-10-18 additions
+    # environment-extra.yml; Rust probes in rust/ ($RUSTBIN); FASTX.jl ($JULIA)
+    dict(t="fasta", tool="Bioconductor Biostrings readDNAStringSet",
+         ver="Rscript -e 'cat(\"Biostrings\", as.character(packageVersion(\"Biostrings\")), \"\\n\")' 2>/dev/null",
+         cmd="Rscript -e 'suppressMessages(library(Biostrings)); writeXStringSet(readDNAStringSet(commandArgs(TRUE)[1]), \"out.fa\")' $IN",
+         fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="scikit-bio skbio.io.read", ver="$PY -c 'import skbio;print(\"scikit-bio\",skbio.__version__)'",
+         cmd="$PY -I -c 'import skbio,sys\nfor q in skbio.io.read(sys.argv[1], format=\"fasta\"): print(\">\"+q.metadata[\"id\"]); print(str(q))' $IN > out.fa",
+         fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="noodles-fasta (Rust)", ver="echo noodles-fasta $(grep -A1 'name = \"noodles-fasta\"' $RUSTDIR/Cargo.lock | sed -n 2p | cut -d'\"' -f2)",
+         cmd="$RUSTBIN/noodles_fasta $IN > out.fa", fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="rust-bio bio::io::fasta", ver="echo bio $(grep -A1 'name = \"bio\"' $RUSTDIR/Cargo.lock | sed -n 2p | cut -d'\"' -f2)",
+         cmd="$RUSTBIN/rust_bio $IN > out.fa", fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="BioJulia FASTX.jl", ver="$JULIA --startup-file=no -e 'using FASTX; println(\"FASTX \", pkgversion(FASTX))'",
+         cmd="$JULIA --startup-file=no -e 'using FASTX; FASTAReader(open(ARGS[1])) do r; for x in r; println(\">\", identifier(x)); println(sequence(x)); end; end' $IN > out.fa",
+         fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="HMMER/Easel esl-reformat", ver="echo hmmer $(hmmsearch -h | grep -o 'HMMER [0-9.]*' | head -1 | cut -d' ' -f2)",
+         cmd="esl-reformat fasta $IN > out.fa", fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="EMBOSS seqret", ver="echo EMBOSS $(embossversion -auto 2>/dev/null)",
+         cmd="seqret -sequence $IN -outseq out.fa -auto", fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="MMseqs2 createdb", ver="echo mmseqs $(mmseqs version)",
+         cmd="mmseqs createdb $IN db > log.txt 2>&1 && mmseqs convert2fasta db out.fa > log.txt 2>&1",
+         fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="DIAMOND makedb (protein)", ver="diamond version",
+         cmd="diamond makedb --in $IN -d db > log.txt 2>&1 && diamond getseq -d db --out out.fa >> log.txt 2>&1",
+         fp=FAFP, pairs=FAA),
+    dict(t="fasta", tool="CD-HIT cd-hit-est", ver="echo cd-hit $(cd-hit-est -h 2>&1 | grep -o 'version [0-9.]*' | head -1)",
+         cmd="cd-hit-est -i $IN -o out.fa -c 1.0 -n 10 > log.txt 2>&1", fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="Clustal Omega", ver="echo clustalo $(clustalo --version)",
+         cmd="clustalo -i $IN -o out.fa --force > log.txt 2>&1", fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="MUSCLE -align", ver="muscle -version 2>&1 | head -1",
+         cmd="muscle -align $IN -output out.fa > log.txt 2>&1", fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="IQ-TREE (alignment)", ver="iqtree3 --version 2>&1 | grep -o 'version [0-9.]*' | head -1",
+         cmd="iqtree3 -s $IN -m JC -nt 1 -seed 1 --prefix t -redo > log.txt 2>&1",
+         fp="cat t.treefile 2>/dev/null || echo missing-output", pairs=ALN),
+    # ------------------------------------------------ annotation and assembly tools
+    # Survey of 2026-10-19 (docs/TOOL_COMPATIBILITY.md, "Annotation and assembly
+    # tools"; versions in environment-annotation.yml). These tools live in separate
+    # environments, so each command takes an optional PATH prefix from an
+    # environment variable: S3 (QUAST, AUGUSTUS, Liftoff, gffcompare, Mash,
+    # sourmash, seqfu, TransDecoder), S3PROKKA, S3BUSCO (+ BUSCO_LINEAGE, a
+    # downloaded bacteria_odb12 directory), S3COMPLEASM (+ COMPLEASM_LIB),
+    # S3REPEAT (RepeatModeler 2.0.9), S3REPEAT41 (RepeatMasker 4.1.2, which runs
+    # with a custom library and no Dfam database; it fails in a working directory
+    # whose path contains parentheses) and S3MERQURY (Merqury, meryl).
+    dict(t="fasta", tool="QUAST", ver="PATH=${S3:+$S3:}$PATH quast.py --version 2>&1 | tail -1",
+         cmd="PATH=${S3:+$S3:}$PATH quast.py -o q --no-plots --no-html --no-icarus -t 1 --labels asm $IN > log.txt 2>&1",
+         fp="cut -f2 q/report.tsv", pairs=FA_PLAIN),
+    dict(t="fasta", tool="AUGUSTUS", ver="PATH=${S3:+$S3:}$PATH augustus --version 2>&1 | head -1",
+         cmd="PATH=${S3:+$S3:}$PATH augustus --species=human --genemodel=partial $IN > out.gff 2> log.txt",
+         fp="grep -v '^#' out.gff | cut -f1,3,4,5,7", pairs=FA_PLAIN),
+    dict(t="fasta", tool="Liftoff (FHR genome as target)", ver="PATH=${S3:+$S3:}$PATH; echo liftoff $(liftoff --version 2>&1 | tail -1)",
+         cmd="PATH=${S3:+$S3:}$PATH liftoff -p 1 -g $GFF -o out.gff3 $IN $GENOME > log.txt 2>&1",
+         fp="grep -v '^#' out.gff3 | cut -f1,3,4,5,7", pairs=FA_PLAIN),
+    dict(t="fasta", tool="Liftoff (FHR genome as reference)", ver="true",
+         cmd="PATH=${S3:+$S3:}$PATH liftoff -p 1 -g $GFF -o out.gff3 $GENOME $IN > log.txt 2>&1",
+         fp="grep -v '^#' out.gff3 | cut -f1,3,4,5,7", pairs=FA_PLAIN),
+    dict(t="fasta", tool="gffcompare -s (genome FASTA)", ver="PATH=${S3:+$S3:}$PATH gffcompare --version 2>&1 | head -1",
+         cmd="PATH=${S3:+$S3:}$PATH gffcompare -r $GFF -s $IN -o cmp $GFF > log.txt 2>&1",
+         fp="grep -v '^#' cmp.stats | grep -v Command | grep .", pairs=FA_PLAIN),
+    dict(t="fasta", tool="Mash sketch -i", ver="PATH=${S3:+$S3:}$PATH; echo mash $(mash --version)",
+         cmd="PATH=${S3:+$S3:}$PATH mash sketch -i -o s $IN > log.txt 2>&1 && PATH=${S3:+$S3:}$PATH mash info -t s.msh > out.txt",
+         fp="cut -f2,3 out.txt | tail -n +2", pairs=FA_PLAIN),
+    dict(t="fasta", tool="sourmash sketch --singleton", ver="PATH=${S3:+$S3:}$PATH sourmash --version 2>&1 | head -1",
+         cmd="PATH=${S3:+$S3:}$PATH sourmash sketch dna -p k=21,scaled=100 --singleton $IN -o s.sig.zip > log.txt 2>&1 && PATH=${S3:+$S3:}$PATH sourmash sig describe s.sig.zip > out.txt 2>&1",
+         fp="grep -E 'signature:|size:' out.txt", pairs=FA_PLAIN),
+    dict(t="fasta", tool="seqfu cat", ver="PATH=${S3:+$S3:}$PATH; echo seqfu $(seqfu version 2>&1)",
+         cmd="PATH=${S3:+$S3:}$PATH seqfu cat $IN > out.fa 2> log.txt",
+         fp=FAFP, pairs=FA_PLAIN),
+    dict(t="fasta", tool="TransDecoder.LongOrfs", ver="PATH=${S3:+$S3:}$PATH; echo transdecoder $(ls $(dirname $(command -v TransDecoder))/../conda-meta | grep -o '^transdecoder-[0-9.]*' | head -1)",
+         cmd="PATH=${S3:+$S3:}$PATH; $(dirname $(command -v TransDecoder))/../opt/transdecoder/util/TransDecoder.LongOrfs -t $IN -O td > log.txt 2>&1",
+         fp="grep '>' td/*.transdecoder_dir/longest_orfs.pep | cut -d' ' -f1-3", pairs=FA_PLAIN),
+    dict(t="fasta", tool="Prokka (BioPerl SeqIO)", ver="PATH=${S3PROKKA:+$S3PROKKA:}$PATH prokka --version 2>&1 | head -1",
+         cmd="PATH=${S3PROKKA:+$S3PROKKA:}$PATH prokka --cpus 1 --outdir out --prefix p --noanno --norrna --notrna --fast $IN > log.txt 2>&1",
+         fp="grep '^##sequence-region' out/p.gff; grep -v '^#' out/p.gff | awk -F'\t' 'NF>=9{print $1,$3,$4,$5,$7}'", pairs=FA_PLAIN),
+    dict(t="fasta", tool="BUSCO genome mode (Biopython)", ver="PATH=${S3BUSCO:+$S3BUSCO:}$PATH busco --version 2>&1 | head -1",
+         cmd="PATH=${S3BUSCO:+$S3BUSCO:}$PATH busco -i $IN -m genome -l $BUSCO_LINEAGE --offline -c 1 -o out > log.txt 2>&1",
+         fp="grep -h 'C:' out/short_summary*.txt", pairs=FA_PLAIN),
+    dict(t="fasta", tool="compleasm (miniprot)", ver="PATH=${S3COMPLEASM:+$S3COMPLEASM:}$PATH; echo compleasm $(compleasm --version 2>&1 | tail -1)",
+         cmd="PATH=${S3COMPLEASM:+$S3COMPLEASM:}$PATH compleasm run -a $IN -o out -l bacteria -L $COMPLEASM_LIB -t 1 > log.txt 2>&1",
+         fp="grep -E '^[SDFIM]:' out/summary.txt", pairs=FA_PLAIN),
+    dict(t="fasta", tool="RepeatModeler BuildDatabase", ver="PATH=${S3REPEAT:+$S3REPEAT:}$PATH; echo RepeatModeler $(ls $(dirname $(command -v BuildDatabase))/../conda-meta | grep -o '^repeatmodeler-[0-9.]*' | head -1)",
+         cmd="PATH=${S3REPEAT:+$S3REPEAT:}$PATH BuildDatabase -name db $IN > log.txt 2>&1 && PATH=${S3REPEAT:+$S3REPEAT:}$PATH blastdbcmd -db db -entry all -outfmt '%a %l' > out.txt",
+         fp="cat out.txt", pairs=FA_PLAIN),
+    dict(t="fasta", tool="RepeatMasker -lib custom library", ver="PATH=${S3REPEAT41:+$S3REPEAT41:}$PATH; echo RepeatMasker $(ls $(dirname $(command -v RepeatMasker))/../conda-meta | grep -o '^repeatmasker-[0-9.]*' | head -1)",
+         cmd="awk '/^>chr2/{p=1;print \">rep1#Unknown\";next} /^>/{p=0} p' $GENOME | head -6 > lib.fa && PATH=${S3REPEAT41:+$S3REPEAT41:}$PATH RepeatMasker -pa 1 -lib lib.fa -nolow -no_is $IN > log.txt 2>&1",
+         fp="tail -n +4 $IN.out | awk '{print $5,$6,$7,$10}'", pairs=FA_PLAIN),
+    dict(t="fasta", tool="meryl count (assembly k-mers)", ver="PATH=${S3MERQURY:+$S3MERQURY:}$PATH meryl --version 2>&1 | head -1",
+         cmd="PATH=${S3MERQURY:+$S3MERQURY:}$PATH meryl count k=21 memory=2 threads=1 $IN output asm.meryl > log.txt 2>&1 && PATH=${S3MERQURY:+$S3MERQURY:}$PATH meryl statistics asm.meryl > out.txt 2>&1",
+         fp="grep -E 'unique|distinct|present' out.txt", pairs=FA_PLAIN),
+    dict(t="fasta", tool="Merqury (QV, completeness)", ver="PATH=${S3MERQURY:+$S3MERQURY:}$PATH; echo merqury $(ls $(dirname $(command -v merqury.sh))/../conda-meta | grep -o '^merqury-[0-9.]*' | head -1)",
+         cmd="export PATH=${S3MERQURY:+$S3MERQURY:}$PATH; export MERQURY=${MERQURY:-$(ls -d $(dirname $(command -v merqury.sh))/../share/merqury* | head -1)}; meryl count k=21 memory=2 threads=1 $READS output reads.meryl > /dev/null 2>&1 && merqury.sh reads.meryl $IN out > log.txt 2>&1",
+         fp="cut -f2- out.qv out.completeness.stats 2>/dev/null", pairs=FA_PLAIN),
     # ------------------------------------------------------------ GFA
     dict(t="gfa", tool="gfatools stat", ver="echo gfatools $(gfatools version 2>&1 | grep gfatools | awk '{print $2}')",
          cmd="gfatools stat $IN > out.txt 2>/dev/null", fp="cat out.txt", pairs=GFA),
@@ -232,14 +327,17 @@ def main():
     env = dict(os.environ, FP=f"python3 -I {HERE / 'fp.py'}", PY="python3",
                READS=str(inp / "reads" / "reads.fq"), GENOME=str(fx / "genome.fa"),
                GFF=str(fx / "genes.gff3"), BAM=str(fx / "reads.bam"),
-               NODE=str(node) if node else "/nonexistent")
+               NODE=str(node) if node else "/nonexistent",
+               RUSTDIR=str(HERE / "rust"),
+               RUSTBIN=os.environ.get("RUSTBIN", str(HERE / "rust" / "target" / "release")),
+               JULIA=os.environ.get("JULIA", "julia"))
     sh("samtools faidx genome.fa && minimap2 -a genome.fa $READS 2>/dev/null | samtools sort -o reads.bam - && samtools index reads.bam",
        fx, env)
     rows = []
     vercache = {}
     last_ver = ""
     for t in TESTS:
-        if a.only and a.only not in t["tool"]:
+        if a.only and not any(o and o in t["tool"] for o in a.only.split(",")):
             continue
         v = t["ver"]
         if v != "true":

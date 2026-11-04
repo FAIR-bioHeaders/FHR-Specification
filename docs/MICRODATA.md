@@ -9,8 +9,12 @@ The converter's HTML representation adds `data-fhr-type` annotations (`object`,
 JSON/YAML mapping recoverable. An array container holds children with
 `itemprop="item"`. These are FHR serialization conventions, not a claim that a
 generic Schema.org consumer understands FHR properties or these extensions.
-HTML values and attribute text must be escaped; command-line strings are data
-and are never executed. Unicode and whitespace in typed strings are preserved.
+HTML values and attribute text must be escaped (`&`, `<` and `>` in text, and the
+quote character as well in attributes); command-line strings are data and are never
+executed. Unicode and whitespace in typed strings are preserved. The converter writes
+every value as element text, never as an `href` or `src`, so a value is not a link in
+the page. A reader that takes a value from an `href` applies the link-scheme rule R14
+of [FORMAT.md](FORMAT.md) like any other.
 
 To embed metadata, copy the generated item-scope element into a page:
 
@@ -49,8 +53,14 @@ these rules.
 - [M4] The extracted metadata must validate against `fhr.json`. A property that
   appears more than once becomes a list, so a repeated property whose field
   takes a single value is invalid.
+- [M5] Microdata carries no extension fields ([FORMAT.md](FORMAT.md) R15). A
+  writer leaves every top-level `x-` key out, with its value, and reports the keys
+  it left out. A document whose FHR item has an `itemprop` that starts with `x-` is
+  invalid, even where the selected schema would accept the key in JSON or YAML, so
+  that HTML pages never hold values that the standard does not define. A microdata
+  round trip therefore drops extension fields; use JSON or YAML to keep them.
 
-The ids M1 to M4 are stable labels used by the
+The ids M1 to M5 are stable labels used by the
 [conformance vectors](../conformance/README.md); they add no requirements beyond
 the converter behaviour described here.
 

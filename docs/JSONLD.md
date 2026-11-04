@@ -26,7 +26,8 @@ The writer (rule J7) emits, in this order:
 1. `"@context"`: the context object, embedded rather than referenced by URL (see
    [Publication](#publication)).
 2. `"@type": "Dataset"` (`schema:Dataset`).
-3. Every FHR key of the record, in record order, with its value unchanged except that nested
+3. Every FHR key of the record, in record order, except extension fields (`x-` keys,
+   [FORMAT.md](FORMAT.md) R15), which are left out (J9). Values are unchanged except that nested
    objects gain a first key `@type`:
 
    | FHR value | `@type` |
@@ -39,7 +40,7 @@ The writer (rule J7) emits, in this order:
 
    A `documentation` value that is an absolute `http`, `https` or `ftp` URL (the scheme,
    in any letter case, at the very start, then `//`, a host and no whitespace or control
-   character; [FORMAT.md](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/docs/FORMAT.md) R14 in FAIR-bioHeaders-Specification) is written under the key `subjectOf`
+   character; [FORMAT.md](FORMAT.md) R14) is written under the key `subjectOf`
    (`schema:subjectOf`) in the same position. Anything else stays text under
    `documentation` (`schema:description`), including text with another scheme such as
    `file:///…` or `javascript:…`.
@@ -51,11 +52,24 @@ it the type follows the identifier: an ORCID identifies a person and a ROR ID an
 A name alone implies neither, so it is typed `fhr:Agent`. `fhr.json` currently allows only
 ORCID URIs for authors.
 
-Nested objects that FHR leaves open (`taxon`, author items, `accessionID`, `vitalStats`) may
-carry keys that the context does not define, such as `taxon.checksum`. They stay in the
-document, so the FHR round trip is exact, but JSON-LD processors ignore them. The toolkit
-prints one warning per key, for example
+An ORCID identifies a person, but the schemas do not couple `nameType` to `uri`:
+`nameType: Organizational` with an ORCID iD validates. This is a known accepted combination,
+not an endorsement. Rejecting it would invalidate records that are valid under FHR 2.0, so it
+needs the next major `schemaVersion`.
+For writing, `nameType` decides first (J7), so such a node is `Organization`; the ORCID stays as
+`uri`, and a reader sets the `@type` aside, so a round trip preserves both values. The
+[FAIR-bioHeaders-Tools#74](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Tools/issues/74)
+change ships in fair-bioheaders 0.8.1 and makes the toolkit's typing follow the same
+nameType-first rule. Validators must not reject the combination under FHR 2.0.
+
+In v0.3 documents (`schemaVersion` 1), nested objects that FHR left open (`taxon`, author
+items, `accessionID`, `vitalStats`) may carry keys that the context does not define, such as
+`taxon.checksum`. They stay in the document, so the FHR round trip is exact, but JSON-LD
+processors ignore them. The toolkit prints one warning per key, for example
 `FHR: JSON-LD: taxon.checksum has no JSON-LD term; linked-data consumers will ignore it`.
+In v0.4 (`schemaVersion` `"2.0"`) those four objects are closed
+(`additionalProperties: false`), so an undefined key fails schema validation before it reaches
+the JSON-LD writer. This warning therefore applies only to v0.3 documents.
 
 ### Export context and Bioschemas
 
@@ -98,6 +112,25 @@ Without an export context, or with an incomplete one, there is no `conformsTo`, 
 says which properties are missing. The Taxon, ComputationalTool and Person profiles also need
 properties that FHR lacks (`taxonRank`, a tool `description`, a person `description` and
 `mainEntityOfPage`, and their own `dct:conformsTo`), so they are followed but not claimed.
+
+### Export terms in the canonical form and in other forms
+
+The export terms `@id`, `keywords`, `url` and `conformsTo` are not FHR fields. Their treatment
+depends on which reading rule applies, and the difference is intended:
+
+- In the canonical form (J1), the writer may attach them from the export context, and a reader
+  sets them aside with a warning. The canonical form is writer output; setting the terms aside
+  keeps that output readable as FHR metadata without pretending the terms are FHR values.
+- In any other form (J3/J4), they are unknown terms and make the document invalid, and so does a
+  root `@id`. Those forms are read by JSON-LD expansion, where there is no writer contract that
+  says the terms are export annotations. Dropping them would silently discard data, and a
+  document that is really a schema.org export would look like FHR metadata. The reader reports
+  them instead.
+
+A canonical document may therefore carry the export terms with a warning, while an expanded or
+otherwise non-canonical document that carries the same terms is invalid. A tool that reads an
+export-shaped document must remove or map the terms explicitly; it must not rely on J1's
+set-aside.
 
 ## Embedding in a web page
 
@@ -173,7 +206,7 @@ Readers turn a JSON-LD document into FHR metadata as follows. The rule ids are s
 conformance vectors in [conformance/](../conformance/README.md) cite them. A canonical
 document (J1) needs no JSON-LD processor. Rules J3 to J5 read JSON-LD in other forms that use
 the FHR context or none: expanded, with value objects or explicit IRIs, or a single record in a
-`@graph`. J7 and J8 are writing rules.
+`@graph`. J7 and J8 are writing rules; J9 constrains writers and readers.
 
 - [J1] **Canonical form.** A document is canonical when its root is an object whose `@context`
   is a published FHR context, embedded (equal as parsed JSON to the `@context` value of
@@ -183,8 +216,10 @@ the FHR context or none: expanded, with value objects or explicit IRIs, or a sin
   every `@type` value is a string or an array of strings. A reader sets the root `@context` and
   every `@type` aside. A root `subjectOf` string is the FHR `documentation` value; a document
   with both `documentation` and `subjectOf` is invalid. The export terms `@id`, `keywords`, `url`
-  and `conformsTo` at the root are not FHR fields: they are set aside, with a warning. What
-  remains is FHR JSON, including nested keys without a term.
+  and `conformsTo` at the root are not FHR fields: they are set aside, with a warning (the
+  writer-only allowance explained under
+  [Export terms in the canonical form and in other forms](#export-terms-in-the-canonical-form-and-in-other-forms)).
+  What remains is FHR JSON, including nested keys without a term.
 - [J2] Duplicate object keys are invalid, as in JSON.
 - [J3] **Other forms.** A document that is not canonical is interpreted by JSON-LD 1.1
   expansion, and the only context it may use is the FHR context. A top-level object (the
@@ -212,13 +247,15 @@ the FHR context or none: expanded, with value objects or explicit IRIs, or a sin
   nested nodes, must map to an FHR field in its scope through the reverse of the FHR context: the
   record (24 fields; `subjectOf` is read as `documentation`), the taxon, an author, the
   accession, `vitalStats` or an `assemblySoftware` item. A term that expansion drops (it has no
-  IRI), an IRI with no FHR field in its scope, and a root `@id` are unknown terms. They are
-  reported, and the document is invalid; a reader may offer to report them as warnings instead,
-  but never drops them silently.
+  IRI), an IRI with no FHR field in its scope, a root `@id` and the export terms are unknown
+  terms. They are reported, and the document is invalid; a reader may offer to report them as
+  warnings instead, but never drops them silently. This differs from the canonical J1 set-aside
+  on purpose: see
+  [Export terms in the canonical form and in other forms](#export-terms-in-the-canonical-form-and-in-other-forms).
 - [J5] **Values.**
   - An IRI-valued field (`schema`, `relatedLink`, `assemblyProtocol`, a taxon or author `uri`,
     an accession `url`, a software `uri`) accepts `{"@id": ...}` or a string value. A value
-    without an accepted link scheme is kept, and reported as [FORMAT.md](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/docs/FORMAT.md) R14 in FAIR-bioHeaders-Specification says.
+    without an accepted link scheme is kept, and reported as [FORMAT.md](FORMAT.md) R14 says.
   - `dateCreated` accepts a value typed `xsd:date` or an untyped string. Any other datatype, on
     any field, is invalid, and so is a language-tagged value.
   - A field that takes one value must have exactly one; two values, for example two `genome`
@@ -234,7 +271,7 @@ the FHR context or none: expanded, with value objects or explicit IRIs, or a sin
   indentation, non-ASCII characters unescaped and a final newline. For the JSON examples the
   result is byte-identical to `examples/*.fhr.jsonld`. The context makes every IRI-valued
   field an IRI, so a writer refuses a record in which such a field holds a value without an
-  accepted link scheme ([FORMAT.md](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/main/docs/FORMAT.md) R14 in FAIR-bioHeaders-Specification), such as `javascript:…` or `file:…`,
+  accepted link scheme ([FORMAT.md](FORMAT.md) R14), such as `javascript:…` or `file:…`,
   rather than write it as a link.
 - [J8] **Embedding in HTML.** Inside a `<script type="application/ld+json">` element
   ([Embedding in a web page](#embedding-in-a-web-page)), a writer must write every `<`, `>` and
@@ -244,3 +281,14 @@ the FHR context or none: expanded, with value objects or explicit IRIs, or a sin
   `>` and `&` can break out of or alter an HTML script element, so escaping only `</` (as
   `<\/`) is not enough. HTML character references such as `&lt;` must not be used, because
   script content is not decoded.
+- [J9] **No extension fields.** Extension fields ([FORMAT.md](FORMAT.md) R15: top-level keys
+  that start with `x-`) are not part of the JSON-LD form. A writer leaves every one of them out,
+  with its value, and reports the keys it left out; it does not map them to any term, so the
+  context and vocabulary have none. A document with a root key that starts with `x-` is
+  invalid, in the canonical form as in any other (where J4 already makes it an unknown term,
+  because the FHR context does not define it and has no `@vocab`). Without this rule a
+  canonical reader would keep the key and a JSON-LD processor would drop it, so the two would
+  read different records from one document, which J3 rules out. Because writers never emit
+  extension values, none of them (an `@context` or `@id` inside a value, or `<`, `>` and `&`
+  that J8 escapes) reaches JSON-LD processing or a web page through a writer. A JSON-LD round
+  trip therefore drops extension fields; use JSON or YAML to keep them.

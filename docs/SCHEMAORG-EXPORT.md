@@ -28,6 +28,12 @@ The bracketed ids are stable labels used by the tests.
    - It never replaces the canonical form, and it cannot be read back as FHR metadata. Readers
      refuse it.
    - The canonical context and examples do not change.
+   - The export terms `@id`, `keywords`, `url` and `conformsTo` are not FHR fields. In the
+     canonical form they are set aside with a warning (J1); in any other JSON-LD form they are
+     unknown terms and the document is invalid (J4). That difference is intended: the canonical
+     form is writer output with a documented place for export annotations, while an expanded or
+     compacted document is read generically. See
+     [JSONLD.md](JSONLD.md#export-terms-in-the-canonical-form-and-in-other-forms).
 2. **[X2] Shape.**
    - The document is `{"@context": {"@vocab": "http://schema.org/", "fhr": ..., "dct": ...},
      "@graph": [...]}`. That is a JSON-LD 1.0 context with no scoped contexts and no coercions, so
@@ -43,14 +49,19 @@ The bracketed ids are stable labels used by the tests.
    - Authors are typed as in the canonical form: an explicit `nameType` (v0.4) decides first
      (`Personal` gives `Person`, `Organizational` gives `Organization`); otherwise ORCID gives `Person`, ROR gives `Organization`,
      and an author with neither stays `fhr:Agent`. `fhr:Agent` is outside `creator`'s expected
-     range, but classifying the author would invent metadata.
+     range, but classifying the author would invent metadata. A `nameType` that contradicts the
+     identifier, such as `Organizational` with an ORCID, is accepted by `fhr.json` 2.0 and is
+     typed by `nameType` here and in the canonical writer; the contradiction is a known accepted
+     combination, and rejecting it needs the next major `schemaVersion`
+     ([JSONLD.md](JSONLD.md#what-the-document-contains)).
 4. **[X4] Statistics are observations of the assembly.**
    - Each numeric `vitalStats` value becomes an `Observation` with:
      - `observationAbout` → the assembly;
      - `measuredProperty` → the FHR term (`fhr:N50`, …);
      - `value`, `unitCode` (Units Ontology) and `unitText`.
-   - Units: base pair (`UO_0000244`) for N50, N90 and totalBasePairs; count unit (`UO_0000189`)
-     for L50, L90, numberContigs and numberScaffolds; percent (`UO_0000187`) for gcContent.
+   - Units: base pair (`UO_0000244`) for N50, N90, scaffoldN50, scaffoldN90 and totalBasePairs;
+     count unit (`UO_0000189`) for L50, L90, scaffoldL50, scaffoldL90, numberContigs and
+     numberScaffolds; percent (`UO_0000187`) for gcContent.
    - No observation date is written.
    - The statistics are not `variableMeasured` of the dataset, because they describe the
      assembly, not variables measured within its sequence data.
@@ -60,9 +71,14 @@ The bracketed ids are stable labels used by the tests.
      profile.
    - `funding` becomes a `Grant` whose `description` is the unchanged text. No funder, award
      number or amount is extracted.
-   - `reuseConditions` and `documentation` become IRIs only when they are absolute URLs.
-     Otherwise they stay text: a non-URL documentation is `description`, and a URL is
-     `subjectOf`.
+   - `reuseConditions` and `documentation` become IRIs only when they are absolute `http`,
+     `https` or `ftp` URLs, as in the canonical form ([JSONLD.md](JSONLD.md#what-the-document-contains)).
+     Otherwise they stay text: other documentation is `description`, and a URL is `subjectOf`.
+     Text with another scheme, such as `file:///…` or `javascript:…`, stays text.
+   - The IRI-valued fields (`schema`, `relatedLink`, `assemblyProtocol`, the taxon and author
+     `uri`, the accession `url`, a software `uri`) are written as IRIs, so a writer refuses a
+     record in which one of them has no accepted link scheme ([FORMAT.md](FORMAT.md) R14). The
+     export context's `id` and `url` must be `http`, `https` or `ftp` URLs.
    - A licence that is text is kept as text, and validator.schema.org reports it. Use a licence
      URL.
 6. **[X6] Identifiers keep their scope.**
@@ -93,6 +109,8 @@ The bracketed ids are stable labels used by the tests.
      minimum property is present, as in the canonical form.
    - Keys that FHR's nested objects do not define are left out and reported, never projected under
      `@vocab`.
+   - Extension fields (top-level `x-` keys, [FORMAT.md](FORMAT.md) R15) are left out and reported
+     in the same way, as in the canonical form (J9).
 
 ## Export context
 
@@ -105,6 +123,7 @@ ignored by the canonical writer.
 The export is not a substitute for the canonical form. It drops:
 - the record's key order and shape;
 - keys that FHR's nested objects do not define;
+- extension fields (`x-` keys);
 - the canonical `vitalStats` object, except `readTechnology`.
 
 It also asserts the article's resource type from the FHR field definition rather than checking it.

@@ -53,7 +53,7 @@ RULE_DOCUMENTS = ("docs/FORMAT.md", "docs/MICRODATA.md", "docs/JSONLD.md", "docs
 SCHEMAS = {"fhp-fasta": "fhp.json", "fhgff3": "fhgff3.json"}
 # Invalid vectors whose rule names the schema their metadata must fail.
 SCHEMA_RULES = {"P1": "fhp.json", "P2": "fhr.json", "G2": "fhgff3.json", "G3": "fhr.json"}
-# Schema selection (docs/SCHEMA-VERSIONS.md V1-V5) and the version registry.
+# Schema selection (docs/SCHEMA-VERSIONS.md V1-V6) and the version registry.
 REGISTRY_PATH = ROOT / "schemas" / "versions.json"
 # Either repository name (#108): FAIR-bioHeaders-Specification, or FHR-Specification
 # as it was called before; the old URLs stay supported aliases.
@@ -84,6 +84,26 @@ def select_schema(value, registry=None):
             return header_type, ref, registry["files"][header_type]
         return header_type, None, None
     return "FHR", "main", registry["files"]["FHR"]
+
+
+# V6: an FHR 1 record citing raw-main is read against the last FHR 1 release.
+FHR1_RELEASE = "v0.3.1"
+
+
+def is_fhr1_version(version):
+    """The number 1 (1 or 1.0); not the string "1" and not a boolean (V6)."""
+    return isinstance(version, (int, float)) and not isinstance(version, bool) and version == 1
+
+
+def select_record(metadata, registry=None):
+    """Like select_schema for a record's ``schema``, with rule V6: a raw-main fhr.json URL
+    and schemaVersion the number 1 select the v0.3.1 FHR schema."""
+    registry = registry or json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    value = metadata.get("schema") if isinstance(metadata, dict) else None
+    raw = RAW_SCHEMA.fullmatch(value) if isinstance(value, str) else None
+    if raw and raw.groups() == ("main", "fhr") and is_fhr1_version(metadata.get("schemaVersion")):
+        return "FHR", FHR1_RELEASE, registry["files"]["FHR"]
+    return select_schema(value, registry)
 
 
 def load_schema(release, name, registry=None):
@@ -234,6 +254,13 @@ def check_manifest(manifest):
     for rule, outcomes in coverage.items():
         if "notApplicable" not in manifest["rules"][rule] and outcomes != {"valid", "invalid"}:
             problems.append(f"{rule}: needs at least one valid and one invalid vector")
+    # Vector ids are never reused: a retired id names no vector.
+    ids = {vector["id"] for vector in manifest["vectors"]}
+    for retired in manifest.get("retired", []):
+        if retired["id"] in ids:
+            problems.append(f"{retired['id']}: retired id reused by a vector")
+        if retired.get("replacedBy") and retired["replacedBy"] not in ids:
+            problems.append(f"{retired['id']}: replacement {retired['replacedBy']} is not a vector")
     return problems
 
 
@@ -241,6 +268,18 @@ def check_schema(conformance, manifest):
     """Validate the metadata of valid vectors against their type's schema."""
     from jsonschema import Draft202012Validator, FormatChecker
     import yaml
+
+    class Loader(yaml.SafeLoader):
+        """YAML with dates and times read as strings, as written (FORMAT.md R12)."""
+
+    Loader.yaml_implicit_resolvers = {
+        first: [(tag, regexp) for tag, regexp in resolvers
+                if tag != "tag:yaml.org,2002:timestamp"]
+        for first, resolvers in yaml.SafeLoader.yaml_implicit_resolvers.items()
+    }
+
+    def load_yaml(text):
+        return yaml.load(text, Loader=Loader)
 
     validators = {
         name: Draft202012Validator(json.loads((ROOT / name).read_text()),
@@ -251,8 +290,7 @@ def check_schema(conformance, manifest):
 
     def selected_validator(metadata):
         """The validator for the schema ``metadata`` selects, or None (unsupported)."""
-        _, release, name = select_schema(metadata.get("schema") if isinstance(metadata, dict)
-                                         else None)
+        _, release, name = select_record(metadata)
         if release is None:
             return None
         if (release, name) not in selected:
@@ -267,12 +305,12 @@ def check_schema(conformance, manifest):
             for line in read_vector(conformance, vector).splitlines(keepends=True)
             if line.startswith(prefix)
         )
-        return yaml.safe_load(text)
+        return load_yaml(text)
 
     problems = []
     for vector in manifest["vectors"]:
         if vector["format"] in PREFIXES and vector.get("rule", "").startswith("V"):
-            # Selection vectors (V1-V5): an unsupported version selects no schema;
+            # Selection vectors (V1-V6): an unsupported version selects no schema;
             # otherwise the metadata must fail the schema its URL selects.
             validator = selected_validator(header_metadata(vector))
             if vector.get("result") == "unsupported-version":
@@ -299,11 +337,22 @@ def check_schema(conformance, manifest):
                 for line in read_vector(conformance, vector).splitlines(keepends=True)
                 if line.startswith(prefix)
             )
-            if not same_json(yaml.safe_load(text), vector["metadata"]):
+            if not same_json(load_yaml(text), vector["metadata"]):
                 problems.append(f"{vector['id']}: parsed metadata differs from the manifest")
             schema = SCHEMA_RULES[vector["rule"]]
             if not list(validators[schema].iter_errors(vector["metadata"])):
                 problems.append(f"{vector['id']}: metadata unexpectedly matches {schema}")
+            continue
+        if vector["format"] in PREFIXES and vector["expected"] == "invalid" \
+                and vector["rule"] == "R15":
+            # Extension fields (docs/FORMAT.md R15): the header must fail the schema
+            # its record selects, whether that is the current or an older release's.
+            metadata = header_metadata(vector)
+            validator = selected_validator(metadata)
+            if validator is None:
+                problems.append(f"{vector['id']}: schema URL is unexpectedly unsupported")
+            elif not list(validator.iter_errors(metadata)):
+                problems.append(f"{vector['id']}: metadata unexpectedly matches the selected schema")
             continue
         if vector["format"] == "jsonld" and vector["expected"] == "valid":
             from make_jsonld import canonical_record, is_canonical
@@ -315,6 +364,8 @@ def check_schema(conformance, manifest):
                                                         vector["metadata"]):
                 problems.append(f"{vector['id']}: rule J1 reading differs from the manifest metadata")
         if vector["format"] in EXTRACTED:
+            # The extracted metadata is checked against the schema it selects (V1-V6).
+            validator = selected_validator(vector.get("metadata", {})) or validator
             errors = list(validator.iter_errors(vector.get("metadata", {})))
             if vector["expected"] == "valid":
                 problems += [f"{vector['id']}: {error.json_path}: {error.message}"
@@ -324,7 +375,7 @@ def check_schema(conformance, manifest):
                 if "seqcol_id" in vector["metadata"]:
                     problems.append(f"{vector['id']}: valid vectors must not carry a SeqCol placeholder")
             elif "metadata" in vector and not errors:
-                problems.append(f"{vector['id']}: extracted metadata unexpectedly matches fhr.json")
+                problems.append(f"{vector['id']}: extracted metadata unexpectedly matches its schema")
             continue
         if vector["expected"] != "valid":
             continue
@@ -334,7 +385,7 @@ def check_schema(conformance, manifest):
             line[len(prefix):].rstrip(b"\r\n").decode("utf-8")
             for line in data.splitlines(keepends=True) if line.startswith(prefix)
         )
-        metadata = yaml.safe_load(text)
+        metadata = load_yaml(text)
         for error in validator.iter_errors(metadata):
             problems.append(f"{vector['id']}: {error.json_path}: {error.message}")
         for key, value in vector["metadata"].items():
@@ -449,6 +500,9 @@ def check_converter(conformance, manifest, location, skip=(), require=(), unsupp
             outcome = "accepted" if accepted else f"rejected ({detail})"
             expected = vector["expected"] + (f", {vector['rule']}" if "rule" in vector else "")
             problems.append(f"{vector['id']}: converter {outcome}; expected {expected}")
+        elif accepted and vector.get("warnings") and "warning" not in result.stderr.lower():
+            problems.append(f"{vector['id']}: converter printed no warning; expected one "
+                            f"under {', '.join(vector['warnings'])}")
         elif extracted is not None and not same_json(extracted, vector["metadata"]):
             differences = sorted(
                 key for key in extracted.keys() | vector["metadata"].keys()
