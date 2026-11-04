@@ -21,6 +21,11 @@ jobs:
           # from their tags (docs/SCHEMA-VERSIONS.md).
           fetch-depth: 0
           fetch-tags: true
+      - name: Fetch the shared release tags
+        # The v0.4.x and later release tags exist only in FAIR-bioHeaders-Specification
+        # (docs/DEVELOPMENT-TREE.md). The release-identity test and the schema-selection
+        # vectors read schemas from them, so fetch them into this checkout only.
+        run: git fetch --quiet --no-tags https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification.git 'refs/tags/v*:refs/tags/v*'
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: '3.13'
