@@ -32,18 +32,35 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "conformance"
 MANIFEST_VERSION = 1
 
+# Vector ids are never reused. A vector whose expected outcome changes is retired and
+# replaced by a vector with a new id, so a published id always means one outcome.
+RETIRED = {
+    "fasta-schema-raw-main-version-1": {
+        "expected": "invalid",
+        "rule": "V1",
+        "replacedBy": "fasta-schema-raw-main-version-1-0",
+        "reason": "Rule V6 made the FHR 1 record it carries (raw-main with schemaVersion "
+                  "1.0) valid, so its expected outcome changed; the same bytes are now the "
+                  "valid vector fasta-schema-raw-main-version-1-0.",
+    },
+}
+
 # Stable, non-normative labels for the docs/FORMAT.md rules.
 RULES = {
     "R1": "Checksum rule 1: hash the exact file bytes without normalization; "
-          "for gzip/BGZF input, the decompressed bytes.",
+          "for gzip/BGZF input, the decompressed bytes. A line ends at LF, CRLF or "
+          "a CR not followed by LF.",
     "R2": "Checksum rule 2: exactly one root-level checksum line with an unquoted "
           "key; spaces only to match root indentation and before the colon; nested "
           "checksum properties stay covered.",
     "R3": "Checksum rule 3: exclude that entire line and its terminator; hash every "
           "other byte, so changing covered bytes invalidates the checksum.",
-    "R4": "Checksum rule 4: SHA-512/256 digest in standard padded base64, no prefix.",
-    "R5": "Header parsing: the checksum value is a single-line YAML scalar on the "
-          "checksum line; block scalars and continuation lines are invalid.",
+    "R4": "Checksum rule 4: SHA-512/256 digest in standard padded base64, no prefix; "
+          "the encoding is canonical (the unused bits are zero) and checksums compare "
+          "as exact strings.",
+    "R5": "Header parsing: the checksum line holds only the 44-character value, plain "
+          "or quoted, with optional spaces or tabs; comments, tags, other text, block "
+          "scalars and continuation lines are invalid.",
     "R6": "Header parsing: FHR header lines are UTF-8 without U+0085, U+2028 or "
           "U+2029; bytes outside header lines are not decoded.",
     "R7": "Header parsing: a FASTA/GFA file must not begin with a UTF-8 byte "
@@ -54,6 +71,22 @@ RULES = {
           "itemtype and itemprop are space-separated token lists.",
     "R10": "Header parsing: FHR lines form the leading header block; a later "
            "FHR line, including one from a concatenated file, is invalid.",
+    "R11": "Header writing (FASTA): header lines should not contain a raw '>' or '@'; "
+           "writers escape them as \\x3E and \\x40 in double-quoted YAML scalars, "
+           "which read back as the same characters.",
+    "R12": "Header parsing: YAML metadata is read with YAML 1.2 core-schema types and "
+           "must read the same under YAML 1.1; explicit tags and plain scalars that the "
+           "two versions read differently (010, 1_000, 1:30, yes, on, 1e3) are invalid.",
+    "R13": "Numbers: a numeric metadata value must be a finite number. YAML .nan, .inf and "
+           "-.inf, and NaN or Infinity written as a JSON extension, make the record invalid.",
+    "R14": "Links: a value whose schema format is uri should use http or https (ftp, urn, doi "
+           "and info are also accepted); any other scheme, such as javascript:, data: or "
+           "file:, stays schema-valid, but validators warn and JSON-LD writers do not write it "
+           "as a link.",
+    "R15": "Extension fields: from FHR 2.1 and FHP and FHGFF3 1.1, a top-level key matching "
+           "^x-[A-Za-z0-9][A-Za-z0-9_.-]*$ may hold any value; every other unknown key, an x- "
+           "key in a nested object and an x- key in a record that states the older minor or "
+           "cites an older release stay invalid; R8, R11, R12 and R13 apply to them.",
     "M1": "Microdata: exactly one FHR item scope; a nested item scope without "
           "itemprop is a separate item whose properties do not leak.",
     "M2": "Microdata: HTML parsing with implied end tags; values come from the "
@@ -62,6 +95,8 @@ RULES = {
           "typed strings are exact; untyped schema numbers and lists are converted.",
     "M4": "Microdata: the extracted metadata must validate against fhr.json; a "
           "repeated property cannot fill a single-valued field.",
+    "M5": "Microdata: no extension fields; writers leave x- keys out, and an FHR item with an "
+          "x- itemprop is invalid.",
     "J1": "JSON-LD: a canonical document has a published FHR context (embedded or a known "
           "URL) and no keyword but @type and a root @id; @context and @type are set aside, "
           "subjectOf is documentation, and export terms are set aside.",
@@ -82,12 +117,16 @@ RULES = {
     "J8": "JSON-LD in HTML: inside <script type=\"application/ld+json\">, '<', '>' and '&' "
           "in the JSON text are written as \\u003c, \\u003e and \\u0026; the document "
           "reads back to the same metadata.",
+    "J9": "JSON-LD: no extension fields; writers leave x- keys out, and a document with a root "
+          "x- key is invalid in the canonical form as in any other.",
     "P1": "FHP: the metadata of a protein FASTA header must validate against fhp.json.",
     "P2": "FHP: a record is read as FHP only when its schema is an FHP schema URL; any "
           "other header is validated as FHR.",
-    "G1": "FHGFF3: line 1 is ##gff-version 3; the leading header block runs from line 2 to "
-          "the first nonblank line that is not a # line, or to ##FASTA; #~ lines may be "
-          "mixed with other # lines inside it, and a #~ line on line 1 or after it is invalid.",
+    "G1": "FHGFF3: line 1 matches ##gff-version 3 or ##gff-version 3.x.y (three numeric "
+          "components), optionally followed by spaces or tabs; the leading header block runs "
+          "from line 2 to the first nonblank line that is not a # line, or to ##FASTA; #~ lines "
+          "may be mixed with other # lines inside it, and a #~ line on line 1 or after it is "
+          "invalid.",
     "G2": "FHGFF3: the metadata must validate against fhgff3.json, including the genome link "
           "(an annotates link to an FHR genome, a genomeReference, or both).",
     "G3": "FHGFF3: a record is read as FHGFF3 only when its schema is an FHGFF3 schema URL; "
@@ -104,12 +143,22 @@ RULES = {
           "that type, or a raw URL with any other ref gives an unsupported-version result, "
           "never another schema.",
     "V5": "Selection: any other schema value is FHR, validated against the current FHR schema.",
+    "V6": "Selection, FHR 1 compatibility: a record whose schema is the raw-main fhr.json URL "
+          "(either repository name) and whose schemaVersion is the number 1 (1 or 1.0, not "
+          "the string \"1\" or a boolean) is an FHR 1 record, validated against the v0.3.1 "
+          "FHR schema; the citation is deprecated, not invalid.",
 }
 NOT_APPLICABLE = {
+    "R11": "R11 is a recommendation: a raw '>' or '@' in a FASTA header line makes a "
+           "validator warn, not reject, so no input is invalid under it. The valid "
+           "vectors that cite R11 show escaped values and a raw value that stays valid.",
     "J7": "J7 constrains writers; a reader has no invalid input for it. The valid vectors "
           "that cite J7 are writer output.",
     "J8": "J8 constrains writers that embed JSON-LD in HTML; the escaped text is ordinary "
-          "JSON, so a reader has no invalid input for it.",
+          "JSON, so a reader has no invalid input for it. Its valid vector shows that the "
+          "escapes read back to the real characters.",
+    "R14": "R14 makes validators warn, not reject: an unexpected link scheme is schema-valid "
+           "in FHR 2.0. Its valid vectors carry \"warnings\": [\"R14\"].",
 }
 
 PREFIX = {"fasta": b";~", "gfa": b"#~", "fhp-fasta": b";~", "fhgff3": b"#~"}
@@ -163,6 +212,10 @@ BODY = {
                   b"MUOBZJXmkta-yi*AKQR"],
 }
 EXPECTED_METADATA = {"genome": GENOME, "version": VERSION, "masking": MASKING}
+# A value with both FASTA record markers (R11).
+RECORD_MARKER_TEXT = "contact someone@example.org; contigs > 1000 bp"
+# A URI with a scheme that is not a link scheme (R14); it does nothing when followed.
+OTHER_SCHEME_LINK = "javascript:void(0)"
 
 
 def digest(data):
@@ -273,6 +326,11 @@ def decompress(data):
 
 # Reference reading of the rules, used to self-check valid vectors.
 
+# R5: after the colon, the value (canonical base64, R4) plain or quoted, and spaces.
+_B64 = rb"[A-Za-z0-9+/]{42}[AEIMQUYcgkosw048]="
+CHECKSUM_VALUE = re.compile(
+    rb" +(?:(" + _B64 + rb")|'(" + _B64 + rb")'|\"(" + _B64 + rb")\") *")
+
 def reference_checksum(data, kind):
     """Return (stated value, computed value) or raise ValueError."""
     prefix = PREFIX[kind]
@@ -296,7 +354,7 @@ def reference_checksum(data, kind):
         len(text) - len(text.lstrip(b" \t")) for text in contents
         if text.strip() and not text.lstrip().startswith(b"#")
     ]
-    pattern = re.compile(rb"^" + re.escape(prefix) + rb"([ \t]*)checksum[ \t]*:(.*)$", re.S)
+    pattern = re.compile(rb"^" + re.escape(prefix) + rb"([ \t]*)checksum( *):(.*)$", re.S)
     matches = [
         line for line in header_lines
         if (found := pattern.match(line.rstrip(b"\r\n"))) and len(found.group(1)) == min(indents)
@@ -307,8 +365,12 @@ def reference_checksum(data, kind):
     position = data.index(excluded) if lines.count(excluded) == 1 else None
     if position is None:
         raise ValueError("ambiguous checksum line")
-    value = pattern.match(excluded.rstrip(b"\r\n")).group(2).strip().strip(b"'\"").decode()
-    return value, digest(data[:position] + data[position + len(excluded):])
+    value = pattern.match(excluded.rstrip(b"\r\n")).group(3)
+    found = CHECKSUM_VALUE.fullmatch(value)
+    if not found:
+        raise ValueError("the checksum line holds more than the checksum value (R4, R5)")
+    stated = (found.group(1) or found.group(2) or found.group(3)).decode()
+    return stated, digest(data[:position] + data[position + len(excluded):])
 
 
 # The vectors.
@@ -317,9 +379,10 @@ VALID = []
 INVALID = []
 
 
-def valid(name, kind, data, value, rules, description, compression=None):
+def valid(name, kind, data, value, rules, description, compression=None, warnings=None):
     VALID.append(dict(name=name, kind=kind, data=data, checksum=value, rules=rules,
-                      description=description, compression=compression, status="valid"))
+                      description=description, compression=compression, status="valid",
+                      warnings=warnings))
 
 
 def invalid(name, kind, data, rule, reason, compression=None, metadata=None, result=None):
@@ -433,6 +496,57 @@ def build():
         data, value = assemble(lines + body(k))
         valid(f"{k}-yaml-indicators-in-strings", k, data, value, ["R8"],
               "Anchor, alias and merge-key characters inside a quoted string are text.")
+        lines = with_metadata(k, replacements=[
+            ("dateCreated: '2026-10-08'", "dateCreated: 2026-10-08"),
+            (f"version: {VERSION}", "version: '010'"),
+        ], insert=[("documentation: Synthetic FHR conformance vector; not a real assembly.",
+                    ["vitalStats:", "  L50: 10", "  gcContent: 41.5"])])
+        data, value = assemble(lines + body(k))
+        valid(f"{k}-yaml-portable-types", k, data, value, ["R12"],
+              "Values every YAML version reads alike: a plain date (a string, as written), "
+              "a quoted '010' (the string 010), and plain 10 and 41.5.")
+        VALID[-1]["expected_metadata"] = dict(EXPECTED_METADATA, version="010")
+        lines = header(k)
+        lines[-1].text = lines[-1].text.replace(b"checksum: ", b"checksum:\t")
+        data, _ = assemble(lines + body(k))
+        invalid(f"{k}-tab-on-checksum-line", k, data, "R5",
+                "A tab, not a space, separates the colon from the checksum value.")
+        if k == "fasta":
+            # R11: '>' and '@' escaped in a double-quoted scalar read back unchanged.
+            lines = with_metadata(k, replacements=[(
+                "documentation: Synthetic FHR conformance vector; not a real assembly.",
+                'documentation: "contact someone\\x40example.org; contigs \\x3E 1000 bp"',
+            )])
+            data, value = assemble(lines + body(k))
+            valid("fasta-escaped-record-markers", k, data, value, ["R11"],
+                  "A value holding '@' and '>' written as \\x40 and \\x3E in a "
+                  "double-quoted scalar; it reads back with the real characters.")
+            VALID[-1]["expected_metadata"] = dict(
+                EXPECTED_METADATA, documentation=RECORD_MARKER_TEXT)
+            lines = with_metadata(k, replacements=[(
+                "documentation: Synthetic FHR conformance vector; not a real assembly.",
+                f"documentation: {RECORD_MARKER_TEXT}",
+            )])
+            data, value = assemble(lines + body(k))
+            valid("fasta-raw-record-markers", k, data, value, ["R11"],
+                  "The same value with a raw '@' and '>': still valid (R11 is a "
+                  "recommendation), but a validator should warn, and kseq-based readers "
+                  "read a bogus record at the '@'.")
+            VALID[-1]["expected_metadata"] = dict(
+                EXPECTED_METADATA, documentation=RECORD_MARKER_TEXT)
+            # R14: a link scheme other than http(s) is schema-valid but reported.
+            lines = with_metadata(k, insert=[(
+                "documentation: Synthetic FHR conformance vector; not a real assembly.",
+                ["relatedLink:", "- https://example.org/synthetic", f"- '{OTHER_SCHEME_LINK}'"],
+            )])
+            data, value = assemble(lines + body(k))
+            valid("fasta-link-scheme-warning", k, data, value, ["R14"],
+                  "relatedLink holds an https URL and a javascript: URI. Both are URIs, so the "
+                  "file is valid, but a validator should warn about the javascript: scheme.",
+                  warnings=["R14"])
+            VALID[-1]["expected_metadata"] = dict(
+                EXPECTED_METADATA, relatedLink=["https://example.org/synthetic",
+                                                OTHER_SCHEME_LINK])
 
         # Invalid vectors with otherwise correct checksums unless stated.
         data, _ = standard(k, endings=b"\r\n", hash_data=lambda b: b.replace(b"\r\n", b"\n"))
@@ -504,6 +618,49 @@ def build():
         data = data.replace(value.encode(), f'"{head}\n'.encode() + PREFIX[k] + f'  {rest}"'.encode())
         invalid(f"{k}-quoted-continued-checksum", k, data, "R5",
                 "A double-quoted checksum value continues on a second FHR line.")
+        data, value = standard(k)
+        data = data.replace(value.encode(), value.encode() + b" # reviewed")
+        invalid(f"{k}-comment-on-checksum-line", k, data, "R5",
+                "A YAML comment follows the checksum value on the checksum line.")
+        if k == "fasta":
+            data, value = standard(k)
+            data = data.replace(value.encode(), value.encode() + b" # see >notes")
+            invalid("fasta-record-marker-on-checksum-line", k, data, "R5",
+                    "A comment holding a raw '>' follows the checksum value; the "
+                    "checksum line is excluded from the checksum and holds only the value.")
+        data, value = standard(k)
+        data = data.replace(b"checksum: " + value.encode(), b"checksum: !!str " + value.encode())
+        invalid(f"{k}-tagged-checksum", k, data, "R5",
+                "The checksum value carries an explicit !!str tag.")
+        data, value = standard(k)
+        last = value[-2]
+        group = "AEIMQUYcgkosw048"
+        sibling = chr(ord(last) + 1)
+        assert last in group and sibling not in group
+        data = data.replace(value.encode(), (value[:-2] + sibling + "=").encode())
+        invalid(f"{k}-noncanonical-checksum", k, data, "R4",
+                "The checksum decodes to the right digest but sets an unused bit, so it "
+                "is not the canonical base64 string.")
+        # R12: YAML read the same by YAML 1.1 and YAML 1.2 readers.
+        documentation = "documentation: Synthetic FHR conformance vector; not a real assembly."
+        for name, item, reason in (
+            ("leading-zero", "  L50: 010",
+             "vitalStats.L50 is the plain scalar 010: YAML 1.1 reads octal 8, YAML 1.2 reads 10."),
+            ("underscore", "  L50: 1_000",
+             "vitalStats.L50 is the plain scalar 1_000: YAML 1.1 reads 1000, YAML 1.2 a string."),
+            ("sexagesimal", "  L50: 1:30",
+             "vitalStats.L50 is the plain scalar 1:30: YAML 1.1 reads 90, YAML 1.2 a string."),
+        ):
+            lines = with_metadata(k, insert=[(documentation, ["vitalStats:", item])])
+            data, _ = assemble(lines + body(k))
+            invalid(f"{k}-yaml-{name}", k, data, "R12", reason)
+        lines = with_metadata(k, replacements=[(documentation, "documentation: yes")])
+        data, _ = assemble(lines + body(k))
+        invalid(f"{k}-yaml-boolean-word", k, data, "R12",
+                "documentation is the plain scalar yes: YAML 1.1 reads true, YAML 1.2 a string.")
+        lines = with_metadata(k, replacements=[(f"genome: {GENOME}", f"genome: !!str {GENOME}")])
+        data, _ = assemble(lines + body(k))
+        invalid(f"{k}-yaml-tag", k, data, "R12", "The genome value carries an explicit !!str tag.")
         for code, label in (("\u0085", "u0085"), (" ", "u2028"), (" ", "u2029")):
             lines = with_metadata(k, replacements=[(
                 "documentation: Synthetic FHR conformance vector; not a real assembly.",
@@ -542,6 +699,22 @@ def build():
         data = plain[k][0] + second
         invalid(f"{k}-concatenated", k, data, "R10",
                 "Two complete FHR files concatenated; each part has a correct checksum.")
+        if k == "fasta":
+            lines = with_metadata(k, insert=[(
+                "documentation: Synthetic FHR conformance vector; not a real assembly.",
+                ["vitalStats:", "  gcContent: .nan"],
+            )])
+            data, _ = assemble(lines + body(k))
+            invalid(f"{k}-nan-vital-stats", k, data, "R13",
+                    "vitalStats.gcContent is the YAML .nan, which is not a finite JSON number.")
+            lines = with_metadata(k, insert=[(
+                "documentation: Synthetic FHR conformance vector; not a real assembly.",
+                ["vitalStats:", "  gcContent: .inf"],
+            )])
+            data, _ = assemble(lines + body(k))
+            invalid(f"{k}-infinity-vital-stats", k, data, "R13",
+                    "vitalStats.gcContent is the YAML .inf: not a finite JSON number, and also "
+                    "above gcContent's maximum of 100.")
 
     for k in ("fasta", "gfa"):
         data, value = plain[k]
@@ -563,6 +736,7 @@ def build():
     build_fhp()
     build_fhgff3()
     build_selection()
+    build_extensions()
 
 
 # FHP vectors (specs/006-protein-header contracts/conformance.md): the shared
@@ -666,6 +840,17 @@ def build_fhp():
     lines.insert(1, Line(b""))
     fhp_valid("fhp-fasta-comments-and-blank-lines", lines, ["P1", "R3", "R10"],
               "An ordinary comment and a blank line before the FHP lines; both are hashed.")
+    lines = fhp_lines()
+    doc = [i for i, line in enumerate(lines)
+           if line.text.startswith(b";~documentation:")]
+    assert len(doc) == 1
+    lines[doc[0]] = Line(
+        b';~documentation: "proteins \\x3E 50 aa; contact someone\\x40example.org"')
+    fhp_valid("fhp-fasta-escaped-record-markers", lines, ["P1", "R11"],
+              "An FHP value holding '>' and '@' written as \\x3E and \\x40 in a "
+              "double-quoted scalar; it reads back with the real characters.",
+              expected=dict(FHP_EXPECTED,
+                            documentation="proteins > 50 aa; contact someone@example.org"))
     valid("fhp-fasta-gzip", k, gzip_member(plain), value, ["P1", "R1"],
           "fhp-fasta-lf compressed as one gzip member; same checksum.", "gzip")
     VALID[-1]["expected_metadata"] = FHP_EXPECTED
@@ -847,6 +1032,10 @@ def build_fhgff3():
                  "A header and no features: an empty annotation.")
     fhgff3_valid("fhgff3-version-3-1-26", fhgff3_lines(version=b"##gff-version 3.1.26"),
                  ["G1"], "##gff-version 3.1.26 on line 1.")
+    fhgff3_valid("fhgff3-version-3-trailing-whitespace",
+                 fhgff3_lines(version=b"##gff-version 3 \t"),
+                 ["G1"], "##gff-version 3 followed by a space and a tab; G1 allows trailing "
+                 "spaces or tabs.")
     fhgff3_valid("fhgff3-crlf", fhgff3_lines(), ["G1", "R1", "R3"],
                  "CRLF line endings; CR bytes are hashed.", endings=b"\r\n")
     valid("fhgff3-gzip", k, gzip_member(plain), value, ["G1", "R1"],
@@ -889,6 +1078,14 @@ def build_fhgff3():
     data, _ = assemble(lines)
     invalid("fhgff3-header-before-version", k, data, "G1",
             "A #~ line on line 1, before ##gff-version 3.")
+    # Invalid near misses for the G1 version grammar; fair-bioheaders 0.8.2
+    # enforces the full grammar (FAIR-bioHeaders-Tools#91), earlier releases
+    # checked only the "##gff-version 3" prefix.
+    for suffix, version in (("30", b"##gff-version 30"), ("3x", b"##gff-version 3x"),
+                            ("3-1", b"##gff-version 3.1")):
+        data, _ = assemble(fhgff3_lines(version=version))
+        invalid(f"fhgff3-version-{suffix}", k, data, "G1",
+                f"{version.decode()} on line 1: G1 allows only 3 or 3.x.y.")
     # G2: the metadata must validate against fhgff3.json.
     fhgff3_invalid("fhgff3-no-genome-link", fhgff3_record(drop=["derivedFrom"]), "G2",
                    "Neither an annotates link nor a genomeReference.")
@@ -937,9 +1134,29 @@ def build_selection():
     raw_main, raw_tag = f"{RAW}main/fhr.json", f"{RAW}{RELEASE}/fhr.json"
     selection_valid("fasta-schema-raw-main", raw_main, "'2.0'", ["V1"],
                     "The raw-main URL selects the current FHR schema (2.0).", "2.0")
-    selection_invalid("fasta-schema-raw-main-version-1", raw_main, "1.0", "V1",
-                      "Raw-main is the current schema (2.0), not v0.3.1, so schemaVersion 1.0 "
-                      "fails it.")
+    # V6: FHR 1 writers cited raw-main with the number 1, usually written 1.0.
+    # It replaces the retired fasta-schema-raw-main-version-1 (invalid before V6).
+    selection_valid("fasta-schema-raw-main-version-1-0", raw_main, "1.0", ["V6"],
+                    "An FHR 1 record: raw-main with schemaVersion 1.0, as FHR 1 writers wrote "
+                    "it, is checked against the v0.3.1 schema (deprecated, not invalid). It "
+                    "replaces the retired invalid vector fasta-schema-raw-main-version-1.", 1)
+    selection_valid("fasta-schema-raw-main-version-1-integer", raw_main, "1", ["V6"],
+                    "An FHR 1 record: raw-main with schemaVersion 1 is checked against the "
+                    "v0.3.1 schema; 1 and 1.0 are the same number.", 1)
+    selection_valid("fasta-schema-canonical-raw-main-version-1", f"{RAW_CANONICAL}main/fhr.json",
+                    "1", ["V6"], "The raw-main URL under the repository's current name with "
+                    "schemaVersion 1 is an FHR 1 record too.", 1)
+    data, _ = assemble(header("fasta", selection_metadata(raw_main, "1")[:-1] + [
+        "vitalStats:", "  N50: not recorded", None]) + body("fasta"))
+    invalid("fasta-schema-raw-main-version-1-invalid", "fasta", data, "V6",
+            "An FHR 1 record whose vitalStats.N50 is not an integer: the v0.3.1 schema it is "
+            "checked against rejects it.")
+    selection_invalid("fasta-schema-raw-main-version-string-1", raw_main, "'1'", "V1",
+                      "schemaVersion is the string '1', not the number 1, so V6 does not apply: "
+                      "raw-main selects the current schema (2.0), which rejects it.")
+    selection_invalid("fasta-schema-raw-main-version-true", raw_main, "true", "V1",
+                      "schemaVersion is a boolean, not the number 1, so V6 does not apply: "
+                      "raw-main selects the current schema (2.0), which rejects it.")
     selection_valid("fasta-schema-raw-tag", raw_tag, "'2.0'", ["V2"],
                     f"The {RELEASE} raw tag URL selects the {RELEASE} FHR schema.", "2.0")
     selection_invalid("fasta-schema-raw-tag-version-1", raw_tag, "1", "V2",
@@ -991,6 +1208,17 @@ def build_selection():
     data, value = assemble(fhgff3_lines(fhgff3_record(schema=f"{W3ID}fhgff3/v0.0.0")))
     invalid("fhgff3-schema-unknown-release", "fhgff3", data, "V4",
             "v0.0.0 is not a release; the result is unsupported-version.", result=UNSUPPORTED)
+    # V6 in microdata and JSON-LD: the same FHR 1 record.
+    import make_jsonld
+
+    fhr1 = md_expect(schema=raw_main, schemaVersion=1)
+    md_valid("microdata-schema-raw-main-version-1", md_page(md_content(fhr1, replace={
+        "schemaVersion": '<span itemprop="schemaVersion">1</span>'})), fhr1, ["M3", "V6"],
+             "An FHR 1 record with an untyped schemaVersion: 1 is read as the number the "
+             "selected v0.3.1 schema defines, and the record is checked against v0.3.1.")
+    jsonld_valid("jsonld-schema-raw-main-version-1", make_jsonld.to_jsonld(fhr1), fhr1,
+                 ["J1", "V6"], "An FHR 1 record in canonical JSON-LD: raw-main with "
+                 "schemaVersion the number 1 is checked against the v0.3.1 schema.")
 
 # Microdata vectors. The checksum is an ordinary value here (the fasta-lf
 # checksum), so these vectors pin the extracted metadata instead.
@@ -1092,7 +1320,7 @@ def build_microdata():
                        "readTechnology": "synthetic"},
     })
     md_valid("microdata-canonical", md_page(md_content(canonical)), canonical,
-             ["M1", "M3", "M4"],
+             ["M1", "M3", "M4", "R13"],
              "The converter's typed serialization: nested objects, arrays, an empty "
              "array, integers and numbers.")
 
@@ -1320,6 +1548,10 @@ def build_microdata():
 # JSON-LD vectors (docs/JSONLD.md). The checksum is an ordinary value, as in microdata.
 
 ORCID_EXAMPLE = "https://orcid.org/0000-0002-1825-0097"  # ORCID's documented example iD.
+# Values that end or re-open an HTML script element unless '<', '>' and '&' are
+# escaped (J8), with CDATA's end and the line and paragraph separators.
+SCRIPT_HOSTILE = ("</script>", "<!--<script>", "]]>", "a & b < c > d",
+                  "line\u2028separator\u2029end")
 EXPORT_CONTEXT = {
     "id": "https://example.org/datasets/synthetic-conformance",
     "url": "https://example.org/genomes/synthetic-conformance",
@@ -1356,9 +1588,11 @@ def reordered(value):
     return value
 
 
-def jsonld_valid(name, document, metadata, rules, description):
-    VALID.append(dict(name=name, kind="jsonld", data=jsonld_bytes(document), metadata=metadata,
-                      rules=rules, description=description, compression=None, status="valid"))
+def jsonld_valid(name, document, metadata, rules, description, data=None, warnings=None):
+    VALID.append(dict(name=name, kind="jsonld",
+                      data=jsonld_bytes(document) if data is None else data,
+                      metadata=metadata, rules=rules, description=description,
+                      compression=None, status="valid", warnings=warnings))
 
 
 def jsonld_invalid(name, data, rule, reason, metadata=None):
@@ -1481,8 +1715,8 @@ def build_jsonld():
     versioned = jsonld_record(schema="https://w3id.org/fair-bioheaders/fhr/v0.4.0")
     jsonld_valid("jsonld-schema-versioned-url", write(versioned), versioned, ["J1", "J6"],
                  "The record cites a versioned schema URL, which is kept unchanged.")
-    linked = jsonld_record(documentation="https://example.org/synthetic/README")
-    jsonld_valid("jsonld-documentation-url", write(linked), linked, ["J1", "J7"],
+    documented = jsonld_record(documentation="https://example.org/synthetic/README")
+    jsonld_valid("jsonld-documentation-url", write(documented), documented, ["J1", "J7"],
                  "documentation is an absolute URL, so it is written as subjectOf and read "
                  "back as documentation.")
     typed = jsonld_record(assemblyAuthor=[{"name": "Example Sequencing Centre",
@@ -1494,6 +1728,26 @@ def build_jsonld():
                  ["J1", "J7"],
                  "Export-context terms @id, keywords, url and conformsTo (Bioschemas Dataset "
                  "1.0-RELEASE) are not FHR fields and are set aside.")
+    local = jsonld_record(documentation="file:///data/synthetic/README")
+    jsonld_valid("jsonld-documentation-other-scheme", write(local), local, ["J1", "J7"],
+                 "documentation is a file: URL, not an http, https or ftp URL, so the writer "
+                 "keeps it as documentation text instead of a subjectOf link.")
+    hostile = jsonld_record(genomeSynonym=list(SCRIPT_HOSTILE))
+    text = jsonld_bytes(write(hostile)).decode("utf-8")
+    escaped = make_jsonld.script_text(text)
+    assert "<" not in escaped and ">" not in escaped and "&" not in escaped
+    jsonld_valid("jsonld-script-escaped", None, hostile, ["J1", "J8"],
+                 "Writer output escaped for a script element: every '<', '>', '&', U+2028 and "
+                 "U+2029 in the values is written as a \\u escape, so values such as "
+                 "'</script>' and '<!--<script>' cannot end or re-open the element. It reads "
+                 "back with the real characters.", data=escaped.encode("utf-8"))
+    linked = write(record)
+    linked["relatedLink"] = record["relatedLink"] + [OTHER_SCHEME_LINK]
+    links = jsonld_record(relatedLink=record["relatedLink"] + [OTHER_SCHEME_LINK])
+    jsonld_valid("jsonld-link-scheme-warning", linked, links, ["J1", "R14"],
+                 "A canonical document whose relatedLink holds a javascript: URI. It is valid, "
+                 "but a reader should warn, and a writer refuses to write it as a link (R14).",
+                 warnings=["R14"])
 
     text = jsonld_bytes(write(record)).decode("utf-8")
     duplicate = text.replace(f'  "genome": "{GENOME}",',
@@ -1516,37 +1770,89 @@ def build_jsonld():
     build_jsonld_general(write, record)
 
 
+def remapped_context(context, swaps):
+    """A copy of the FHR context whose listed terms exchange their definitions."""
+    body = copy.deepcopy(context)
+    for left, right in swaps:
+        body[left], body[right] = body[right], body[left]
+    return body
+
+
 def build_jsonld_general(write, record):
     """Rules J3 to J5: JSON-LD in other forms than the canonical one."""
+    import make_jsonld
+
     expanded = expand_canonical(write(record))
     jsonld_valid("jsonld-expanded", expanded, record, ["J3", "J4", "J5", "J6"],
                  "The canonical document in JSON-LD expanded form: full IRIs, value objects, "
                  "@id for IRI fields, @list for commandLineOption and no context.")
-    vocab = vocab_compact(expanded)
-    assert isinstance(vocab["dateCreated"], dict)
-    jsonld_valid("jsonld-schemaorg-vocab-compaction", vocab, record, ["J3", "J5"],
-                 "Compacted with a schema.org @vocab and an fhr prefix instead of the FHR "
-                 "context; dateCreated is a value object typed xsd:date.")
     canonical = write(record)
     context = canonical.pop("@context")
     jsonld_valid("jsonld-graph-single-node", {"@context": context, "@graph": [canonical]},
                  record, ["J4"],
                  "The FHR context with the record as the only node of @graph.")
-    strings = copy.deepcopy(vocab)
-    strings["schemaVersion"] = record["schema"]
-    strings["fhr:relatedLink"] = record["relatedLink"][0]
-    strings["dateCreated"] = record["dateCreated"]
-    jsonld_valid("jsonld-iri-as-string", strings, record, ["J5"],
-                 "Under the schema.org @vocab, the IRI fields schema (schema.org schemaVersion) "
-                 "and relatedLink, and dateCreated, are plain strings.")
+    jsonld_valid("jsonld-context-url-array",
+                 {"@context": [make_jsonld.RAW_MAIN_CONTEXT_URL], **canonical}, record,
+                 ["J3", "J4"],
+                 "The FHR context URL as the only item of a context array: the FHR context "
+                 "alone, read by expansion; nothing is fetched.")
+    values = {"@context": context, **copy.deepcopy(canonical)}
+    values["schema"] = {"@value": record["schema"]}
+    values["relatedLink"] = [{"@value": link} for link in record["relatedLink"]]
+    values["dateCreated"] = {"@value": record["dateCreated"], "@type": "xsd:date"}
+    jsonld_valid("jsonld-iri-as-string", values, record, ["J3", "J5"],
+                 "The FHR context with value objects: the IRI fields schema and relatedLink are "
+                 "plain strings, and dateCreated is a value typed xsd:date.")
 
-    unknown = dict(copy.deepcopy(vocab), keywords=["synthetic"])
-    jsonld_invalid("jsonld-unknown-term", jsonld_bytes(unknown), "J4",
-                   "http://schema.org/keywords has no FHR field (it is export metadata only).")
+    # J3: any context but the FHR context alone is invalid, however it is given.
+    swapped = {"@context": remapped_context(context, [("genome", "documentation")]),
+               **copy.deepcopy(canonical)}
+    swapped["documentation"] = "Synthetic FHR conformance vector; not a real assembly."
+    jsonld_invalid("jsonld-context-remapped", jsonld_bytes(swapped), "J3",
+                   "An embedded copy of the FHR context whose genome and documentation terms "
+                   "exchange their IRIs, so JSON-LD expansion would read each key as the other "
+                   "field.")
+    vocab = vocab_compact(expanded)
+    assert isinstance(vocab["dateCreated"], dict)
+    jsonld_invalid("jsonld-context-schemaorg-vocab", jsonld_bytes(vocab), "J3",
+                   "Compacted with a schema.org @vocab and an fhr prefix instead of the FHR "
+                   "context: the keys (name, description, ...) are not the FHR keys their "
+                   "values are read as.")
+    extended = {"@context": [make_jsonld.RAW_MAIN_CONTEXT_URL,
+                             {"title": "http://schema.org/name"}],
+                **{("title" if k == "genome" else k): v for k, v in canonical.items()}}
+    jsonld_invalid("jsonld-context-extended", jsonld_bytes(extended), "J3",
+                   "The FHR context URL followed by a local context that adds the term title "
+                   "for schema.org name, used in place of genome.")
+    imported = {"@context": {"@version": 1.1, "@import": make_jsonld.RAW_MAIN_CONTEXT_URL,
+                             "genome": {"@id": "sdo:description"},
+                             "documentation": {"@id": "sdo:name"}},
+                **{k: v for k, v in swapped.items() if k != "@context"}}
+    jsonld_invalid("jsonld-context-import", jsonld_bytes(imported), "J3",
+                   "A context that @imports the FHR context URL and overrides the genome and "
+                   "documentation terms, which @import allows despite @protected.")
+    nested = {"@context": context,
+              "@graph": [dict({"@context": {"@vocab": SDO_IRI}},
+                              **{("description" if k == "documentation" else k): v
+                                 for k, v in swapped.items() if k != "@context"})]}
+    jsonld_invalid("jsonld-context-nested", jsonld_bytes(nested), "J3",
+                   "The FHR context at the top, and a second context with a schema.org @vocab "
+                   "on the record inside @graph, where description stands for documentation.")
+    nest = {"@context": context, **copy.deepcopy(canonical)}
+    nest["@nest"] = {"documentation": nest.pop("documentation")}
+    jsonld_invalid("jsonld-nest", jsonld_bytes(nest), "J3",
+                   "The FHR context, with documentation moved into @nest, where a JSON reader "
+                   "does not see it but JSON-LD expansion reads it as the record's "
+                   "documentation.")
     remote = {"@context": "https://schema.org/", "@type": "Dataset", "name": GENOME}
     jsonld_invalid("jsonld-remote-context", jsonld_bytes(remote), "J3",
                    "The context is a remote URL that is not a bundled FHR context; nothing "
                    "may be fetched.")
+
+    unknown = copy.deepcopy(expanded)
+    unknown[0][SDO_IRI + "keywords"] = [{"@value": "synthetic"}]
+    jsonld_invalid("jsonld-unknown-term", jsonld_bytes(unknown), "J4",
+                   "http://schema.org/keywords has no FHR field (it is export metadata only).")
     second = dict(copy.deepcopy(canonical), genome="Second synthetic genome")
     jsonld_invalid("jsonld-two-nodes",
                    jsonld_bytes({"@context": context, "@graph": [canonical, second]}), "J4",
@@ -1556,14 +1862,14 @@ def build_jsonld_general(write, record):
     jsonld_invalid("jsonld-two-genome-values", jsonld_bytes(two), "J5",
                    "Expanded form with two values for genome (schema.org name), a "
                    "single-valued field.")
-    flattened = copy.deepcopy(vocab)
-    flattened["about"] = {"@id": record["taxon"]["uri"]}
+    flattened = copy.deepcopy(expanded)
+    flattened[0][SDO_IRI + "about"] = [{"@id": record["taxon"]["uri"]}]
     jsonld_invalid("jsonld-flattened", jsonld_bytes(flattened), "J5",
                    "The taxon is given only by its @id, as in flattened form; its name is "
                    "not in the document.")
-    dated = copy.deepcopy(vocab)
-    dated["dateCreated"] = {"@value": record["dateCreated"] + "T00:00:00Z",
-                            "@type": XSD_IRI + "dateTime"}
+    dated = copy.deepcopy(expanded)
+    dated[0][SDO_IRI + "dateCreated"] = [{"@value": record["dateCreated"] + "T00:00:00Z",
+                                          "@type": XSD_IRI + "dateTime"}]
     jsonld_invalid("jsonld-datetime-datecreated", jsonld_bytes(dated), "J5",
                    "dateCreated is typed xsd:dateTime; only xsd:date or no type is allowed.")
     identified = copy.deepcopy(expanded)
@@ -1581,7 +1887,10 @@ def self_check():
     names = set()
     for entry in VALID + INVALID:
         assert entry["name"] not in names, entry["name"]
+        assert entry["name"] not in RETIRED, entry["name"]
         names.add(entry["name"])
+    for name, retired in RETIRED.items():
+        assert retired["replacedBy"] in names, name
     required = json.loads((ROOT / "fhr.json").read_text())["required"]
     for entry in VALID + INVALID:
         if entry["kind"] == "microdata":
@@ -1609,6 +1918,212 @@ def self_check():
             assert stated != computed, entry["name"]
 
 
+# Extension fields (docs/FORMAT.md R15, JSONLD.md J9, MICRODATA.md M5; specs/015).
+# Every existing vector cites v0.4.0; these cite v0.5.0, the release that adds them.
+EXTENSION_RELEASE = "v0.5.0"
+FHR_EXTENSION_SCHEMA = f"{W3ID}fhr/{EXTENSION_RELEASE}"
+FHP_EXTENSION_SCHEMA = f"{W3ID}fhp/{EXTENSION_RELEASE}"
+FHGFF3_EXTENSION_SCHEMA = f"{W3ID}fhgff3/{EXTENSION_RELEASE}"
+# Extension values of every JSON type; '@' and '>' are escaped (R11), and the
+# '\x40id' key shows that a JSON-LD keyword inside a value is ordinary data.
+EXTENSION_LINES = [
+    "x-refget-assemblySource: Synthetic conformance source (placeholder)",
+    'x-example-contact: "someone\\x40example.org; contigs \\x3E 1000 bp"',
+    "x-example-count: 3",
+    "x-example-ratio: 0.5",
+    "x-example-flags:",
+    "- true",
+    "- null",
+    "x-example-object:",
+    '  "\\x40id": https://example.org/extension-only',
+    "  list:",
+    "  - a",
+    "  - 2",
+    "x-example-empty: ''",
+]
+EXTENSION_VALUES = {
+    "x-refget-commonName": "human",
+    "x-refget-assemblySource": "Synthetic conformance source (placeholder)",
+    "x-example-contact": "someone@example.org; contigs > 1000 bp",
+    "x-example-count": 3,
+    "x-example-ratio": 0.5,
+    "x-example-flags": [True, None],
+    "x-example-object": {"@id": "https://example.org/extension-only", "list": ["a", 2]},
+    "x-example-empty": "",
+}
+
+
+def extension_metadata(extra=(), version="'2.1'", schema=FHR_EXTENSION_SCHEMA, first=True,
+                       taxon=()):
+    """METADATA citing ``schema`` with ``version``; ``x-refget-commonName`` right after
+    schemaVersion when ``first``, ``extra`` lines before the checksum line, ``taxon``
+    lines inside the taxon object."""
+    lines = []
+    for item in selection_metadata(schema, version):
+        if item is None:
+            lines += list(extra)
+        lines.append(item)
+        if first and item == f"schemaVersion: {version}":
+            lines.append("x-refget-commonName: human")
+        if item == "  uri: https://identifiers.org/taxonomy:9606":
+            lines += list(taxon)
+    return lines
+
+
+def extension_valid(name, kind, lines, rules, description, expected):
+    data, value = assemble(header(kind, lines) + body(kind))
+    valid(name, kind, data, value, rules, description)
+    VALID[-1]["expected_metadata"] = expected
+
+
+def extension_invalid(name, lines, rule, reason, kind="fasta"):
+    data, _ = assemble(header(kind, lines) + body(kind))
+    invalid(name, kind, data, rule, reason)
+
+
+def build_extensions():
+    import make_jsonld
+
+    expected = dict(EXPECTED_METADATA, **EXTENSION_VALUES)
+    for kind in ("fasta", "gfa"):
+        extension_valid(f"{kind}-extension-fields", kind, extension_metadata(EXTENSION_LINES),
+                        ["R15", "R11", "R12", "V3"],
+                        "FHR 2.1 (v0.5.0) with extension fields of every JSON type, one before "
+                        "the standard fields and the rest after them; their bytes are covered "
+                        "by the checksum like any other header line.", expected)
+    raw_main = f"{RAW_CANONICAL}main/fhr.json"
+    extension_valid("fasta-extension-fields-raw-main", "fasta",
+                    extension_metadata(schema=raw_main), ["R15", "V1"],
+                    "The raw-main URL selects the current schema, FHR 2.1, which accepts an "
+                    "extension field in a record that states schemaVersion '2.1'.",
+                    dict(EXPECTED_METADATA, schema=raw_main, schemaVersion="2.1",
+                         **{"x-refget-commonName": "human"}))
+    extension_valid("fasta-extension-named-like-standard-field", "fasta",
+                    extension_metadata(["x-genome: Another name (extension only)"]), ["R15"],
+                    "x-genome is an extension field like any other; it does not replace "
+                    "genome, which keeps its value.",
+                    dict(EXPECTED_METADATA, **{"x-genome": "Another name (extension only)"}))
+    fhp = fhp_record(schema=FHP_EXTENSION_SCHEMA, schemaVersion="1.1",
+                     **{"x-example-curation": {"reviewed": True, "round": 2}})
+    fhp_valid("fhp-fasta-extension-fields", fhp_lines(fhp), ["R15", "P1"],
+              "FHP 1.1 (v0.5.0) with an extension field holding an object.",
+              dict(FHP_EXPECTED, **{"x-example-curation": {"reviewed": True, "round": 2}}))
+    fhgff3 = fhgff3_record(schema=FHGFF3_EXTENSION_SCHEMA, schemaVersion="1.1",
+                           **{"x-example-pipeline": ["synthetic-step-1", "synthetic-step-2"]})
+    fhgff3_valid("fhgff3-extension-fields", fhgff3_lines(fhgff3), ["R15", "G2"],
+                 "FHGFF3 1.1 (v0.5.0) with an extension field holding a list.",
+                 dict(FHGFF3_EXPECTED,
+                      **{"x-example-pipeline": ["synthetic-step-1", "synthetic-step-2"]}))
+
+    # Every other unknown key stays invalid, and so does an x- key where 2.1 does not apply.
+    extension_invalid("fasta-unknown-key", extension_metadata(["genomeName: Synthetic"]),
+                      "R15", "genomeName is not an FHR field and does not start with x-.")
+    for suffix, key, reason in (
+        ("uppercase-prefix", "X-refget-commonName", "The prefix is X-, not x-."),
+        ("empty-name", "x-", "Nothing follows the x- prefix."),
+        ("punctuation-first", "x-_note", "The name after x- starts with _, not a letter or "
+                                         "digit."),
+        ("space", "'x-common name'", "The key contains a space."),
+        ("non-ascii", "x-commonN\u00e4me", "The key contains a non-ASCII letter."),
+        ("trailing-line-feed", '"x-note\\n"', "The key ends with a line feed. Python's $ "
+                                                "would match before it; no key may contain one."),
+    ):
+        extension_invalid(f"fasta-extension-key-{suffix}",
+                          extension_metadata([f"{key}: value"], first=False), "R15", reason)
+    extension_invalid("fasta-extension-nested", extension_metadata(
+        taxon=["  x-example-note: placeholder"]), "R15",
+        "An x- key inside taxon: nested objects stay closed.")
+    lines = extension_metadata()
+    lines.insert(lines.index("- name: Synthetic metadata author (placeholder)") + 1,
+                 "  x-example-role: placeholder")
+    extension_invalid("fasta-extension-nested-author", lines, "R15",
+                      "An x- key inside a metadataAuthor item: nested objects stay closed.")
+    extension_invalid("fasta-extension-older-version", extension_metadata(version="'2.0'"), "R15",
+                      "The record cites v0.5.0 but states schemaVersion '2.0', which has no "
+                      "extension fields.")
+    extension_invalid("fasta-extension-older-release",
+                      extension_metadata(version="'2.0'", schema=FHR_SCHEMA), "R15",
+                      f"The record cites {RELEASE}, whose schema (FHR 2.0) has no extension "
+                      "fields.")
+    extension_invalid("fasta-extension-older-release-new-version",
+                      extension_metadata(schema=FHR_SCHEMA), "R15",
+                      f"The record cites {RELEASE}, whose schema accepts only schemaVersion "
+                      "'2.0' and no extension fields.")
+    extension_invalid("gfa-extension-older-version", extension_metadata(version="'2.0'"), "R15",
+                      "A GFA header that cites v0.5.0 but states schemaVersion '2.0', which has "
+                      "no extension fields.", kind="gfa")
+    extension_invalid("fasta-extension-older-version-raw-main",
+                      extension_metadata(version="'2.0'", schema=raw_main), "R15",
+                      "Raw-main selects the current schema (2.1), but the record states "
+                      "schemaVersion '2.0', which has no extension fields.")
+    extension_invalid("fasta-extension-yaml-boolean-word",
+                      extension_metadata(["x-example-flag: yes"]), "R12",
+                      "An extension value written as plain yes, a boolean in YAML 1.1 and a "
+                      "string in YAML 1.2.")
+    extension_invalid("fasta-extension-nan", extension_metadata(["x-example-ratio: .nan"]),
+                      "R13", "An extension value is NaN.")
+    extension_invalid("fasta-extension-duplicate-key",
+                      extension_metadata(["x-refget-commonName: other"]), "R8",
+                      "The extension key x-refget-commonName appears twice.")
+    for kind, record, nested in (
+        ("fhp-fasta", fhp_record(schema=FHP_EXTENSION_SCHEMA, schemaVersion="1.0",
+                                 **{"x-example-note": "placeholder"}), None),
+        ("fhgff3", fhgff3_record(schema=FHGFF3_EXTENSION_SCHEMA, schemaVersion="1.0",
+                                 **{"x-example-note": "placeholder"}), None),
+        ("fhp-fasta", fhp_record(**{"x-example-note": "placeholder"}), "release"),
+        ("fhgff3", fhgff3_record(**{"x-example-note": "placeholder"}), "release"),
+        ("fhp-fasta", fhp_record(schema=FHP_EXTENSION_SCHEMA, schemaVersion="1.1",
+                                 derivedFrom=[dict(FHP_RECORD["derivedFrom"][0],
+                                                   **{"x-example-note": "placeholder"})]),
+         "derivedFrom"),
+        ("fhgff3", fhgff3_record(schema=FHGFF3_EXTENSION_SCHEMA, schemaVersion="1.1",
+                                 derivedFrom=[dict(GENOME_LINK,
+                                                   **{"x-example-note": "placeholder"})]),
+         "derivedFrom"),
+    ):
+        lines = fhp_lines(record) if kind == "fhp-fasta" else fhgff3_lines(record)
+        data, _ = assemble(lines)
+        name = f"{kind}-extension-" + {None: "older-version", "release": "older-release",
+                                       "derivedFrom": "nested"}[nested]
+        reason = {
+            None: "The record cites v0.5.0 but states schemaVersion '1.0', which has no "
+                  "extension fields.",
+            "release": f"The record cites {RELEASE}, whose schema (1.0) has no extension "
+                       "fields.",
+            "derivedFrom": "An x- key inside a derivedFrom item: nested objects stay closed.",
+        }[nested]
+        invalid(name, kind, data, "R15", reason)
+
+    # JSON-LD and microdata carry no extension fields (J9, M5).
+    record = jsonld_record(schema=FHR_EXTENSION_SCHEMA, schemaVersion="2.1")
+    extended = dict(record, **{"x-refget-commonName": "human",
+                               "x-example-object": {"@context": {"@vocab": "https://example.org/"},
+                                                    "@id": "https://example.org/extension-only"}})
+    jsonld_valid("jsonld-extension-fields-left-out", make_jsonld.to_jsonld(extended), record,
+                 ["J7", "J9"], "Writer output for an FHR 2.1 record with extension fields, one "
+                 "holding JSON-LD keywords: the writer left them out, so the document holds "
+                 "only standard fields.")
+    document = dict(make_jsonld.to_jsonld(record), **{"x-refget-commonName": "human"})
+    jsonld_invalid("jsonld-extension-field", jsonld_bytes(document), "J9",
+                   "A canonical document with the root key x-refget-commonName, which a "
+                   "JSON reader would keep and a JSON-LD processor would drop.")
+    document = make_jsonld.to_jsonld(record)
+    document = {"@context": [document.pop("@context")], **document,
+                "x-refget-commonName": "human"}
+    jsonld_invalid("jsonld-extension-field-general", jsonld_bytes(document), "J9",
+                   "The FHR context as the only item of an array, so the document is read by "
+                   "expansion, with the root key x-refget-commonName: the context has no term "
+                   "for it (J4).")
+    metadata = md_expect(schema=FHR_EXTENSION_SCHEMA, schemaVersion="2.1")
+    md_valid("microdata-extension-fields-left-out", md_page(md_content(metadata)), metadata,
+             ["M4", "M5"], "Writer output for an FHR 2.1 record with extension fields: the "
+             "writer left them out, so the item holds only standard fields.")
+    md_invalid("microdata-extension-field", md_page(md_content(metadata, after={
+        "genome": md_property("x-refget-commonName", "human")})), "M5",
+               "The FHR item has the property x-refget-commonName, although the selected "
+               "schema (FHR 2.1) would accept it in JSON or YAML.")
+
+
 def jsonld_self_check():
     """Valid JSON-LD vectors read back (rule J1) to their expected metadata."""
     import make_jsonld
@@ -1620,6 +2135,14 @@ def jsonld_self_check():
                 assert make_jsonld.canonical_record(document) == entry["metadata"], entry["name"]
             else:
                 assert not make_jsonld.is_canonical(document), entry["name"]
+            assert make_jsonld.context_problem(document) is None, entry["name"]
+    for entry in INVALID:
+        if entry["kind"] == "jsonld" and entry["rule"] == "J3":
+            problem = make_jsonld.context_problem(json.loads(entry["data"]))
+            remote = json.loads(entry["data"])["@context"] == "https://schema.org/"
+            assert problem is not None or remote, entry["name"]
+        elif entry["kind"] == "jsonld" and entry["rule"] != "J2":
+            assert make_jsonld.context_problem(json.loads(entry["data"])) is None, entry["name"]
 
 
 def manifest():
@@ -1636,6 +2159,8 @@ def manifest():
             item["compression"] = entry["compression"]
         if entry["status"] == "valid":
             item.update(expected="valid", rules=entry["rules"], description=entry["description"])
+            if entry.get("warnings"):
+                item.update(warnings=entry["warnings"])
             if entry["kind"] in {"microdata", "jsonld"}:
                 item.update(metadata=entry["metadata"])
             else:
@@ -1671,6 +2196,7 @@ def manifest():
             for rule, text in RULES.items()
         },
         "vectors": vectors,
+        "retired": [{"id": name, **retired} for name, retired in RETIRED.items()],
     }
 
 

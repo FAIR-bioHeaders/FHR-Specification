@@ -1,8 +1,232 @@
 # Changelog
 
+## Unreleased
+
+- `examples/fhp/rich-predicted.fhp.yaml`: the author gains `nameType: Personal`, as in the
+  FHP-Specification copy (its #12) that FAIR-bioHeaders-Tools bundles, so the two companion
+  copies match again and `check_release.py` passes. The example stays valid FHP 1.1 (author
+  `nameType` is part of FHP since 1.0). `check_release.py` now reports a missing top-level
+  companion example instead of stopping with a traceback.
+
+## v0.5.0 — 2026-11-04
+
+A minor schema release: extension fields. FHR `"2.1"`, FHP `"1.1"` and FHGFF3 `"1.1"` accept
+top-level keys that start with `x-` (docs/FORMAT.md R15); every record valid under FHR `"2.0"`,
+FHP `"1.0"` and FHGFF3 `"1.0"` stays valid with the same meaning. The schemas are published at
+`https://w3id.org/fair-bioheaders/<type>/v0.5.0`, and `schemas/versions.json` sets `current` to
+v0.5.0 with `preRelease` cleared. These rules match fair-bioheaders 0.9.0.
+
+- **Schema addition (minor): extension fields** (#197,
+  [specs/015-extension-fields](specs/015-extension-fields/spec.md)). A top-level key that
+  matches `^x-[A-Za-z0-9][A-Za-z0-9_.-]*$` may hold any JSON/YAML value that the standard
+  does not define, for example `x-refget-commonName`. New rule R15 in docs/FORMAT.md:
+  every other unknown key is still invalid, nested objects stay closed, R8, R11, R12 and
+  R13 apply to extension keys and values, the checksum covers them, validators attach no
+  meaning to them, an extension never overrides a standard field, a namespace
+  `x-<project>-<field>` is recommended but not checked, and a widely used extension is
+  promoted under its own standard name. New schema versions FHR `"2.1"`, FHP `"1.1"` and
+  FHGFF3 `"1.1"`: `patternProperties` for the pattern, no key with a line feed (Python's `$`
+  matches before one), and a record that states `"2.0"`/`"1.0"` may not use extension
+  fields, so it keeps exactly its 2.0/1.0 outcome. Every record valid under FHR 2.0, FHP 1.0
+  and FHGFF3 1.0 stays valid with the same meaning. Records that cite a v0.4.x schema URL
+  are still checked against the v0.4.x schemas (V2, V3), where `x-` keys are unknown keys;
+  the selection rules V1 to V6 are unchanged.
+- docs/JSONLD.md J9 and docs/MICRODATA.md M5 (new): JSON-LD, the schema.org export (X9)
+  and microdata carry no extension fields. Writers leave them out and report the keys, and
+  a JSON-LD document (canonical or not) or microdata item with an `x-` key is invalid, so
+  JSON readers and JSON-LD processors still read the same record (J3) and no extension
+  value reaches a JSON-LD processor or a web page through a writer. The JSON-LD context is
+  unchanged; the vocabulary's `schemaVersion` comment names 2.1. The reference writers in
+  `scripts/make_jsonld.py` leave extension fields out and its canonical reader rejects
+  them.
+- `schemas/versions.json`: v0.5.0 (`FHR` `"2.1"`, `FHP` and `FHGFF3` `"1.1"`) was prepared
+  on `main` under the `preRelease` exception (docs/SCHEMA-VERSIONS.md, "Schema files on
+  main") and the marker is cleared for the release, so the examples and `llms.txt` cite
+  v0.5.0 and the new versions, with recomputed checksums for the headed examples and the
+  FHGFF3 parent links. New
+  example `examples/extension-fields.fhr.yaml`. docs/SCHEMA-VERSIONS.md: a record that
+  states an earlier minor is held to it. The INSDC coverage assessment is re-pinned (v2);
+  no row changes. The mapping-proposal fixture stays pinned to its source commit.
+- 34 new conformance vectors (284: 117 valid, 167 invalid), the only ones that cite
+  v0.5.0; every existing vector keeps its id, bytes and outcome. `check_conformance.py
+  --schema` checks that each invalid R15 vector fails the schema it selects. The
+  conformance CI runs the FAIR-bioHeaders-Tools commit that bundles the v0.5.0 schemas,
+  pinned by hash, until fair-bioheaders 0.9.0 is released.
+- `json-schema-generator.py` adds the extension rules (LinkML cannot express them) for
+  every header type and for profile roots; drift baselines updated.
+
+- specs/005-rna-transcriptome-header (#107): synced the shared copy with the FHT 1.0
+  development contract in FHT-Specification (`9dae29b`, model merged in its PR #21),
+  replacing the original draft's required `moleculeType` (`mRNA | total RNA | cDNA |
+  ncRNA`). It now records the nine required fields, optional `moleculeType`
+  (`mRNA | rRNA | tRNA | transcribed RNA`), the `sample` array and its rules, the two
+  allowed `derivedFrom` pairs with a required parent checksum, the legacy-compatible
+  `transcriptomeSynonym`, `assemblyAuthor` and `instrument`, and the dotted BUSCO lineage
+  limitation (#170). Documentation only: no shared schema, `schemaVersion`, example,
+  vector or validation change. FHT stays draft and unreleased.
+- docs/SCHEMA-GAP-AUDIT.md (#189): recorded the maintainer decision that the next major
+  of FHR, FHP and FHGFF3 requires `taxon.uri` with an NCBI Taxonomy or ITIS identifier,
+  replacing GAP-1's "`name` or `uri`" plan. Adds the proposed rule (recognised URI forms),
+  NCBI taxa for unclassified and environmental material, the ITIS caveats (separate
+  numbering, limited microbial coverage, no FHGFF3 `##species` comparison) and migration
+  notes. docs/insdc-coverage.md rows A.c, A.d, SA.T2, SA.T7 and the follow-ups, and the
+  planned constraints in docs/SCHEMA-VERSIONS.md, now say this is decided for the next
+  major; the INSDC profile (#190) requires the NCBI form. No schema, `schemaVersion`,
+  example, vector or validation change.
+- Docs: shortened J3/J8 rationale.
+- docs/insdc-coverage.md (#157): assessment v1 of the INSDC minimum-specification
+  review. Every requirement of the ten categories at insdc/minimum-specifcations
+  `41f0dc4` has an ID and a final disposition (covered, partial, out of scope or a linked
+  follow-up). Corrected claims: A.c submitter identity and A.j assembly metadata are
+  partial (required author lists may be empty; method and technology fields are optional),
+  A.d and SA.T2 note that `taxon.uri` is optional, the Analysis checksum (AY7) is not the
+  whole-file digest INSDC records, and BioSample XSD validation (SA.4) is out of scope.
+  FHT rows cite the FHT 1.0 development contract and stay marked draft. Follow-ups:
+  #189 (next major: taxonomy identifier), #190 (draft INSDC profile), #191 (INSDC
+  submission tools), gff3-validator#27 (Annotation rules). New section on using FH headers
+  alongside an INSDC submission, linked from README, MAPPINGS.md and llms.txt.
+- tests/test_insdc_coverage.py: checks that the matrix has one row for each requirement ID
+  pinned in tests/fixtures/insdc-requirements.json, that dispositions are final and match
+  the coverage symbol, that follow-up links are well formed and listed, that FHT rows are
+  marked draft, and that the assessed `schemaVersion`s match the schemas.
+- AGENTS.md: review proposed schema revisions against the INSDC coverage review.
+- scripts/make_assessment_fixtures.py: pin the gzip header OS byte to 255, so the
+  generated assessment fixtures match the committed files on Python 3.12 as well as 3.13.
+
+## v0.4.2 — 2026-10-28
+
+A patch release of the format rules: hardening that accepts only the FHR JSON-LD context,
+restricts link schemes, and escapes JSON-LD in HTML script elements, plus FHR 1
+compatibility (V6). The JSON schemas and every `schemaVersion` are unchanged (FHR `"2.0"`,
+FHP and FHGFF3 `"1.0"`); `https://w3id.org/fair-bioheaders/<type>/v0.4.2` selects the same
+schemas as v0.4.0, and `schemas/versions.json` keeps `current` at v0.4.0 so the examples
+are unchanged. These rules match fair-bioheaders 0.8.5.
+
+- docs/JSONLD.md J3: a document read by JSON-LD expansion may use only the FHR context
+  (a known URL or an embedded copy equal as parsed JSON, alone or as the only item of an
+  array, on a top-level object). Any other context, embedded, extended, `@import`ed,
+  nested or with a schema.org `@vocab`, is invalid, and so is `@nest`: such a context could map an FHR key such as
+  `genome` to another field's IRI, so JSON readers and JSON-LD readers would read
+  different values from one document. J1's "equal as parsed JSON" now compares JSON types
+  exactly. Conformance: the valid vector `jsonld-schemaorg-vocab-compaction` is now the
+  invalid `jsonld-context-schemaorg-vocab`; `jsonld-iri-as-string` keeps its id but now
+  uses the FHR context with value objects; new invalid J3 vectors `jsonld-context-remapped`,
+  `jsonld-context-extended`, `jsonld-context-import`, `jsonld-context-nested` and
+  `jsonld-nest`, and a new
+  valid `jsonld-context-url-array`. `jsonld-unknown-term`, `jsonld-flattened` and
+  `jsonld-datetime-datecreated` are now built on the expanded form, so they still break
+  only their own rule.
+- docs/FORMAT.md R14 (new): a `format: uri` value should use `http` or `https`; `ftp`,
+  `urn:`, `doi:` and `info:` are also accepted. Other schemes (`javascript:`, `data:`,
+  `file:`, ...) stay schema-valid, but validators warn, and JSON-LD and schema.org export
+  writers refuse to write them as links (J7, X5). Text becomes an IRI (documentation as
+  `subjectOf`; documentation and the licence in the export) only when it is an `http`,
+  `https` or `ftp` URL, instead of any `scheme://` text. New valid vectors
+  `fasta-link-scheme-warning`, `jsonld-link-scheme-warning` (both with the new optional
+  manifest field `warnings`) and `jsonld-documentation-other-scheme`;
+  `check_conformance.py --converter` checks that the converter warns.
+- docs/JSONLD.md J8 (new): JSON-LD embedded in `<script type="application/ld+json">` must
+  have every `<`, `>` and `&` written as `\u003c`, `\u003e` and `\u0026` (and should
+  have U+2028/U+2029 escaped). Escaping only `</`, as advised before, does not cover every
+  value. New valid vector
+  `jsonld-script-escaped`; `scripts/make_jsonld.py` gains the reference `script_text`.
+- 250 vectors (109 valid, 141 invalid), from 240. The conformance CI now runs fair-bioheaders 0.8.5, the first release
+  with these rules.
+- **Normative (schema selection):** add rule V6 to docs/SCHEMA-VERSIONS.md, FHR 1
+  compatibility. FHR 1 (releases up to v0.3.1) told writers to cite the raw-main
+  `fhr.json` URL with `schemaVersion: 1`, and existing FHR 1 files in the wild do; since
+  v0.4.0 raw-main selects FHR 2.0, so V1 alone made those files fail on `schemaVersion`
+  even when they were valid FHR 1. A record whose `schema` is the raw-main `fhr.json`
+  URL (either repository name) and whose `schemaVersion` is the number 1 (`1` or `1.0`;
+  not the string `"1"` or a boolean) is now an FHR 1 record, checked against the v0.3.1
+  schema: deprecated (readers should warn), not invalid. Every other record selects as
+  before, and FHP and FHGFF3 are unaffected. The migration section now describes such
+  files as deprecated. No schema bytes, `schemaVersion` or `versions.json` change.
+- Conformance vectors for V6 (233 -> 240 vectors): the invalid vector
+  `fasta-schema-raw-main-version-1` (raw-main with `schemaVersion: 1.0`) is retired,
+  because V6 changes its outcome, and the same bytes are the new valid vector
+  `fasta-schema-raw-main-version-1-0`. Vector ids are never reused: the manifest gains a
+  `retired` list (id, former outcome, replacement, reason), and `check_conformance.py`
+  rejects a vector that reuses a retired id. New valid
+  `fasta-schema-raw-main-version-1-integer`,
+  `fasta-schema-canonical-raw-main-version-1`, `microdata-schema-raw-main-version-1`
+  (untyped `schemaVersion`) and `jsonld-schema-raw-main-version-1`; new invalid
+  `fasta-schema-raw-main-version-1-invalid` (an FHR 1 record that v0.3.1 rejects),
+  `fasta-schema-raw-main-version-string-1` and `fasta-schema-raw-main-version-true`
+  (V6 needs the number 1, so V1 applies). `check_conformance.py --schema` applies V6, and
+  validates microdata and JSON-LD metadata against the schema it selects. fair-bioheaders
+  0.8.4 is the first release that implements V6 (FAIR-bioHeaders-Tools#114).
+
+- Enable the deferred FHGFF3 G1 near-miss vectors `fhgff3-version-30`,
+  `fhgff3-version-3x` and `fhgff3-version-3-1` (invalid, G1), now that fair-bioheaders
+  0.8.2 enforces the full `##gff-version` grammar (FAIR-bioHeaders-Tools#91), and pin
+  the conformance CI to fair-bioheaders 0.8.2 (#171). Vectors and tests only; no schema
+  or `schemaVersion` change.
+
+- Start the draft #56 mapping-profile foundation: separate proposed assembly
+  export context, root-field DCMI handling inventory, worked descriptive RDF
+  bundle, target/family status matrix and offline semantic tests. No core schema,
+  canonical serialization or release/version changes; target adapters and FHT
+  mapping remain unfinished.
+
+- Document the open schema-contract questions from #150 and add conformance coverage:
+  required values must be non-empty (the matching schema constraints are deferred to the
+  next major `schemaVersion`), `format` must be asserted by a conforming validator, NaN and
+  infinities are invalid (new rule R13, invalid vectors `fasta-nan-vital-stats` and
+  `fasta-infinity-vital-stats`), `nameType` wins over an ORCID for JSON-LD typing while the
+  combination stays accepted, the J1/J4 export-term difference is intended, and FHGFF3 G1
+  now gives the full `##gff-version` grammar with a valid trailing-whitespace vector. The
+  near-miss `##gff-version` vectors (`fhgff3-version-30`, `-3x`, `-3-1`) are deferred until
+  the toolkit implements the grammar (FAIR-bioHeaders-Tools#75).
+  `tests/test_schema_versions.py` now checks that the schema bytes on main equal the current
+  release tag. Documentation, vectors and tests only; no schema or `schemaVersion` change.
+
+## v0.4.1 — 2026-10-21
+
+A patch release of the format rules. The JSON schemas and every `schemaVersion` are
+unchanged (FHR `"2.0"`, FHP and FHGFF3 `"1.0"`); `https://w3id.org/fair-bioheaders/<type>/v0.4.1`
+selects the same schemas as v0.4.0, and `schemas/versions.json` keeps `current`
+at v0.4.0 so the examples are unchanged. The checksum-line and YAML rules below close a gap in
+what the checksum covers; see GHSA-4hc8-hc87-xvc8 (FAIR-bioHeaders-Tools), fixed in
+fair-bioheaders 0.8.1.
+
+
+- docs/FORMAT.md defines the checksum line exactly (R5): after the key and colon it
+  holds only the 44-character value, plain or quoted, and spaces. A comment, tag,
+  tab or other text on that line now makes the file invalid, because the line is
+  excluded from the checksum. R4 requires the canonical base64 form and exact
+  string comparison; R1 defines line terminators (LF, CRLF, or a CR not followed by
+  LF); R3 states that the checksum line's position within the header block is not
+  covered. New rule R12: YAML metadata is read with YAML 1.2 core-schema types and
+  must read the same under YAML 1.1, so explicit tags and plain scalars such as
+  `010`, `1_000`, `1:30`, `yes`, `on` or `1e3` are invalid (quote them). The JSON
+  schemas and `schemaVersion` are unchanged; files written by fair-bioheaders
+  already follow these rules. New conformance vectors for R4, R5 and R12. These
+  match fair-bioheaders 0.8.1 (security advisory to follow).
+- docs/FORMAT.md states which containers each header type goes in (FHR: FASTA and
+  GFA; FHP: FASTA; FHGFF3: GFF3), as fair-bioheaders enforces since #73, and the
+  input limits that readers may apply (1 MiB and 10,000 lines of header, 20,000
+  YAML nodes nested at most 64 deep, 64 MiB metadata files).
+- Add `llms.txt`, a short overview of FAIR-bioHeaders for AI assistants (llmstxt.org
+  format), checked against `schemas/versions.json` by `tests/test_llms_txt.py`, and an
+  AGENTS.md section on using FAIR-bioHeaders in another project.
+- Add rule R11 to docs/FORMAT.md (#127, spec 014): in FASTA files (FHR and FHP),
+  FHR header lines should not contain a raw `>` or `@`, because kseq-based readers
+  (BWA, minimap2, seqtk, `samtools dict`, pysam `FastxFile`) start a record at
+  either character anywhere in a line and silently read a bogus record. Writers
+  escape them as `\x3E` and `\x40` in double-quoted YAML scalars, which read back
+  as the same characters, so the metadata and every other format are unchanged.
+  A raw `>` or `@` stays valid (validators warn), so no schema or `schemaVersion`
+  change. New conformance vectors `fasta-escaped-record-markers`,
+  `fasta-raw-record-markers` and `fhp-fasta-escaped-record-markers`; R11 is a
+  writer rule with no invalid vector, like J7.
+- Add an "Upstream support" inventory to docs/TOOL_COMPATIBILITY.md (#121): the tools that already
+  work with FHR headers, and the changes proposed upstream so that FASTA tools skip `;` lines before
+  the first record. Documentation only.
+
 ## v0.4.0 — 2026-10-14
 
-The next major public release. FHR's metadata contract moves to `schemaVersion`
+The major public release. FHR's metadata contract moves to `schemaVersion`
 `"2.0"`: the v0.4 tightening rejects some files that v0.3 accepted (see
 docs/SCHEMA-CHANGES-v0.4.md). The protein header FHP and the GFF3 annotation
 header FHGFF3 have their first releases, each at `schemaVersion` `"1.0"`. A file's
@@ -10,6 +234,10 @@ header FHGFF3 have their first releases, each at `schemaVersion` `"1.0"`. A file
 the raw-`main` URL means the current schema, a versioned w3id or tag URL selects
 that release, and an unknown version is reported as unsupported. Release-targeted
 files cite `https://w3id.org/fair-bioheaders/<type>/v0.4.0`.
+
+Several entries below record intermediate states on the release line. Where the
+final state supersedes an earlier entry, that entry is marked **Superseded in
+v0.4.0** rather than rewritten; the release records stay in place.
 
 - The repository is now `FAIR-bioHeaders-Specification` (#108). Schema
   selection (docs/SCHEMA-VERSIONS.md V1, V2) recognises raw GitHub URLs under
@@ -32,21 +260,27 @@ files cite `https://w3id.org/fair-bioheaders/<type>/v0.4.0`.
   patterns accept the raw-main, raw tag and w3id forms. Files that cite raw-main
   with `schemaVersion: 1` must be updated or pinned to v0.3.1 (migration in
   `docs/SCHEMA-VERSIONS.md`); no tool rewrites them.
-- FHGFF3 v0.1 (draft GFF3 annotation header, spec 007) is released from this
+- FHGFF3 v0.1 (document status; released as `schemaVersion` `"1.0"`, spec 007;
+  called a draft when this entry was written) is released from this
   line too: `fhgff3.json` is generated here from the v0.4 core (tightened
   patterns, optional author `nameType`), with its baseline
   `.github/schema-baseline-fhgff3.json` updated deliberately. `fhp.json` is
   unchanged by the merge.
-- FHP v0.1 (draft protein header, spec 006) is released from this line, so
+- FHP v0.1 (document status; released as `schemaVersion` `"1.0"`, spec 006;
+  called a draft when this entry was written) is released from this line, so
   `fhp.json` is generated here from the v0.4 core: the tightened patterns and the
   optional author `nameType` apply to FHP as well. Its baseline
   `.github/schema-baseline-fhp.json` was updated deliberately. Every core object is
   closed for FHP and FHR alike on this line.
-- Tighten loose schema constraints (#35, spec 002). `schemaVersion` stays 1;
-  every change rejects values that were already malformed.
+- Tighten loose schema constraints (#35, spec 002). **Superseded in v0.4.0:**
+  the released `schemaVersion` is the string `"2.0"`, not 1 (see the
+  schema-version entry above); the rest of the tightening stands. Every other
+  change rejects values that were already malformed.
   docs/SCHEMA-CHANGES-v0.4.md lists each change with a before/after example and
   a migration hint. Possibly breaking for existing metadata:
   - `schemaVersion` is restricted to 1 (`enum: [1]`); `99` or `2` now fail.
+    **Superseded in v0.4.0** by `type: string`, `enum: ["2.0"]`; non-string and
+    unknown values still fail.
   - Nested objects (`taxon`, `metadataAuthor`/`assemblyAuthor` items,
     `accessionID`, `vitalStats`) reject unknown keys, so a typo such as
     `vitalStats.n50` now fails. Use profiles (#51) for extra fields.
@@ -75,7 +309,8 @@ files cite `https://w3id.org/fair-bioheaders/<type>/v0.4.0`.
   remains valid as 0.42 percent.
 - LinkML (`schemas/core.yaml`, `fhr_linkml.yml`) carries the same constraints;
   `json-schema-generator.py` no longer reopens nested objects and emits
-  `schemaVersion` as `enum: [1]`. The schema review baseline was updated
+  `schemaVersion` as `enum: [1]` (**superseded in v0.4.0** by the string
+  `enum: ["2.0"]`). The schema review baseline was updated
   deliberately. New tests cover each rejected value against both schemas, real
   edge forms (ORCID `X`, preprint DOIs, uppercase CURIEs, low GC percentages)
   and all examples. The `fasta-nested-checksum`/`gfa-nested-checksum`
@@ -109,9 +344,12 @@ files cite `https://w3id.org/fair-bioheaders/<type>/v0.4.0`.
   compares the export fixtures with the toolkit.
 - Update current maintainer contacts to `molik@fhref.org` and `wright@fhref.org` and project Pages links to `https://fhref.org`. Citation/package metadata and private reporting routes are checked; runtime behavior and historical notices are unchanged.
 
-- Add a **draft** FAIR header for GFF3 annotations, FHGFF3 (spec 007, #48, the
-  FHGFF3 part of #50). **FHR and FHP are unchanged**: `fhr.json`, `fhp.json`, the
-  core and every existing vector are byte-identical. The new files are:
+- Add a FAIR header for GFF3 annotations, FHGFF3 (spec 007, #48, the FHGFF3
+  part of #50; draft at the time, released in v0.4.0). **Superseded in v0.4.0:**
+  FHR and FHP were regenerated from the v0.4 core later on this line, so they
+  are not byte-identical to their pre-v0.4 files. At the time of this entry
+  **FHR and FHP were unchanged**: `fhr.json`, `fhp.json`, the core and every
+  existing vector were byte-identical. The new files are:
   - `fhgff3_linkml.yml`, which imports the core, and `fhgff3.json`, generated from it
     (`json-schema-generator.py --type fhgff3`), with its own review baseline;
   - the required `annotation` field and a required genome link. The link is a
@@ -130,10 +368,13 @@ files cite `https://w3id.org/fair-bioheaders/<type>/v0.4.0`.
   stale-parent examples. Twenty-five `fhgff3` conformance vectors cover R1–R10 on
   GFF3 and G1–G3. `check_conformance.py --converter` reports FHGFF3 as unsupported
   for converters without `fhr-gff3-validate` (unless `--require-format fhgff3` is
-  given). JSON-LD and microdata for FHGFF3 are follow-ups. FHGFF3 is not released.
-- Add a **draft** FAIR header for protein FASTA, FHP (spec 006, #47, the FHP part of
-  #50). **FHR is unchanged**: `fhr.json`, `fhr_linkml.yml`, the core and every FHR
-  vector are untouched. The new files are:
+  given). JSON-LD and microdata for FHGFF3 are follow-ups. FHGFF3 was not
+  released at this point; **superseded in v0.4.0** by the release entry above.
+- Add a FAIR header for protein FASTA, FHP (spec 006, #47, the FHP part of
+  #50; draft at the time, released in v0.4.0). **Superseded in v0.4.0:** FHR was
+  regenerated from the v0.4 core later on this line. At the time of this entry
+  **FHR was unchanged**: `fhr.json`, `fhr_linkml.yml`, the core and every FHR
+  vector were untouched. The new files are:
   - `fhp_linkml.yml`, which imports the shared core, and the JSON Schema `fhp.json`
     generated from it (`json-schema-generator.py --type fhp`), with its own review
     baseline;
@@ -147,7 +388,8 @@ files cite `https://w3id.org/fair-bioheaders/<type>/v0.4.0`.
   vectors cover R1–R10 on amino-acid FASTA (stops, U, O, B, Z, J, X, lower case,
   gaps) and P1–P2. `check_linkml.py` checks both types, and `check_release.py`
   compares the toolkit's FHP schema copy when present. JSON-LD and microdata for
-  FHP are follow-ups. FHP is not released.
+  FHP are follow-ups. FHP was not released at this point; **superseded in
+  v0.4.0** by the release entry above.
 - Add a JSON-LD form of FHR metadata (feature 011, #56). **No schema change.**
   `jsonld/fhr.context.jsonld` maps every FHR field to schema.org where a term
   fits and otherwise to the FAIR-bioHeaders vocabulary

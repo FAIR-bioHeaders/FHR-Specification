@@ -75,7 +75,7 @@ REJECTED = [
     ("schemaVersion", 2, "a number, not the string 2.0"),
     ("schemaVersion", 2.0, "the number 2.0, as unquoted YAML 2.0 reads"),
     ("schemaVersion", "2", "MAJOR.MINOR has two parts"),
-    ("schemaVersion", "2.1", "FHR 2.0 accepts only 2.0"),
+    ("schemaVersion", "2.2", "FHR 2.1 accepts only 2.0 and 2.1"),
     ("schemaVersion", "02.0", "no leading zeros"),
     ("schemaVersion", 1.5, "fractional schemaVersion"),
     ("schemaVersion", "1", "the old version as a string"),
@@ -123,7 +123,8 @@ ACCEPTED = [
     ("masking", "hard-masked", "each masking value"),
     ("masking", "repeat-masked", "each masking value"),
     ("metadataAuthor.0.nameType", "Personal", "optional author nameType"),
-    ("assemblyAuthor.0.nameType", "Organizational", "optional author nameType"),
+    ("assemblyAuthor.0.nameType", "Organizational",
+     "nameType with an ORCID iD; accepted, and nameType wins for typing (docs/JSONLD.md)"),
 ]
 
 
@@ -191,6 +192,8 @@ class V04TighteningTests(unittest.TestCase):
         validator = self.validators["fhr.json"]
         for vector in manifest["vectors"]:
             if vector["format"] == "microdata" and vector["expected"] == "valid":
+                if "V6" in vector["rules"]:
+                    continue  # An FHR 1 record, read as v0.3.1 (check_conformance.py --schema).
                 with self.subTest(vector=vector["id"]):
                     validator.validate(vector["metadata"])
 
@@ -205,7 +208,14 @@ class V04TighteningTests(unittest.TestCase):
                 for index, child in enumerate(node):
                     yield from objects(child, f"{path}/{index}")
 
-        found = list(objects(self.published, ""))
+        # The extension-field conditional (docs/FORMAT.md R15) tests schemaVersion
+        # in its if/then subschemas; they are not object definitions.
+        gates = [f"/allOf/{index}/{part}"
+                 for index, item in enumerate(self.published.get("allOf", []))
+                 if "then" in item and "propertyNames" in item["then"]
+                 for part in ("if", "then")]
+        found = [(path, node) for path, node in objects(self.published, "")
+                 if not any(path == gate or path.startswith(gate + "/") for gate in gates)]
         self.assertGreaterEqual(len(found), 7)
         for path, node in found:
             with self.subTest(path=path or "/"):

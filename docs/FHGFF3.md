@@ -1,9 +1,9 @@
 # FHGFF3: FAIR header for GFF3 annotations
 
-**Status: v0.1, first released in FAIR-bioHeaders-Specification v0.4.0** (`schemaVersion`
-`"1.0"`). FHGFF3 is the working name (#54), and the fields may still change after curator
-review, through a new schema version. Its persistent schema URL is
-`https://w3id.org/fair-bioheaders/fhgff3/v0.4.0`. The design is in
+**Status: v0.1 (document status; the schema contract is `schemaVersion` `"1.1"`, released in
+FAIR-bioHeaders-Specification v0.5.0; `"1.0"` was first released in v0.4.0).** FHGFF3 is the working name (#54), and the
+fields may still change after curator review, through a new schema version. Its persistent
+schema URL is `https://w3id.org/fair-bioheaders/fhgff3/v0.5.0` (v0.4.0 for FHGFF3 1.0). The design is in
 [specs/007-gff3-header](../specs/007-gff3-header/spec.md).
 
 FHGFF3 is a provenance header around ordinary GFF3. It adds YAML lines that start with `#~` after
@@ -31,16 +31,17 @@ biodatamodels/gff-schema, whose upstream licence is unresolved (#75).
 ```
 ##gff-version 3
 #!genome-build Synthetic SyntheticAssembly1
-#~schema: https://w3id.org/fair-bioheaders/fhgff3/v0.4.0
-#~schemaVersion: '1.0'
+#~schema: https://w3id.org/fair-bioheaders/fhgff3/v0.5.0
+#~schemaVersion: '1.1'
 #~annotation: Synthetic example annotation
 ##sequence-region ctg1 1 20
-#~...
+#~# more fields
 #~checksum: …
 ctg1	synthetic	gene	1	20	.	+	.	ID=gene1
 ```
 
-- Line 1 is `##gff-version 3` (or `3.x.y`), as GFF3 requires.
+- Line 1 is `##gff-version 3`, or `##gff-version 3.x.y` with three numeric components, as GFF3
+  requires. No other text is allowed on the line; trailing spaces or tabs are ignored.
 - The header block runs from line 2 to the first line that is neither blank nor starts with `#`
   (the first feature, or a `>` line), or to the `##FASTA` line, whichever comes first.
 - Inside it, `#~` lines can be mixed with native directives (`##sequence-region`, `##species`,
@@ -64,8 +65,8 @@ Required are the core's required fields (`schema`, `schemaVersion`, `taxon`, `ve
 | the genome link | At least one of the two forms below |
 
 `schema` must be an FHGFF3 schema URL ([SCHEMA-VERSIONS.md](SCHEMA-VERSIONS.md)): preferably the
-versioned `https://w3id.org/fair-bioheaders/fhgff3/v0.4.0` of the release a file targets, or the raw
-GitHub URL of `fhgff3.json` on `main` or at a release tag, under either repository name. `schemaVersion` is `'1.0'` (FHGFF3 1.0),
+versioned `https://w3id.org/fair-bioheaders/fhgff3/v0.5.0` of the release a file targets, or the raw
+GitHub URL of `fhgff3.json` on `main` or at a release tag, under either repository name. `schemaVersion` is `'1.1'` (FHGFF3 1.1; `'1.0'` with the v0.4.x schemas),
 quoted in YAML.
 
 ### The genome link
@@ -101,7 +102,9 @@ features.
 The optional core fields (`voucherSpecimen`, `accessionID`, `scholarlyArticle`, `documentation`,
 `identifier`, `relatedLink`, `funding`, `reuseConditions`) mean the same as in FHR. Genome-only
 FHR fields (`genome`, `assemblyAuthor`, `masking`, `vitalStats`, `assemblySoftware` and the
-others) and FHP-only fields are not FHGFF3 fields. Every object rejects unknown keys and `null`.
+others) and FHP-only fields are not FHGFF3 fields. Every object rejects unknown keys and `null`,
+except that from FHGFF3 1.1 the top level accepts extension fields, keys that start with `x-`
+([FORMAT.md](FORMAT.md) R15).
 There is no required "method" field: describe how the annotation was made with the software,
 protocol and `source` values.
 
@@ -131,10 +134,16 @@ A match establishes identity, not that the annotation is correct.
 
 ## Rules
 
-FHGFF3 files follow the shared header and checksum rules R1 to R9 of [FORMAT.md](FORMAT.md)
-unchanged, and R10 with the GFF3 block end below. In addition:
+FHGFF3 files follow the shared header, checksum, number and link rules R1 to R9 and R12 to
+R15 of [FORMAT.md](FORMAT.md) unchanged, and R10 with the GFF3 block end below. In addition:
 
-- [G1] Line 1 is `##gff-version 3`. The leading header block runs from line 2 to the first
+- [G1] Line 1 matches `^##gff-version 3(\.[0-9]+\.[0-9]+)?[ \t]*$`: `##gff-version 3`, or
+  `##gff-version 3.MINOR.PATCH` where each component after `3` is one or more ASCII digits,
+  optionally followed by spaces or tabs. The pattern applies to the line content before its
+  terminator, so LF, CRLF and lone-CR endings all match. `##gff-version 30` and
+  `##gff-version 3x` are invalid for the same reason as any other extra text. `##gff-version
+  3.1` is invalid because the accepted extension is the three-component `3.x.y` form, not a
+  two-component version. The leading header block runs from line 2 to the first
   nonblank line that is not a `#` line, or to the `##FASTA` line. `#~` lines may be mixed with
   other `#` lines inside it. A `#~` line on line 1 or after the block is invalid.
 - [G2] FHGFF3 metadata must validate against `fhgff3.json`. That includes the genome link: an
@@ -167,15 +176,17 @@ checksum-linked examples cite.
 
 ## Not yet available
 
-These are recorded as follow-ups F-01 to F-07 in the
-[plan](../specs/007-gff3-header/plan.md):
+These remain follow-ups in the [plan](../specs/007-gff3-header/plan.md):
 
-- JSON-LD and HTML microdata forms.
-- Header checks in the gff3-validator's browser build.
-- A release.
+- JSON-LD and HTML microdata forms (F-01).
+- Header checks in the gff3-validator's browser build (F-04).
 
-FHGFF3 v0.1 is released from the `release-v0.4` line with FAIR-bioHeaders-Specification v0.4.0, as FHP is;
-it is on that line (FAIR-bioHeaders-Specification#97). Its persistent schema URL is
-`https://w3id.org/fair-bioheaders/fhgff3/vX.Y.Z`, the FAIR-bioHeaders-Specification release tag
-(registered in perma-id/w3id.org#6890; it resolves once v0.4.0 is tagged). On `main`, it
-inherits the core's v0.3 patterns.
+F-02 (the persistent schema alias, with the release) is complete: v0.4.0 is tagged, and
+`https://w3id.org/fair-bioheaders/fhgff3/vX.Y.Z` selects that release's `fhgff3.json`
+(registered in perma-id/w3id.org#6890).
+
+FHGFF3 v0.1 was released from the `release-v0.4` line with FAIR-bioHeaders-Specification
+v0.4.0, as FHP was (FAIR-bioHeaders-Specification#97). Its persistent schema URL is
+`https://w3id.org/fair-bioheaders/fhgff3/vX.Y.Z`, the FAIR-bioHeaders-Specification release
+tag, and it serves the v0.4.0 release. `fhgff3.json` on `main` is generated from the same
+v0.4 core, not the core's v0.3 patterns.
