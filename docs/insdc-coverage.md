@@ -11,7 +11,7 @@ A FAIR-bioHeaders header, a community profile or an optional field is never evid
 **Pinned inputs:**
 
 - **INSDC**: [insdc/minimum-specifcations](https://github.com/insdc/minimum-specifcations) (the repository name is spelled this way upstream) at commit `41f0dc424748c9f7e50a8b6bda9b888218c4b65e` (2026-07-06). All ten categories are at v1.0. Text was read from the per-category PDFs in each `Current version/` folder.
-- **FAIR-bioHeaders, released**: FHR `schemaVersion` `2.1`, FHP `1.1` and FHGFF3 `1.1` (`fhr.json`, `fhp.json`, `fhgff3.json`; release v0.5.0). They add only top-level `x-` extension fields ([FORMAT.md](FORMAT.md) R15) to FHR `2.0`, FHP `1.0` and FHGFF3 `1.0` (release line v0.4.x), and every row reads the same for both. An extension field never carries an INSDC requirement: rows count only standard fields, because tools attach no meaning to extensions.
+- **FAIR-bioHeaders, released**: FHR `schemaVersion` `2.1`, FHP `1.2` and FHGFF3 `1.2` (`fhr.json`, `fhp.json`, `fhgff3.json`; release v0.6.0, tagged 2026-11-13; the previous release v0.5.0 carries FHR `2.1`, FHP and FHGFF3 `1.1`). FHP 1.2 and FHGFF3 1.2 only widen the shared `Completeness.lineageDataset` pattern to dotted BUSCO dataset versions (#170), and every row reads the same for all versions: a dataset name carries no INSDC meaning beyond naming the BUSCO run, whatever its version form. FHR is unchanged (no completeness slot). v0.5.0 added only top-level `x-` extension fields ([FORMAT.md](FORMAT.md) R15) to FHR `2.0`, FHP `1.0` and FHGFF3 `1.0` (release line v0.4.x), and every row reads the same for both. An extension field never carries an INSDC requirement: rows count only standard fields, because tools attach no meaning to extensions.
 - **FHT, draft (not released)**: the FHT 1.0 development contract, [`fht.json` at FHT-Specification `0ceb6f4`](https://github.com/FAIR-bioHeaders/FHT-Specification/blob/0ceb6f460e1f749f9eb2afb0a8b2f83cddb0e07a/fht.json), and the shared draft [specs/005-rna-transcriptome-header at `9a87e5c`](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/9a87e5cfe0ce3e024508ff8fdb58e6fe9042dffe/specs/005-rna-transcriptome-header/spec.md). FHT rows are marked **FHT (draft)** and describe a contract that can still change.
 - **gff3-validator**: [rule catalogue at `c753f45`](https://github.com/FAIR-bioHeaders/gff3-validator/blob/c753f451d28b80b5f84c042e0f0486c3b1049adf/gff3_validator/catalogue.yaml) (`catalogue_version 0.1.0-draft`, 2026-10-08, a draft for Sequence Ontology review). Rules cited as implemented are implemented at that revision; planned rules are marked (planned).
 
@@ -23,6 +23,8 @@ A FAIR-bioHeaders header, a community profile or an optional field is never evid
 | v0 | 2026-10-28 | Landed in [#183](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/pull/183); review fixes in [#184](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/pull/184). |
 | v1 | 2026-10-28 | Every requirement given an ID and a final disposition; coverage claims rechecked against the pinned sources; follow-ups opened; submission guidance and `tests/test_insdc_coverage.py` added. |
 | v2 | 2026-11-03 | Re-pinned to FHR `2.1`, FHP `1.1` and FHGFF3 `1.1` (extension fields, #197). No row's coverage or disposition changes: extension fields carry no meaning the standard defines. |
+| v3 | 2026-11-12 | Re-pinned to FHP `1.2` and FHGFF3 `1.2` (dotted BUSCO dataset versions, #170; FHR stays `2.1`, v0.6.0 prepared on main). No row's coverage or disposition changes: no INSDC requirement depends on the identifier form of a BUSCO dataset name. |
+| v4 | 2026-11-13 | v0.6.0 tagged: the FHP `1.2` and FHGFF3 `1.2` pinning of v3 is now a released contract rather than a prepared one. No row's coverage or disposition changes; only the status wording does. |
 
 ## Keys
 
@@ -66,7 +68,7 @@ A FAIR-bioHeaders header, a community profile or an optional field is never evid
 | S8 | Sequence determined or contracted by the submitter, or third-party | FHR, FHP | — | FHR `metadataAuthor`/`assemblyAuthor` name who made the file; FHP `sourceType` says where sequences came from | **Out of scope** — an attestation made at submission, not file metadata |
 | S9 | Joined sequences in biological order with gaps | FHR | — | no sequence-content rule | **Out of scope** — sequence content |
 | S10 | No vector/linker unless synthetic; contamination screening to order; proposed screening checksum report | FHR | ◐ | `assemblySoftware` and `assemblyProtocol` can name the screening tools and run; no screening-result field | **Partial** — tools can be named; a screening-report field would be a schema addition and is not proposed while INSDC's report format (10.b) is undefined |
-| S11 | Semantic and syntactic FASTA validation; full specification still to be developed | FHR, FHT (draft) | ◐ | FH specifies its own header block (FORMAT.md), versioned schemas, conformance vectors and `bioheaders verify`; FASTA body rules (blank lines, IUPAC) are not checked | **Partial** — FH validates the header block only; sequence-body validation stays with INSDC tools |
+| S11 | Semantic and syntactic FASTA validation; full specification still to be developed | FHR, FHT (draft) | ◐ | FH checks the header block (`bioheaders verify`). Of the INSDC-side tools, table2asn 1.29.324 reads the FASTA and accepts an FHR `;~` block, dropping it silently (class a, [#191](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/191)); `asnvalidate` reads ASN.1 only, not FASTA (verified on the plain control); DDBJ `ddbj-validator` 1.0.94 rejects an FHR FASTA (`SEQ0080`, `SEQ0090`); FASTA body rules (blank lines, IUPAC) are not FH-checked | **Partial** — FH validates the header block only; sequence-body validation stays with INSDC tools |
 | S12 | Sequence-specific metadata (molecule type, topology, chromosome type, localization) included with each sequence | FHR, FHT (draft) | — | headers describe the whole file; no per-sequence fields. FHT (draft) `moleculeType` is one value for the file | **Out of scope** — per-sequence metadata belongs in the deflines or the submission |
 | S13 | Technique keywords (HTGS/STS/GSS/WGS, TSA) validated against molecule type | FHR, FHT (draft) | ◐ | FHR: no keyword field. FHT (draft): `assemblyType` and `moleculeType` (`mRNA`, `rRNA`, `tRNA`, `transcribed RNA`, all RNA, consistent with "TSA should not be DNA") | **Partial** — FHT (draft) has the file-level analogue; INSDC's keyword list is still to be determined, so no FHR keyword field is proposed |
 | S14 | Submitter sequence name under 51 characters, INSDC-legal characters, not an accession pattern | FHR | — | per-sequence naming; `assess related` compares names across GFF3/FASTA pairs as a consistency check | **Out of scope** — per-sequence naming |
@@ -98,7 +100,7 @@ A FAIR-bioHeaders header, a community profile or an optional field is never evid
 
 | ID | INSDC requirement | FH type(s) | Cov. | Location in FH | Disposition |
 | --- | --- | --- | --- | --- | --- |
-| AN.a | Conform to the INSDC GFF3 specification or feature table | FHGFF3 | ◐ | header lines are GFF3 comments after `##gff-version 3`; gff3-validator checks GFF3 1.26 syntax and structure; INSDC submission tools are untested with `#~` blocks | **Follow-up** [#191](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/191) — test table2asn and Webin-CLI; until then strip the header before submission |
+| AN.a | Conform to the INSDC GFF3 specification or feature table | FHGFF3 | ◐ | header lines are GFF3 comments after `##gff-version 3`; gff3-validator checks GFF3 1.26 syntax and structure; table2asn 1.29.324 reads an FHGFF3-headed GFF3 (class **a**, header silently dropped); ENA's bundled gff3tools 5.5.1 accepts it; ENA Webin-CLI itself is untested (needs an account) | **Partial** — [#191](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/191) measured 2026-11-10: NCBI accepts `#~` blocks and discards them; the ENA CLI could not run offline, so ENA remains unverified; strip the header before submission (see [guidance](#4-using-fair-bioheaders-alongside-an-insdc-submission)) |
 | AN.b.i | Features and qualifiers limited to the INSDC Feature Table | FHGFF3 | ◐ | types checked against a pinned SO release (SO-001…009), not against the INSDC feature and qualifier lists | **Partial** — SO's mapping to INSDC features is incomplete upstream (AN-std), so an INSDC feature-table check cannot be derived from SO alone |
 | AN.b.iii | Feature locations: start/end/strand present; within the sequence; one sequence; intervals ordered per strand; partial only at ends; CDS/mRNA locations compatible | FHGFF3 | ◐ | b.iii.1: SYN-013…015, SYN-017; b.iii.2: STR-008, STR-011, BIO-002; b.iii.3: STR-002; b.iii.6: BIO-005 (CDS within exons) only; b.iii.4 and b.iii.5: no rule | **Follow-up** [gff3-validator#27](https://github.com/FAIR-bioHeaders/gff3-validator/issues/27) — rules for b.iii.4–6 |
 | AN.b.iv | Intervals do not overlap; rRNA does not overlap CDS or rRNA; tRNA not inside a CDS exon | FHGFF3 | ✗ | no implemented rule; STR-012/013 (planned) are parent/child checks | **Follow-up** [gff3-validator#27](https://github.com/FAIR-bioHeaders/gff3-validator/issues/27) — overlap rules, with the slippage exception |
@@ -113,6 +115,53 @@ A FAIR-bioHeaders header, a community profile or an optional field is never evid
 | AN.d | Amino acids NH3 to COOH; no internal stops; IUPAC amino acids; provided translation matches; complete CDS start and stop | FHGFF3, FHP | ◐ | BIO-006/007/008 with `--genome` (d.ii, d.v); d.i and d.iii concern protein sequences, which no FH tool validates; d.iv is feature-table only | **Partial** — codon checks exist; protein-sequence content is outside FH |
 | AN-xref | Mandatory links to sequence, sample, assembly, study, validation reports; optional publication and db_xrefs | FHGFF3 | ◐ | `genomeReference` (assembly accession and `seqcol_id`) or `derivedFrom` an FHR file; `relatedLink` for study and sample; ATT-014 checks `Dbxref` form; no validation-report link | **Partial** — the genome link is first-class; other links are `relatedLink` URLs |
 | AN-std | Standards: INSDC Feature Table; Sequence Ontology with incomplete INSDC mappings | FHGFF3 | ◐ | validator pins an SO release and SO rules; the Feature Table is not modelled | **Partial** — the incomplete INSDC to SO mapping is upstream at the Sequence Ontology |
+
+#### Draft FHGM note
+
+The [FHGM pilot review (FHGM-Specification #5)](https://github.com/FAIR-bioHeaders/FHGM-Specification/issues/5)
+explores multiple model records embedded in one FHGFF3 annotation. The records
+use experimental extension fields. They add no coverage to the rated rows.
+
+- **FHGFF3** describes the enclosing annotation. Header validation checks its
+  schema and genome link structure (AN-xref). File verification checks the
+  exact-byte checksum, including the embedded records.
+- **GFF3 validation** checks feature syntax, coordinates, and native
+  `ID`/`Parent` relationships (AN.a, AN.b.iii, AN.b.vii). Sequence-dependent
+  checks require the relevant reference. Missing INSDC rules and profile
+  placement remain tracked in [gff3-validator #27](https://github.com/FAIR-bioHeaders/gff3-validator/issues/27).
+- **FHGM (draft)** would check that each model record resolves to an
+  unambiguous feature at the intended scope. For revisions, it would resolve
+  the prior annotation checksum and the model ID and version within that
+  snapshot. A resolved pointer identifies a predecessor. Curator-approved
+  supersession requires separate evidence. A model ID does not establish an
+  INSDC locus tag (AN.b.ix).
+
+Submission-tool compatibility remains tracked in [#191](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/191).
+
+#### GFF3 draft ASCII rule versus R6 UTF-8
+
+The INSDC GFF3 Specification draft (v0.5.1, p. 6, ll. 145–150) lists ASCII as a
+common rule; its scope for comment bytes is not yet stated
+([#210](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/210)).
+Evidence run 2026-11-10 ([round 6 harness](../scripts/tool_survey/round6/README.md)):
+
+- ASCII-only FH headers satisfy both rule sets trivially (ASCII ⊂ UTF-8).
+- Raw non-ASCII UTF-8 in `#~` bytes was accepted without error by every tool
+  we could run (gff3 1.0.1, gffutils 0.14; fair-bioheaders 0.9.0 verifies);
+  ENA's own shipped engine (gff3tools 5.5.1 inside Webin-CLI 11.0.0) reported
+  **no encoding-related finding** on any of the four fixtures, identically to
+  the plain control; the standalone v5.6.4 source treats all `#` lines as
+  skippable comments; no INSDC-side rejection has been reproduced.
+- The ASCII-escape route (YAML `\uXXXX` in a double-quoted scalar, verified to
+  decode identically) keeps the serialized file ASCII. The evidence supports
+  ASCII-on-disk compatibility only; it does not establish compliance if the
+  draft rule constrains decoded values. This is the recommended serialization
+  for ASCII-on-disk compatibility while the question is open.
+
+Status: **open question to the draft editors** (The-Sequence-Ontology/
+Specifications#41). Do not mark this covered or closed until an authoritative
+disposition arrives. This is compatibility guidance; the released UTF-8 rule R6
+is unchanged and no matrix row's rating changes on this evidence.
 
 ### Analysis Minimum Specification v1.0
 
@@ -196,9 +245,9 @@ A FAIR-bioHeaders header, a community profile or an optional field is never evid
 
 | Repository / type | Contract assessed | Rows | Open follow-ups |
 | --- | --- | --- | --- |
-| FAIR-bioHeaders-Specification: FHR | `2.1` (v0.5.0; `2.0` in v0.4.x, the same rows) | Sequence, Assembly, Analysis, Sample, Project, Package-Checklist | [#190](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/190) profile; [#189](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/189) next major |
-| FAIR-bioHeaders-Specification: FHP | `1.1` (v0.5.0; `1.0` in v0.4.x, the same rows) | Sequence S8 and S-xref/S-ver, Annotation AN.c.iii/AN.d, Sample, Project, Package-Checklist | [#189](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/189) next major |
-| FAIR-bioHeaders-Specification: FHGFF3 | `1.1` (v0.5.0; `1.0` in v0.4.x, the same rows) | Annotation, Analysis, Sample, Project, Package-Checklist | [#191](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/191) tool tests; [#189](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/189) next major |
+| FAIR-bioHeaders-Specification: FHR | `2.1` (v0.5.0, unchanged in v0.6.0; `2.0` in v0.4.x, the same rows) | Sequence, Assembly, Analysis, Sample, Project, Package-Checklist | [#190](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/190) profile; [#189](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/189) next major |
+| FAIR-bioHeaders-Specification: FHP | `1.2` (v0.6.0 prepared; `1.1` in v0.5.0, `1.0` in v0.4.x, the same rows) | Sequence S8 and S-xref/S-ver, Annotation AN.c.iii/AN.d, Sample, Project, Package-Checklist | [#189](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/189) next major |
+| FAIR-bioHeaders-Specification: FHGFF3 | `1.2` (v0.6.0 prepared; `1.1` in v0.5.0, `1.0` in v0.4.x, the same rows) | Annotation, Analysis, Sample, Project, Package-Checklist | [#191](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/191) tool tests; [#189](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/189) next major |
 | FHT-Specification: FHT (draft) | `1.0` development contract at `0ceb6f4` (unreleased) | Sequence S1–S4, S11–S13, S-fmt; Sample SA.T1; Experiment | none; rows are re-checked when FHT is released |
 | gff3-validator | catalogue `0.1.0-draft` at `c753f45` | Annotation | [gff3-validator#27](https://github.com/FAIR-bioHeaders/gff3-validator/issues/27) |
 
@@ -208,15 +257,19 @@ A FAIR-bioHeaders header, a community profile or an optional field is never evid
 - [#190](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/190): draft INSDC submission-readiness profile for FHR; it requires `taxon.uri` in the NCBI Taxonomy form, because INSDC requires an NCBI taxID.
 - [#191](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/191): test FH headers with INSDC submission validators.
 - [gff3-validator#27](https://github.com/FAIR-bioHeaders/gff3-validator/issues/27): INSDC Annotation rules missing from the catalogue.
-- [#170](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/170): BUSCO `lineageDataset` dotted versions. Raised by the same FHT design review; no INSDC requirement depends on it.
+- [#170](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/170): BUSCO `lineageDataset` dotted versions. Raised by the same FHT design review; no INSDC requirement depends on it. Decided 2026-11-12 (option A, widen); the widening is staged for FHP/FHGFF3 `1.2` in v0.6.0 (prepared), with this assessment re-pinned at v3.
 - [#139](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/139): structured voucher specimens, relevant to A.b and SA.T1 but reviewed on its own track.
 
 ## 4. Using FAIR-bioHeaders alongside an INSDC submission
 
+The draft [insdc-fhr profile](../profiles/examples/insdc-fhr/README.md) checks
+selected FHR 2.0 assembly metadata offline after project and sample registration.
+
+
 A FAIR-bioHeaders header keeps metadata with a file you share or archive yourself. It does not replace an INSDC submission and does not make a file ready to deposit. To submit to GenBank, ENA or DDBJ, follow that node's instructions and validators, and use the header as a source of values.
 
 1. **Register the records INSDC needs.** BioProject, BioSample, collection date, geographic location and the per-sequence details in S12 and A.l (molecule type, topology, chromosome names and levels) are not in FH headers. Supply them through the node's submission route.
-2. **Submit files without the header unless the node accepts it.** INSDC submission tools have not been tested with `;~` or `#~` header blocks ([#191](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/191)), and strict FASTA readers reject them (TOOL_COMPATIBILITY.md). Use `bioheaders strip` to write a header-free copy, and compute the checksum the node asks for on the file you upload. The FH `checksum` is not that checksum.
+2. **Submit files without the header.** Tested 2026-11-10 ([#191](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/191), [TOOL_COMPATIBILITY.md](TOOL_COMPATIBILITY.md#insdc-submission-validators-191-run-2026-11-10)): NCBI table2asn accepts `;~` and `#~` blocks but **discards them without a word** — the provenance reaches neither the `.sqn` nor the GenBank flatfile, so keeping the header in a submission buys nothing. DDBJ's public `ddbj-validator` **rejects** an FHR FASTA outright (`SEQ0080`, `SEQ0090`), and its default auto-fix corrupts it into a bogus sequence record. ENA Webin-CLI's validation could not be run at all: it requires a submission account, so ENA's treatment is **unknown**. In all three cases the safe route is the same: use `bioheaders strip` to write a header-free copy and submit that. Strip is byte-lossless for everything else, so the header you keep locally still matches what you sent. Compute any checksum the node asks for on the file you upload; the FH `checksum` is not that checksum, and it is invalidated by any tool that rewrites bytes (including gff3tools' output mode and `gt gff3 -tidy`).
 3. **Copy values with care.** Common correspondences:
 
    | INSDC asks for | Take it from | Check |
