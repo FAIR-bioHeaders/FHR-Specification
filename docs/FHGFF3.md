@@ -80,7 +80,7 @@ Two tested caveats:
   validates rewritten bytes (verified: fixture bytes with another file's header
   fail `bioheaders verify`).
 
-Evidence: [scripts/tool_survey/round6](../scripts/tool_survey/round6/README.md).
+Evidence: [scripts/tool_survey/round6](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/v0.6.0/scripts/tool_survey/round6/README.md).
 
 ## Fields
 

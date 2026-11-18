@@ -143,7 +143,7 @@ Submission-tool compatibility remains tracked in [#191](https://github.com/FAIR-
 The INSDC GFF3 Specification draft (v0.5.1, p. 6, ll. 145–150) lists ASCII as a
 common rule; its scope for comment bytes is not yet stated
 ([#210](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/210)).
-Evidence run 2026-11-10 ([round 6 harness](../scripts/tool_survey/round6/README.md)):
+Evidence run 2026-11-10 ([round 6 harness](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/v0.6.0/scripts/tool_survey/round6/README.md)):
 
 - ASCII-only FH headers satisfy both rule sets trivially (ASCII ⊂ UTF-8).
 - Raw non-ASCII UTF-8 in `#~` bytes was accepted without error by every tool
@@ -262,7 +262,7 @@ is unchanged and no matrix row's rating changes on this evidence.
 
 ## 4. Using FAIR-bioHeaders alongside an INSDC submission
 
-The draft [insdc-fhr profile](../profiles/examples/insdc-fhr/README.md) checks
+The draft [insdc-fhr profile](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/v0.6.0/profiles/examples/insdc-fhr/README.md) checks
 selected FHR 2.0 assembly metadata offline after project and sample registration.
 
 

@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+- The published copies are checked against the pinned shared release, not shared `main`.
+  `scripts/check_development_tree.py` records the pin (`SHARED_TAG` `v0.6.0`, commit
+  `0ae18b00`); `--remote` now reads the raw files at that tag, and `--remote --ref main` is an
+  advisory comparison with shared `main`. The `published-files` workflow runs `--remote`, so
+  it covers all 35 published files instead of `fhr.json`, `fhp.json`, `fhgff3.json` and
+  `jsonld/*` only, and it no longer fails when shared `main` moves between releases (as
+  `jsonld/terms.jsonld` and `jsonld/terms.ttl` did after v0.6.0); a second step reports those
+  differences without failing (FAIR-bioHeaders-Specification#241, #246). README,
+  CONTRIBUTING, docs/DEVELOPMENT-TREE.md and the FHR section of AGENTS.md say the same.
+- The conformance job installs fair-bioheaders 0.12.0 from PyPI instead of a
+  FAIR-bioHeaders-Tools commit pinned before 0.9.0 was released.
+- `check_conformance.py --converter` requires, for each rule a vector lists under `warnings`
+  (R14), a warning line that names that rule; any line containing "warning" no longer
+  passes. conformance/README.md also says that `jsonld-script-escaped` exercises the
+  converter's reader, not a writer.
+- Links that the v0.6.0 sync copied from the shared tree but whose targets are not carried here
+  (docs/FHGM.md, the insdc-fhr profile README, `scripts/tool_survey/round6`,
+  `scripts/make_cedar.py`) now point at FAIR-bioHeaders-Specification at `v0.6.0`.
 - `examples/fhp/rich-predicted.fhp.yaml`: the author gains `nameType: Personal`, as in the
   FHP-Specification copy (its #12) that FAIR-bioHeaders-Tools bundles, so the two companion
   copies match again and `check_release.py` passes. The example stays valid FHP 1.1 (author
