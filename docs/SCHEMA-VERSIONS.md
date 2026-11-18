@@ -246,7 +246,7 @@ lane.
 A reader that implements the lane ships the draft bytes it recognises and pins them the way this
 family pins a copied tree: the commit of the development repository and the SHA-256 of the exact
 schema bytes, the pair `header/provenance.json` records for the FHGFF3 development copy and the
-digest `scripts/make_cedar.py` writes into every template's provenance line. Selection runs against
+digest [`scripts/make_cedar.py`](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/v0.6.0/scripts/make_cedar.py) writes into every template's provenance line. Selection runs against
 the pinned bytes, never against `main` at run time, so a rewrite of a draft cannot move a reading
 that claims to be current out of sight; when the bytes a reader holds no longer match the digest it
 states, it says so instead of quietly choosing a newer draft.
@@ -265,7 +265,7 @@ Two drafts are in the lane today: the transcriptome contract drafted in
 cites `https://raw.githubusercontent.com/FAIR-bioHeaders/FHT-Specification/main/fht.json`, and the
 gene-model records drafted in
 [FHGM-Specification](https://github.com/FAIR-bioHeaders/FHGM-Specification) and described in
-[FHGM.md](FHGM.md). The rule names neither: it describes the shape of the lane, and any type
+[FHGM.md](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/blob/v0.6.0/docs/FHGM.md). The rule names neither: it describes the shape of the lane, and any type
 repository holding a draft contract is covered the same way. FHGM is the general case worth
 stating, because its records carry no `schema` field at all: they ride inside an FHGFF3 header as
 extension fields ([FORMAT.md](FORMAT.md) R15), so the file is routed by its own FHGFF3 citation

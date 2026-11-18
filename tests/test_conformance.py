@@ -351,7 +351,7 @@ class ConformanceTests(unittest.TestCase):
             "if vector['expected'] != 'valid':\n"
             "    raise SystemExit(1)\n"
             "if vector.get('warnings'):\n"
-            "    print('FHR: warning: link scheme', file=sys.stderr)\n"
+            "    print('FHR: warning: link scheme (docs/FORMAT.md R14)', file=sys.stderr)\n"
             "if len(sys.argv) > 2:\n"
             "    json.dump(vector['metadata'], open(sys.argv[2], 'w'))\n"
         )
@@ -377,6 +377,22 @@ class ConformanceTests(unittest.TestCase):
         self.assertEqual(wrong_version.returncode, 1)
         self.assertIn("fhp-fasta-busco-lineage-dotted: converter rejected "
                       "(FHR: invalid metadata:", wrong_version.stderr)
+
+        # R14 vectors need a warning that names R14, not just any warning line.
+        unrelated_warning_bin = self.root / "unrelated-warning-bin"
+        unrelated_warning_bin.mkdir()
+        unrelated_body = body.replace("FHR: warning: link scheme (docs/FORMAT.md R14)",
+                                      "FHR: warning: R140 is not a rule")
+        self.assertNotEqual(unrelated_body, body)
+        for name in ("fhr-fasta-validate", "fhr-gfa-validate", "fhr-convert"):
+            script = unrelated_warning_bin / name
+            script.write_text(unrelated_body)
+            script.chmod(0o755)
+        unrelated = self.check("--skip-regeneration", "--converter", unrelated_warning_bin)
+        self.assertEqual(unrelated.returncode, 1)
+        self.assertIn("fasta-link-scheme-warning: converter printed no warning; expected one "
+                      "under R14", unrelated.stderr)
+        self.assertNotIn("jsonld-link-scheme-warning", unrelated.stderr)  # jsonld skipped
 
         strict = self.check("--skip-regeneration", "--require-format", "jsonld",
                             "--converter", bin_directory)

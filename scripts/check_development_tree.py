@@ -12,12 +12,17 @@ Only the standard library is used. By default the check is offline: it compares
 each published file against the recorded SHA-256 of its shared copy, rejects
 unclassified files in a strict published location, and lists the files
 classified as removable. ``--shared PATH`` compares against a local
-FAIR-bioHeaders-Specification checkout instead, and ``--remote`` against its
-raw ``main`` over the network (as .github/workflows/published-files.yml does).
+FAIR-bioHeaders-Specification checkout instead (check out the pinned tag first),
+and ``--remote`` against the pinned release tag over the network (as
+.github/workflows/published-files.yml does). ``--remote --ref main`` compares with
+shared ``main`` instead; that comparison is advisory, because shared ``main`` may
+move ahead of the pinned release between releases.
 
-The published set and the digests mirror FAIR-bioHeaders-Specification main; the
-``published-files`` workflow checks the same files live. Keep this file and
-docs/DEVELOPMENT-TREE.md in sync when a file changes section.
+The published set and the digests mirror the pinned FAIR-bioHeaders-Specification
+release, SHARED_TAG (FAIR-bioHeaders-Specification#241: a released reference
+resolves at its release tag, never at ``main``). Moving the pin is a sync: update
+SHARED_TAG, SHARED_COMMIT, the copies and their digests together. Keep this file
+and docs/DEVELOPMENT-TREE.md in sync when a file changes section.
 """
 
 import argparse
@@ -30,8 +35,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 SHARED_REPOSITORY = "FAIR-bioHeaders-Specification"
-RAW_MAIN = ("https://raw.githubusercontent.com/FAIR-bioHeaders/"
-            + SHARED_REPOSITORY + "/main")
+RAW_BASE = ("https://raw.githubusercontent.com/FAIR-bioHeaders/"
+            + SHARED_REPOSITORY)
+
+# The shared release the published copies are synchronized to, and the commit
+# that tag resolves to. Released bytes are compared at the tag, not at main.
+SHARED_TAG = "v0.6.0"
+SHARED_COMMIT = "0ae18b00ee4bd71ab2dc28bae706b0f9d195076b"
 
 # Section 2 of docs/DEVELOPMENT-TREE.md: directories whose entire contents are
 # published. Every file below one of these does not have to be listed in
@@ -46,7 +56,7 @@ ROOT_SCHEMAS = ("fhr.json", "fhp.json", "fhgff3.json")
 
 # Section 2 of docs/DEVELOPMENT-TREE.md: files that serve established raw-main,
 # tag or Pages URLs, or are published companion copies. Each value is the
-# SHA-256 of the file in FAIR-bioHeaders-Specification main. A file that is
+# SHA-256 of the file in FAIR-bioHeaders-Specification at SHARED_TAG. A file that is
 # missing here, or whose bytes differ, fails the check.
 PUBLISHED = {
     "fhr.json": "694ab5afaf8c3743eacf9e2aacb5551f7cbe37073b6f4afc3ae4a65b47f9d4df",
@@ -138,7 +148,7 @@ def check_published(root, published=PUBLISHED):
         if actual != expected:
             problems.append(
                 f"changed published file: {name} (expected {expected[:12]}…, "
-                f"got {actual[:12]}…); synchronize the shared main copy")
+                f"got {actual[:12]}…); synchronize the shared {SHARED_TAG} copy")
     for name in unexpected_published(root, published):
         problems.append(
             f"unexpected published file: {name} (not in the published set; "
@@ -161,8 +171,8 @@ def check_shared(root, shared):
     return problems
 
 
-def check_remote(root, base=RAW_MAIN):
-    """Problems comparing the published set with raw shared main over the network."""
+def check_remote(root, ref=SHARED_TAG, base=RAW_BASE):
+    """Problems comparing the published set with the raw shared copies at ``ref``."""
     problems = []
     for name in sorted(PUBLISHED):
         local = root / name
@@ -170,7 +180,7 @@ def check_remote(root, base=RAW_MAIN):
             problems.append(f"missing published file: {name}")
             continue
         request = urllib.request.Request(
-            f"{base}/{name}", headers={"User-Agent": "fhr-development-tree-check"})
+            f"{base}/{ref}/{name}", headers={"User-Agent": "fhr-development-tree-check"})
         try:
             with urllib.request.urlopen(request, timeout=30) as response:
                 remote = response.read()
@@ -178,7 +188,7 @@ def check_remote(root, base=RAW_MAIN):
             problems.append(f"cannot fetch the shared copy of {name}: {error}")
             continue
         if local.read_bytes() != remote:
-            problems.append(f"published file differs from shared main: {name}")
+            problems.append(f"published file differs from shared {ref}: {name}")
     return problems
 
 
@@ -193,8 +203,11 @@ def main(argv=None):
                         help="compare the published set with a local "
                              f"{SHARED_REPOSITORY} checkout")
     parser.add_argument("--remote", action="store_true",
-                        help="compare the published set with raw shared main over "
-                             "the network")
+                        help="compare the published set with the raw shared copies "
+                             f"at {SHARED_TAG} (or --ref) over the network")
+    parser.add_argument("--ref", default=SHARED_TAG,
+                        help=f"with --remote, the shared tag or branch to compare with "
+                             f"(default: the pinned {SHARED_TAG}; main is advisory only)")
     parser.add_argument("--strict", action="store_true",
                         help="also fail when a classified-removable file is "
                              "present (no additional effect while REMOVABLE is "
@@ -205,7 +218,8 @@ def main(argv=None):
 
     present = removable_present(ROOT)
     if args.list:
-        print(f"{len(PUBLISHED)} published/URL-served files; "
+        print(f"{len(PUBLISHED)} published/URL-served files pinned to shared "
+              f"{SHARED_TAG} ({SHARED_COMMIT[:8]}); "
               f"strict directories: {', '.join(STRICT_DIRECTORIES)}; "
               f"{len(REMOVABLE)} classified removable")
         for name in REMOVABLE:
@@ -218,7 +232,7 @@ def main(argv=None):
     if args.shared:
         problems = check_shared(ROOT, args.shared)
     elif args.remote:
-        problems = check_remote(ROOT)
+        problems = check_remote(ROOT, args.ref)
     else:
         problems = check_published(ROOT)
     if args.strict and present:
@@ -238,7 +252,11 @@ def main(argv=None):
                     "present)")
     else:
         removals = "no files classified removable yet (removals deferred)"
-    print(f"ok: {len(PUBLISHED)} published files match their shared copy; "
+    if args.shared:
+        against = f"copy in {args.shared}"
+    else:
+        against = f"{args.ref if args.remote else SHARED_TAG} copy"
+    print(f"ok: {len(PUBLISHED)} published files match their shared {against}; "
           f"{removals}")
     return 0
 
