@@ -1,8 +1,12 @@
 name: Published files
 
-# Existing FHR files cite raw-main URLs in this repository. They must keep
-# serving exactly what FAIR-bioHeaders-Specification main serves, so main's
-# copies here may not drift from it (FAIR-bioHeaders-Specification#108).
+# Existing FHR files cite raw-main URLs in this repository. Main's published
+# copies (fhr.json, fhp.json, fhgff3.json, jsonld/, examples/ and the other
+# files classified in docs/DEVELOPMENT-TREE.md) must stay byte-identical to the
+# FAIR-bioHeaders-Specification release this repository is pinned to
+# (SHARED_TAG in scripts/check_development_tree.py; FAIR-bioHeaders-Specification#108).
+# Released bytes are compared at their tag, never at shared main, because both
+# sides of a main comparison move (FAIR-bioHeaders-Specification#241, #246).
 
 on:
   push:
@@ -24,16 +28,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - name: Compare with FAIR-bioHeaders-Specification main
+      - name: Compare every published file with the pinned shared release
+        run: python3 scripts/check_development_tree.py --remote
+      - name: Report where shared main has moved past the pinned release (advisory)
+        # Shared main may change published files between releases (for example
+        # jsonld/terms.* after v0.6.0). That is expected, so this step never fails
+        # the job; the differences it lists are synchronized with the next release.
         run: |
-          base=https://raw.githubusercontent.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/main
-          status=0
-          for file in fhr.json fhp.json fhgff3.json jsonld/*; do
-            if curl -fsSL --retry 3 "$base/$file" | cmp -s - "$file"; then
-              echo "same: $file"
-            else
-              echo "::error file=$file::differs from FAIR-bioHeaders-Specification main"
-              status=1
-            fi
-          done
-          exit $status
+          if ! python3 scripts/check_development_tree.py --remote --ref main; then
+            echo "::notice::shared main differs from the pinned release for the files above; synchronize them when the next shared release is pinned"
+          fi

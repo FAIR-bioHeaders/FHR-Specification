@@ -9,8 +9,11 @@
 >
 > - **`main` keeps the published files unchanged.** Existing FHR files cite
 >   `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json`,
->   so `main`'s `fhr.json`, `fhp.json`, `fhgff3.json` and `jsonld/` always equal
->   FAIR-bioHeaders-Specification `main`'s copies; the `published-files` check enforces it.
+>   so `main`'s `fhr.json`, `fhp.json`, `fhgff3.json`, `jsonld/` and the other published
+>   copies equal the FAIR-bioHeaders-Specification release this repository is pinned to
+>   (currently `v0.6.0`); the `published-files` check enforces it at that tag. Shared
+>   `main` can move ahead between releases; those changes arrive here with the next
+>   pinned release.
 >   The release tags (`v0.3.0`, `v0.3.1`) stay for the same reason.
 > - **Develop on branches** and open issues here for FHR-specific work.
 > - **What belongs here.** The FHR model, documentation, examples and checks live
@@ -26,7 +29,7 @@
 >   replace the repository name. GitHub does not redirect them, because this
 >   repository reuses the old name, and new issues here may later reuse those numbers.
 > - **Finished changes go to FAIR-bioHeaders-Specification by pull request.** Once merged
->   there, `main` here is updated to match.
+>   there and released, `main` here is synchronized to that release.
 >
 > The rest of this README is a copy of the specification repository's README.
 

@@ -20,14 +20,29 @@ checked in CI (`.github/workflows/validate-specification.yml`).
 - **Develop on branches.** FHR-specific model, documentation, example and check
   changes start here and are reviewed in a branch/PR.
 - **Reviewed schema changes publish in FAIR-bioHeaders-Specification first.**
-  Finished work goes there by pull request; only then is this repository's
-  `main` synchronized.
+  Finished work goes there by pull request; once it is released there, this
+  repository's `main` is synchronized to that release.
 - **`main` keeps the published files unchanged.** Existing FHR files cite
   `https://raw.githubusercontent.com/FAIR-bioHeaders/FHR-Specification/main/fhr.json`,
-  so `main`'s `fhr.json`, `fhp.json`, `fhgff3.json` and `jsonld/` always equal
-  FAIR-bioHeaders-Specification `main`'s copies. The `published-files` workflow
-  enforces that live; `scripts/check_development_tree.py` enforces it locally
-  against recorded digests.
+  so `main`'s `fhr.json`, `fhp.json`, `fhgff3.json`, `jsonld/` and the other
+  section 2 files equal the copies in the FAIR-bioHeaders-Specification release
+  this repository is pinned to: `SHARED_TAG` in
+  `scripts/check_development_tree.py`, currently `v0.6.0` (commit `0ae18b00`).
+  `scripts/check_development_tree.py` enforces that offline against recorded
+  digests, and with `--remote` against the raw files at the pinned tag, which is
+  what the `published-files` workflow runs.
+- **The pin is a release tag, not shared `main`.** A released reference resolves
+  at its release tag
+  ([FAIR-bioHeaders-Specification#241](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/241),
+  [#246](https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification/issues/246)).
+  Shared `main` can change a published file between releases (it changed
+  `jsonld/terms.jsonld` and `jsonld/terms.ttl` after `v0.6.0`, in
+  FAIR-bioHeaders-Specification#255); comparing with `main` would then fail
+  here without anything here having changed, and agreement with `main` says
+  nothing about a release. The workflow still reports, without failing, which
+  files shared `main` has moved; they are synchronized when the next release is
+  pinned. Moving the pin updates `SHARED_TAG`, `SHARED_COMMIT`, the copies and
+  their digests in one change.
 - **Never rewrite history, tags or released bytes.** This repository's release
   tags (`v0.3.0`, `v0.3.1`) and their files stay. The `v0.4.x` release tags are
   in `FAIR-bioHeaders-Specification`, not here; do not recreate or move them in
@@ -67,7 +82,7 @@ shared publication by pull request:
 
 These files serve established `raw.githubusercontent.com`/tag/Pages URLs, or
 are published companion copies. They may not be edited here except by
-synchronizing the shared `main`, and they may not be deleted:
+synchronizing the pinned shared release, and they may not be deleted:
 `scripts/check_development_tree.py` fails if any is missing or differs from its
 recorded shared-copy digest.
 
@@ -90,10 +105,13 @@ digest check.
 | `mappings/mapping-table.schema.json` | `$id` raw-main URL `.../FHR-Specification/main/mappings/mapping-table.schema.json` |
 | `specs/013-schemaorg-export/contracts/export-table.schema.json` | `$id` raw-main URL `.../FHR-Specification/main/specs/013-schemaorg-export/contracts/export-table.schema.json` |
 
-The `published-files` workflow additionally compares `fhr.json`, `fhp.json`,
-`fhgff3.json` and `jsonld/*` against shared `main` over the network. That live
-check and this digest check are complementary: the workflow catches shared
-`main` moving, and this check catches a local edit or deletion.
+The `published-files` workflow additionally runs the check with `--remote`,
+comparing every file in this section with the raw shared copy at the pinned
+tag over the network. The two are complementary: the offline digest check
+catches a local edit or deletion, and the network check catches a recorded
+digest that does not match the tag's bytes. A second, advisory step compares
+with shared `main` (`--remote --ref main`) and lists what will change at the
+next sync without failing.
 
 ### 3. Inherited FHP/FHGFF3/shared fixtures and machinery
 
@@ -188,14 +206,17 @@ adds no failure beyond the published-file checks.
    classified-removable file is still present and otherwise has no effect while
    the list is empty;
 4. with `--shared PATH`, compares section 2 byte-for-byte against a local
-   `FAIR-bioHeaders-Specification` checkout; with `--remote`, against its raw
-   `main` over the network. `--list` prints the classification without checking
-   bytes.
+   `FAIR-bioHeaders-Specification` checkout (check out the pinned tag first);
+   with `--remote`, against its raw files at the pinned tag over the network,
+   or with `--remote --ref main` against shared `main` (advisory). `--list`
+   prints the classification and the pin without checking bytes.
 
 Run it from the repository root:
 
 ```bash
 python scripts/check_development_tree.py
+python scripts/check_development_tree.py --remote
+git -C ../FAIR-bioHeaders-Specification checkout v0.6.0
 python scripts/check_development_tree.py --shared ../FAIR-bioHeaders-Specification
 ```
 

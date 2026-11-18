@@ -3,10 +3,12 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 """The FHR development tree classification (docs/DEVELOPMENT-TREE.md)."""
 
+import json
 from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -100,6 +102,45 @@ class DevelopmentTreeTests(unittest.TestCase):
             self.assertFalse(
                 [p for p in tree.check_shared(local, shared) if p.endswith(": fhr.json")])
 
+
+    def test_pin_is_the_current_release(self):
+        # The published copies follow the released shared contract, so the pin
+        # is the release that schemas/versions.json names as current.
+        versions = json.loads((ROOT / "schemas" / "versions.json").read_text(encoding="utf-8"))
+        self.assertEqual(tree.SHARED_TAG, versions["current"])
+        self.assertRegex(tree.SHARED_COMMIT, r"^[0-9a-f]{40}$")
+
+    def test_remote_comparison_reads_the_pinned_tag(self):
+        requested = []
+
+        class Response:
+            def __init__(self, url):
+                requested.append(url)
+                self.url = url
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *arguments):
+                return False
+
+            def read(self):
+                return b"same\n"
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for name in tree.PUBLISHED:
+                (root / name).parent.mkdir(parents=True, exist_ok=True)
+                (root / name).write_bytes(b"same\n")
+            with mock.patch.object(tree.urllib.request, "urlopen",
+                                   lambda request, timeout: Response(request.full_url)):
+                self.assertEqual(tree.check_remote(root), [])
+                self.assertEqual(len(requested), len(tree.PUBLISHED))
+                self.assertTrue(all(
+                    url.startswith(f"{tree.RAW_BASE}/{tree.SHARED_TAG}/") for url in requested))
+                requested.clear()
+                self.assertEqual(tree.check_remote(root, "main"), [])
+                self.assertTrue(all(url.startswith(f"{tree.RAW_BASE}/main/") for url in requested))
 
 if __name__ == "__main__":
     unittest.main()
