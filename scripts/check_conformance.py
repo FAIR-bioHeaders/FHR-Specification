@@ -510,9 +510,9 @@ def check_converter(conformance, manifest, location, skip=(), require=(), unsupp
             expected = (f"one of {', '.join(converter_results)}" if converter_results else
                         vector["expected"] + (f", {vector['rule']}" if "rule" in vector else ""))
             problems.append(f"{vector['id']}: converter {outcome}; expected {expected}")
-        elif accepted and vector.get("warnings") and "warning" not in result.stderr.lower():
+        elif accepted and missing_warnings(vector.get("warnings", []), result.stderr):
             problems.append(f"{vector['id']}: converter printed no warning; expected one "
-                            f"under {', '.join(vector['warnings'])}")
+                            f"under {', '.join(missing_warnings(vector['warnings'], result.stderr))}")
         elif extracted is not None and not same_json(extracted, vector["metadata"]):
             differences = sorted(
                 key for key in extracted.keys() | vector["metadata"].keys()
@@ -530,6 +530,20 @@ def check_converter(conformance, manifest, location, skip=(), require=(), unsupp
         unsupported.update(skipped)
     return [problem[1] if isinstance(problem, tuple) else problem for problem in problems
             if not (isinstance(problem, tuple) and problem[0] in skipped)]
+
+
+def missing_warnings(rules, stderr):
+    """The rules in ``rules`` that no warning line on ``stderr`` names.
+
+    A vector's ``warnings`` lists the rules (R14) under which a validator should
+    warn. Any line containing "warning" is not enough: an unrelated warning, such
+    as one about the schema version, would satisfy it. Each listed rule needs its
+    own line that contains "warning" and names the rule as a whole word.
+    """
+    lines = [line for line in stderr.splitlines() if "warning" in line.lower()]
+    return [rule for rule in rules
+            if not any(re.search(rf"(?<![A-Za-z0-9]){re.escape(rule)}(?![0-9])", line)
+                       for line in lines)]
 
 
 def main():
