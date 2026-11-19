@@ -14,8 +14,9 @@
 - The conformance job installs fair-bioheaders 0.12.0 from PyPI instead of a
   FAIR-bioHeaders-Tools commit pinned before 0.9.0 was released.
 - `check_conformance.py --converter` requires, for each rule a vector lists under `warnings`
-  (R14), a warning line that names that rule; any line containing "warning" no longer
-  passes. conformance/README.md also says that `jsonld-script-escaped` exercises the
+  (R14), a warning line that names that rule as a complete token (R140, R14A and XR14 do
+  not name R14, as in FAIR-bioHeaders-Specification#265); any line containing "warning" no
+  longer passes. conformance/README.md also says that `jsonld-script-escaped` exercises the
   converter's reader, not a writer.
 - Links that the v0.6.0 sync copied from the shared tree but whose targets are not carried here
   (docs/FHGM.md, the insdc-fhr profile README, `scripts/tool_survey/round6`,
