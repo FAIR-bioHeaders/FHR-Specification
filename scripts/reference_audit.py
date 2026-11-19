@@ -30,34 +30,69 @@ def load(root, name):
 
 
 def measured_file(local, upstream, sha, **extra):
-    if not isinstance(sha, str) or not re.fullmatch('[0-9a-f]{64}', sha):
+    if sha not in (None, '') and (not isinstance(sha, str) or not re.fullmatch('[0-9a-f]{64}', sha)):
         raise ValueError(str(local or upstream) + ': unusable recorded digest')
     return dict(local=local, path=upstream, sha256=sha, **extra)
 
 
 def reference(identity, cls, revision, files, commit=None, **extra):
-    if not isinstance(revision, str) or not revision:
+    if revision not in (None, '') and not isinstance(revision, str):
         raise ValueError(identity + ': unusable recorded revision')
-    if commit is not None and (not isinstance(commit, str) or not re.fullmatch('[0-9a-f]{40}', commit)):
+    if commit not in (None, '') and (not isinstance(commit, str) or not re.fullmatch('[0-9a-f]{40}', commit)):
         raise ValueError(identity + ': unusable recorded commit')
     row = dict(id=identity, consumer=CONSUMER, repository=AUTHORITY, **{'class': cls},
-               revision=revision, revisionKind='tag' if revision.startswith('v') else 'commit', files=files)
+               revision=revision, revisionKind='tag' if not revision or revision.startswith('v') else 'commit' if re.fullmatch('[0-9a-f]{40}', revision) else 'branch', files=files)
     if commit:
         row['commit'] = commit
     row.update(extra)
     return row
 
 
-def literal_assignments(root, name, wanted):
-    found = {}
-    for node in ast.parse((root / name).read_text()).body:
-        if isinstance(node, ast.Assign):
-            for target in node.targets:
-                if isinstance(target, ast.Name) and target.id in wanted:
-                    found[target.id] = ast.literal_eval(node.value)
-    if set(found) != set(wanted):
+def validated_bindings(root, filename, wanted):
+    """Accept each consumed binding/dependency once, as a top-level assignment."""
+    tree = ast.parse((root / filename).read_text())
+    assignments = {}
+    candidates = {}
+    for statement in tree.body:
+        if isinstance(statement, ast.Assign) and len(statement.targets) == 1 and isinstance(statement.targets[0], ast.Name):
+            candidates.setdefault(statement.targets[0].id, []).append(statement)
+    needed = set(wanted)
+    pending = list(wanted)
+    while pending:
+        name = pending.pop()
+        for statement in candidates.get(name, []):
+            for node in ast.walk(statement.value):
+                if isinstance(node, ast.Name) and node.id not in needed:
+                    needed.add(node.id)
+                    pending.append(node.id)
+    for name in needed:
+        entries = candidates.get(name, [])
+        if len(entries) > 1:
+            raise ValueError(filename + ': reassigned source binding ' + name)
+        if entries:
+            assignments[name] = entries[0].value
+    permitted = {id(entries[0].targets[0]) for name, entries in candidates.items() if name in needed and len(entries) == 1}
+    for statement in tree.body:
+        if isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            continue
+        for node in ast.walk(statement):
+            if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)) and node.id in needed and id(node) not in permitted:
+                raise ValueError(filename + ': unsupported source binding write ' + node.id)
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+                base = node.func.value
+                if isinstance(base, ast.Name) and base.id in needed:
+                    raise ValueError(filename + ': unsupported source binding mutation ' + base.id)
+            if isinstance(node, (ast.Subscript, ast.Attribute)) and isinstance(node.ctx, (ast.Store, ast.Del)):
+                if any(isinstance(part, ast.Name) and part.id in needed for part in ast.walk(node)):
+                    raise ValueError(filename + ': unsupported source binding mutation')
+    return assignments
+
+
+def literal_assignments(root, name, wanted, optional=()):
+    found = {key: ast.literal_eval(value) for key, value in validated_bindings(root, name, wanted).items() if key in wanted}
+    if set(wanted) - set(found) - set(optional):
         raise ValueError(name + ': missing declared constants')
-    return found
+    return {key: found.get(key) for key in wanted}
 
 
 def require_authority(data, context):
@@ -76,12 +111,7 @@ def reject_source_overrides(entry, context):
 
 
 def string_declarations(root, filename, wanted):
-    assignments = {}
-    for node in ast.parse((root / filename).read_text()).body:
-        if isinstance(node, ast.Assign):
-            for target in node.targets:
-                if isinstance(target, ast.Name):
-                    assignments[target.id] = node.value
+    assignments = validated_bindings(root, filename, wanted)
     active = set()
     def evaluate(node):
         if isinstance(node, ast.Constant) and isinstance(node.value, str):
@@ -125,7 +155,7 @@ def declarations(root):
     origin = string_declarations(root, name, {'SHARED_REPOSITORY', 'RAW_BASE'})
     if origin['SHARED_REPOSITORY'] != AUTHORITY.split('/')[1] or origin['RAW_BASE'] != 'https://raw.githubusercontent.com/' + AUTHORITY:
         raise ValueError('Missing or unexpected declared publication repository/URL')
-    declared = literal_assignments(root, name, {'PUBLISHED', 'SHARED_TAG', 'SHARED_COMMIT'})
+    declared = literal_assignments(root, name, {'PUBLISHED', 'SHARED_TAG', 'SHARED_COMMIT'}, optional={'SHARED_TAG', 'SHARED_COMMIT'})
     files = [measured_file(p, p, sha) for p, sha in declared['PUBLISHED'].items()]
     groups = []
     for directory in ('examples', 'jsonld'):
@@ -168,14 +198,22 @@ def verified_checker(root, source):
     script = (source / pin['path']).resolve()
     if not script.is_relative_to(source.resolve()):
         raise ValueError('Checker path escapes the reviewed source checkout')
-    actual = subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip()
+    actual = subprocess.check_output(['git', '--no-replace-objects', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip()
     if actual != pin['commit']:
         raise ValueError('Checker checkout HEAD differs from the reviewed source pin')
-    immutable = subprocess.check_output(['git', '-C', str(source), 'show', pin['commit'] + ':' + pin['path']])
+    immutable = subprocess.check_output(['git', '--no-replace-objects', '-C', str(source), 'show', pin['commit'] + ':' + pin['path']])
     if script.read_bytes() != immutable:
         raise ValueError('Checker working bytes differ from the immutable commit')
     if digest(immutable) != pin['sha256']:
         raise ValueError('Checker source digest differs; refusing execution')
+    return immutable
+
+
+def checker_snapshot(root, source, directory):
+    immutable = verified_checker(root, source)
+    script = Path(directory) / 'verified-checker.py'
+    script.write_bytes(immutable)
+    script.chmod(0o400)
     return script
 
 
@@ -196,8 +234,8 @@ def main(argv=None):
             return 0
         if not args.checker_root:
             parser.error('--checker-root is required for execution')
-        script = verified_checker(ROOT, args.checker_root)
         with tempfile.TemporaryDirectory() as directory:
+            script = checker_snapshot(ROOT, args.checker_root, directory)
             table_file = Path(directory) / 'inventory.json'
             table_file.write_text(json.dumps(table))
             command = [sys.executable, '-I', str(script), '--inventory', str(table_file),
