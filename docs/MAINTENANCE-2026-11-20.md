@@ -85,3 +85,16 @@ gate first: matching two modified checkouts or a modified remote response cannot
 turn drift into a pass. Local/remote modes are exclusive, and documented hidden
 root editor files are ignored consistently with strict directories. New positive
 and no-bypass regressions use private temporary trees; no fixture or pin changed.
+
+## Output and converter review follow-up
+
+The page builder now checks physical filesystem identity for checkout and
+ancestor aliases, rejects case-insensitive Git metadata, and compares normalized
+case-folded paths against the full NUL-delimited Git index before deletion.
+The guard does not protect arbitrary untracked work or other repositories nested
+inside an output directory; choose disposable outputs.
+
+The converter comparison treats abnormal exits, silent nonzero failures and
+Python tracebacks as execution failures before known-gap or unsupported-format
+accounting. Ordinary diagnostic rejection and explicit unsupported formats retain
+their separate meanings. These changes do not alter schemas, vectors or pins.
