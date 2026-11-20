@@ -1,5 +1,8 @@
 # FHR-Specification (FHR development)
 
+Start with the [reader and maintainer guide](docs/WORKING-GUIDE.md) for
+setup, runnable checks, generator options and interpretation of results.
+
 > **This repository is where the FHR (FAIR Header Reference genome) header is
 > developed.** The released specifications of every FAIR-bioHeaders header type,
 > including FHR, live in
