@@ -9,9 +9,11 @@ for older releases); JSON-LD vectors are read by rule J1 first.
 ``--converter`` runs fhr-fasta-validate/fhr-gfa-validate on every FASTA/GFA
 vector and ``fhr-convert in.html out.json`` or ``fhr-convert in.jsonld out.json``
 on every microdata or JSON-LD vector: valid vectors must exit 0 and invalid
-vectors nonzero, except where a manifest vector explicitly allows an unsupported
-schema version. Microdata and JSON-LD vectors must also produce exactly the
-manifest metadata. A converter that rejects every vector of a format as an
+vectors must exit 1 with a diagnostic (tracebacks/process failures do not count).
+A manifest may explicitly allow an unsupported-schema result instead of a
+validation decision; that still requires a normal rejection, not an execution
+failure. Microdata and JSON-LD vectors must also produce exactly the manifest
+metadata. A converter that rejects every vector of a format as an
 unsupported file extension predates that format; those vectors are left out and
 reported, unless ``--require-format`` names the format. ``--skip-format`` leaves
 out a format explicitly.
