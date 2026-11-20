@@ -4,6 +4,8 @@
 """The FHR development tree classification (docs/DEVELOPMENT-TREE.md)."""
 
 import json
+import contextlib
+import io
 from pathlib import Path
 import sys
 import tempfile
@@ -16,6 +18,43 @@ import check_development_tree as tree  # noqa: E402
 
 
 class DevelopmentTreeTests(unittest.TestCase):
+    def test_external_agreement_cannot_bypass_frozen_bytes_or_classification(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "fhr.json").write_bytes(b"edited\n")
+            (root / "examples").mkdir()
+            (root / "examples/unclassified.json").write_bytes(b"{}\n")
+            pins = {"fhr.json": tree.digest(b"frozen\n")}
+            for args in (["--shared", str(root)], ["--remote", "--ref", "main"]):
+                stderr = io.StringIO()
+                with self.subTest(args=args), mock.patch.object(tree, "ROOT", root), \
+                        mock.patch.object(tree, "PUBLISHED", pins), \
+                        mock.patch.object(tree, "check_remote", return_value=[]), \
+                        contextlib.redirect_stderr(stderr):
+                    self.assertEqual(tree.main(args), 1)
+                self.assertIn("changed published file: fhr.json", stderr.getvalue())
+                self.assertIn("unexpected published file", stderr.getvalue())
+
+    def test_external_comparison_accepts_locally_pinned_bytes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "fhr.json").write_bytes(b"frozen\n")
+            with mock.patch.object(tree, "ROOT", root), \
+                    mock.patch.object(tree, "PUBLISHED", {"fhr.json": tree.digest(b"frozen\n")}), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(tree.main(["--shared", str(root)]), 0)
+
+    def test_external_modes_are_mutually_exclusive(self):
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as error:
+            tree.main(["--shared", ".", "--remote"])
+        self.assertEqual(error.exception.code, 2)
+
+    def test_hidden_root_json_is_not_a_published_schema(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / ".editor.json").write_bytes(b"{}\n")
+            self.assertEqual(tree.unexpected_published(root, {}), [])
+
     def test_published_files_match_their_recorded_shared_digests(self):
         self.assertEqual(tree.check_published(ROOT), [])
 

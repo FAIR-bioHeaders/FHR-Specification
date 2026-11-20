@@ -76,3 +76,13 @@ PR branch stay active through human review.
 The PR handoff records actual test skips and CI. Browser, installed-package,
 network and external-owner checks are not silently credited by local Python
 checks. A human must merge; no release or website publication occurs here.
+
+
+## General-source review followup
+
+The independent runtime review found that external-comparison modes could skip
+the frozen local digest/classification gate. All checking modes now perform that
+gate first: matching two modified checkouts or a modified remote response cannot
+turn drift into a pass. Local/remote modes are exclusive, and documented hidden
+root editor files are ignored consistently with strict directories. New positive
+and no-bypass regressions use private temporary trees; no fixture or pin changed.
