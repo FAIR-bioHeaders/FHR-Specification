@@ -205,19 +205,22 @@ adds no failure beyond the published-file checks.
    reporting whether each is still present; `--strict` fails if a
    classified-removable file is still present and otherwise has no effect while
    the list is empty;
-4. with `--shared PATH`, compares section 2 byte-for-byte against a local
+4. with `--shared PATH`, additionally compares section 2 byte-for-byte against a local
    `FAIR-bioHeaders-Specification` checkout (check out the pinned tag first);
    with `--remote`, against its raw files at the pinned tag over the network,
    or with `--remote --ref main` against shared `main` (advisory). `--list`
-   prints the classification and the pin without checking bytes.
+   prints the classification and the pin without checking bytes. Local digest
+   and classification checks remain mandatory in either comparison mode. The
+   `--shared` and `--remote` modes are mutually exclusive.
 
 Run it from the repository root:
 
 ```bash
 python scripts/check_development_tree.py
 python scripts/check_development_tree.py --remote
-git -C ../FAIR-bioHeaders-Specification checkout v0.6.0
-python scripts/check_development_tree.py --shared ../FAIR-bioHeaders-Specification
+shared_checkout=$(mktemp -d)
+git clone --branch v0.6.0 --single-branch https://github.com/FAIR-bioHeaders/FAIR-bioHeaders-Specification.git "$shared_checkout"
+python scripts/check_development_tree.py --shared "$shared_checkout"
 ```
 
 ## Keeping this document current

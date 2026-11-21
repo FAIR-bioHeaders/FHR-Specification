@@ -11,9 +11,9 @@ are compatibility copies that must stay byte-identical to the shared repository.
 Only the standard library is used. By default the check is offline: it compares
 each published file against the recorded SHA-256 of its shared copy, rejects
 unclassified files in a strict published location, and lists the files
-classified as removable. ``--shared PATH`` compares against a local
-FAIR-bioHeaders-Specification checkout instead (check out the pinned tag first),
-and ``--remote`` against the pinned release tag over the network (as
+classified as removable. ``--shared PATH`` additionally compares against a local
+FAIR-bioHeaders-Specification checkout (check out the pinned tag first),
+and ``--remote`` additionally compares the pinned release tag over the network (as
 .github/workflows/published-files.yml does). ``--remote --ref main`` compares with
 shared ``main`` instead; that comparison is advisory, because shared ``main`` may
 move ahead of the pinned release between releases.
@@ -131,7 +131,7 @@ def unexpected_published(root, published=PUBLISHED):
             if name not in published:
                 unexpected.add(name)
     for path in root.glob("*.json"):
-        if path.is_file() and path.name not in ROOT_SCHEMAS:
+        if path.is_file() and not path.name.startswith(".") and path.name not in ROOT_SCHEMAS:
             unexpected.add(path.name)
     return sorted(unexpected)
 
@@ -199,10 +199,11 @@ def removable_present(root, removable=REMOVABLE):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--shared", type=Path,
+    comparison = parser.add_mutually_exclusive_group()
+    comparison.add_argument("--shared", type=Path,
                         help="compare the published set with a local "
                              f"{SHARED_REPOSITORY} checkout")
-    parser.add_argument("--remote", action="store_true",
+    comparison.add_argument("--remote", action="store_true",
                         help="compare the published set with the raw shared copies "
                              f"at {SHARED_TAG} (or --ref) over the network")
     parser.add_argument("--ref", default=SHARED_TAG,
@@ -229,12 +230,13 @@ def main(argv=None):
             print("  none classified; removals are deferred to a later change")
         return 0
 
+    # External agreement cannot replace the local frozen-byte/classification
+    # contract: two identically edited copies must still fail their recorded pin.
+    problems = check_published(ROOT, PUBLISHED)
     if args.shared:
-        problems = check_shared(ROOT, args.shared)
+        problems += check_shared(ROOT, args.shared)
     elif args.remote:
-        problems = check_remote(ROOT, args.ref)
-    else:
-        problems = check_published(ROOT)
+        problems += check_remote(ROOT, args.ref)
     if args.strict and present:
         problems += [f"classified-removable file is still present: {name}"
                      for name in present]
