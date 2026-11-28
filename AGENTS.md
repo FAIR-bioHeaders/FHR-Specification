@@ -167,9 +167,12 @@ granted permissions.
 
 **Test datasets and generated databases:** ODbL-1.0 (Open Database License) for newly created
 project-owned database collections where the project has authority to grant database rights.
-Reference: <https://opendatacommons.org/licenses/odbl/>. This applies to curated test fixtures,
-conformance vector collections, schema compilation metadata and derived databases where
-the project holds relevant rights.
+Reference: <https://opendatacommons.org/licenses/odbl/>. This applies only to collection-level
+rights in curated test fixtures, conformance vector collections, schema compilation metadata
+and derived databases where the project holds relevant rights. It does not replace
+constituent-file licenses: project-authored code, schemas and documentation remain subject
+to the local `LICENSE` and applicable notices, including MPL-2.0 where specified. Record
+collection-level and constituent terms separately.
 
 **Database rights versus content rights:** ODbL licenses the structure, curation and
 compilation of a database — not individual sequences, images, articles, books or other
